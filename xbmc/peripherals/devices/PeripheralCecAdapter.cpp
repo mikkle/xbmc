@@ -42,7 +42,7 @@ using namespace ANNOUNCEMENT;
 using namespace CEC;
 using namespace std;
 
-#define CEC_LIB_SUPPORTED_VERSION 0x1602
+#define CEC_LIB_SUPPORTED_VERSION 0x1700
 
 /* time in seconds to ignore standby commands from devices after the screensaver has been activated */
 #define SCREENSAVER_TIMEOUT       10
@@ -321,17 +321,24 @@ bool CPeripheralCecAdapter::OpenConnection(void)
 
   if (bIsOpen)
   {
-    // read the configuration
-    m_cecAdapter->GetCurrentConfiguration(&m_configuration);
-    SetVersionInfo(m_configuration);
-
     CLog::Log(LOGDEBUG, "%s - connection to the CEC adapter opened", __FUNCTION__);
 
-    if (!m_configuration.wakeDevices.IsEmpty())
-      m_cecAdapter->PowerOnDevices(CECDEVICE_BROADCAST);
+    // read the configuration
+    libcec_configuration config;
+    if (m_cecAdapter->GetCurrentConfiguration(&config))
+    {
+      // send wakeup commands
+      if (!config.wakeDevices.IsEmpty())
+        m_cecAdapter->PowerOnDevices(CECDEVICE_BROADCAST);
 
-    if (m_configuration.bActivateSource == 1)
-      m_cecAdapter->SetActiveSource();
+      // make xbmc the active source
+      if (config.bActivateSource == 1)
+        m_cecAdapter->SetActiveSource();
+
+      // update the local configuration
+      CSingleLock lock(m_critSection);
+      SetConfigurationFromLibCEC(config);
+    }
   }
 
   return bIsOpen;
@@ -1171,6 +1178,13 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
   m_configuration.deviceTypes.Add(config.deviceTypes[0]);
   bChanged |= SetSetting("device_type", (int)config.deviceTypes[0]);
 
+  // hide the "connected device" and "hdmi port number" settings when the PA was autodetected
+  bool bPAAutoDetected(config.serverVersion >= CEC_SERVER_VERSION_1_7_0 &&
+      config.bAutodetectAddress == 1);
+
+  SetSettingVisible("connected_device", !bPAAutoDetected);
+  SetSettingVisible("cec_hdmi_port", !bPAAutoDetected);
+
   // set the connected device
   m_configuration.baseDevice = config.baseDevice;
   bChanged |= SetSetting("connected_device", (int)config.baseDevice);
@@ -1181,9 +1195,9 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
 
   // set the physical address, when baseDevice or iHDMIPort are not set
   CStdString strPhysicalAddress("0");
-  if (m_configuration.baseDevice == CECDEVICE_UNKNOWN ||
+  if (!bPAAutoDetected && (m_configuration.baseDevice == CECDEVICE_UNKNOWN ||
       m_configuration.iHDMIPort < CEC_MIN_HDMI_PORTNUMBER ||
-      m_configuration.iHDMIPort > CEC_MAX_HDMI_PORTNUMBER)
+      m_configuration.iHDMIPort > CEC_MAX_HDMI_PORTNUMBER))
   {
     m_configuration.iPhysicalAddress = config.iPhysicalAddress;
     strPhysicalAddress.Format("%x", config.iPhysicalAddress);
