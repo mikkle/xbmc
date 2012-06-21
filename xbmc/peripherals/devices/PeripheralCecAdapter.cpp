@@ -1257,8 +1257,8 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
 
 void CPeripheralCecAdapter::SetConfigurationFromSettings(void)
 {
-  // client version 1.6.0
-  m_configuration.clientVersion = CEC_CLIENT_VERSION_1_6_2;
+  // client version 1.7.1
+  m_configuration.clientVersion = CEC_CLIENT_VERSION_1_7_1;
 
   // device name 'XBMC'
   snprintf(m_configuration.strDeviceName, 13, "%s", GetSettingString("device_name").c_str());
