@@ -1245,6 +1245,12 @@ void CPeripheralCecAdapter::SetConfigurationFromLibCEC(const CEC::libcec_configu
     m_configuration.bShutdownOnStandby = config.bShutdownOnStandby;
   }
 
+  if (config.serverVersion >= CEC_SERVER_VERSION_1_6_2)
+  {
+    memcpy(m_configuration.strDeviceLanguage, config.strDeviceLanguage, 3);
+    m_configuration.iFirmwareBuildDate = config.iFirmwareBuildDate;
+  }
+
   SetVersionInfo(m_configuration);
 
   bChanged |= SetSetting("standby_pc_on_tv_standby",
