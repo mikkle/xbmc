@@ -179,6 +179,7 @@ bool CPeripheralCecAdapter::InitialiseFeature(const PeripheralFeature feature)
   if (feature == FEATURE_CEC && !m_bStarted && GetSettingBool("enabled"))
   {
     SetConfigurationFromSettings();
+    m_callbacks.Clear();
     m_callbacks.CBCecLogMessage           = &CecLogMessage;
     m_callbacks.CBCecKeyPress             = &CecKeyPress;
     m_callbacks.CBCecCommand              = &CecCommand;
