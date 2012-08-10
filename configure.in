@@ -774,7 +774,7 @@ elif test "$use_arch" = "arm"; then
         use_cpu=cortex-a8])
   else
     if test "$use_neon" = "yes"; then 
-      CFLAGS="$CFLAGS -mfpu=neon -mvectorize-with-neon-quad"
+      CFLAGS="$CFLAGS -mfpu=vfpv3-d16"
       CXXFLAGS="$CXXFLAGS -mfpu=vfpv3-d16"
       FFMPEG_EXTRACFLAGS="$FFMPEG_EXTRACFLAGS -mfpu=vfpv3-d16"
     fi
