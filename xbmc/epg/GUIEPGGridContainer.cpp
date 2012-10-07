@@ -1310,10 +1310,7 @@ bool CGUIEPGGridContainer::OnMouseWheel(char wheel, const CPoint &point)
 
 int CGUIEPGGridContainer::GetSelectedItem() const
 {
-  if (!m_gridIndex ||
-      !m_epgItemsPtr.size() ||
-      m_channelCursor + m_channelOffset >= (int)m_channelItems.size() ||
-      m_blockCursor + m_blockOffset >= (int)m_programmeItems.size())
+  if (!m_gridIndex || !m_epgItemsPtr.size())
     return 0;
 
   CGUIListItemPtr currentItem = m_gridIndex[m_channelCursor + m_channelOffset][m_blockCursor + m_blockOffset].item;
