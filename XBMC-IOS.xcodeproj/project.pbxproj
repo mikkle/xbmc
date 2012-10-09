@@ -101,10 +101,10 @@
 		DF23462315FA675200A934F6 /* UPnPInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF23461B15FA675200A934F6 /* UPnPInternal.cpp */; };
 		DF23462415FA675200A934F6 /* UPnPRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF23461D15FA675200A934F6 /* UPnPRenderer.cpp */; };
 		DF23462515FA675200A934F6 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF23461F15FA675200A934F6 /* UPnPServer.cpp */; };
+		DF24EADE1621E67200034265 /* DVDDemuxBXA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF24EADC1621E67200034265 /* DVDDemuxBXA.cpp */; };
 		DF2E329415509B2C000F5772 /* XbmcContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2E329215509B2C000F5772 /* XbmcContext.cpp */; };
 		DF33C29415509BF50046CDCB /* ilog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF33C29115509BF50046CDCB /* ilog.cpp */; };
 		DF3488F813FD961A0026A711 /* GUIAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF3488F613FD961A0026A711 /* GUIAction.cpp */; };
-		DF44856C140065C60069344B /* BXAcodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF44856A140065C60069344B /* BXAcodec.cpp */; };
 		DF448572140065E10069344B /* PipesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF44856F140065E10069344B /* PipesManager.cpp */; };
 		DF4485751400662D0069344B /* AirTunesServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF4485731400662D0069344B /* AirTunesServer.cpp */; };
 		DF527757151BAF8200B5B63B /* WebSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF52774E151BAF8200B5B63B /* WebSocket.cpp */; };
@@ -716,7 +716,6 @@
 		F56C8A6A131F42ED000AD0F6 /* GUIDialogMusicInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85AA131F42EA000AD0F6 /* GUIDialogMusicInfo.cpp */; };
 		F56C8A6B131F42ED000AD0F6 /* GUIDialogMusicOSD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85AC131F42EA000AD0F6 /* GUIDialogMusicOSD.cpp */; };
 		F56C8A6C131F42ED000AD0F6 /* GUIDialogMusicOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85AE131F42EA000AD0F6 /* GUIDialogMusicOverlay.cpp */; };
-		F56C8A6D131F42ED000AD0F6 /* GUIDialogMusicScan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85B0131F42EA000AD0F6 /* GUIDialogMusicScan.cpp */; };
 		F56C8A6E131F42ED000AD0F6 /* GUIDialogSongInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85B2131F42EA000AD0F6 /* GUIDialogSongInfo.cpp */; };
 		F56C8A6F131F42ED000AD0F6 /* GUIDialogVisualisationPresetList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85B4131F42EA000AD0F6 /* GUIDialogVisualisationPresetList.cpp */; };
 		F56C8A70131F42ED000AD0F6 /* MusicAlbumInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85B7131F42EA000AD0F6 /* MusicAlbumInfo.cpp */; };
@@ -734,7 +733,6 @@
 		F56C8A7C131F42ED000AD0F6 /* karaokelyricstextlrc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85D0131F42EA000AD0F6 /* karaokelyricstextlrc.cpp */; };
 		F56C8A7D131F42ED000AD0F6 /* karaokelyricstextustar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85D2131F42EA000AD0F6 /* karaokelyricstextustar.cpp */; };
 		F56C8A7E131F42ED000AD0F6 /* karaokewindowbackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85D4131F42EA000AD0F6 /* karaokewindowbackground.cpp */; };
-		F56C8A81131F42ED000AD0F6 /* Id3Tag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85DD131F42EA000AD0F6 /* Id3Tag.cpp */; };
 		F56C8A82131F42ED000AD0F6 /* MusicInfoTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85E1131F42EA000AD0F6 /* MusicInfoTag.cpp */; };
 		F56C8A85131F42ED000AD0F6 /* MusicInfoTagLoaderASAP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85E7131F42EA000AD0F6 /* MusicInfoTagLoaderASAP.cpp */; };
 		F56C8A86131F42ED000AD0F6 /* MusicInfoTagLoaderCDDA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C85E9131F42EA000AD0F6 /* MusicInfoTagLoaderCDDA.cpp */; };
@@ -885,7 +883,6 @@
 		F56C8B3B131F42ED000AD0F6 /* GUIDialogVideoInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C8774131F42EC000AD0F6 /* GUIDialogVideoInfo.cpp */; };
 		F56C8B3C131F42ED000AD0F6 /* GUIDialogVideoOSD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C8776131F42EC000AD0F6 /* GUIDialogVideoOSD.cpp */; };
 		F56C8B3D131F42ED000AD0F6 /* GUIDialogVideoOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C8778131F42EC000AD0F6 /* GUIDialogVideoOverlay.cpp */; };
-		F56C8B3E131F42ED000AD0F6 /* GUIDialogVideoScan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C877A131F42EC000AD0F6 /* GUIDialogVideoScan.cpp */; };
 		F56C8B3F131F42ED000AD0F6 /* GUIDialogVideoSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C877C131F42EC000AD0F6 /* GUIDialogVideoSettings.cpp */; };
 		F56C8B40131F42ED000AD0F6 /* GUIWindowFullScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C877F131F42EC000AD0F6 /* GUIWindowFullScreen.cpp */; };
 		F56C8B41131F42ED000AD0F6 /* GUIWindowVideoBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F56C8781131F42EC000AD0F6 /* GUIWindowVideoBase.cpp */; };
@@ -947,7 +944,6 @@
 		F56C8BA9131F4466000AD0F6 /* XBMCApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = F56C8BA0131F4466000AD0F6 /* XBMCApplication.m */; };
 		F56C8BAA131F4466000AD0F6 /* XBMCController.mm in Sources */ = {isa = PBXBuildFile; fileRef = F56C8BA2131F4466000AD0F6 /* XBMCController.mm */; };
 		F56C8BB9131F44AA000AD0F6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F56C8BB7131F44AA000AD0F6 /* InfoPlist.strings */; };
-		F56C8C09131F47EA000AD0F6 /* libapetag.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F56C8C03131F47EA000AD0F6 /* libapetag.a */; };
 		F56C8C11131F4811000AD0F6 /* libsquish.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F56C8C0D131F4811000AD0F6 /* libsquish.a */; };
 		F56C8C12131F4811000AD0F6 /* librtv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F56C8C0E131F4811000AD0F6 /* librtv.a */; };
 		F56C8C14131F4811000AD0F6 /* libxdaap.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F56C8C10131F4811000AD0F6 /* libxdaap.a */; };
@@ -1259,14 +1255,14 @@
 		DF23461E15FA675200A934F6 /* UPnPRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UPnPRenderer.h; sourceTree = "<group>"; };
 		DF23461F15FA675200A934F6 /* UPnPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UPnPServer.cpp; sourceTree = "<group>"; };
 		DF23462015FA675200A934F6 /* UPnPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UPnPServer.h; sourceTree = "<group>"; };
+		DF24EADC1621E67200034265 /* DVDDemuxBXA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DVDDemuxBXA.cpp; sourceTree = "<group>"; };
+		DF24EADD1621E67200034265 /* DVDDemuxBXA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDDemuxBXA.h; sourceTree = "<group>"; };
 		DF2E329215509B2C000F5772 /* XbmcContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XbmcContext.cpp; sourceTree = "<group>"; };
 		DF2E329315509B2C000F5772 /* XbmcContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XbmcContext.h; sourceTree = "<group>"; };
 		DF33C29115509BF50046CDCB /* ilog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ilog.cpp; sourceTree = "<group>"; };
 		DF33C29215509BF50046CDCB /* ilog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ilog.h; sourceTree = "<group>"; };
 		DF3488F613FD961A0026A711 /* GUIAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIAction.cpp; sourceTree = "<group>"; };
 		DF3488F713FD961A0026A711 /* GUIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIAction.h; sourceTree = "<group>"; };
-		DF44856A140065C60069344B /* BXAcodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BXAcodec.cpp; sourceTree = "<group>"; };
-		DF44856B140065C60069344B /* BXAcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAcodec.h; sourceTree = "<group>"; };
 		DF44856F140065E10069344B /* PipesManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PipesManager.cpp; sourceTree = "<group>"; };
 		DF448570140065E10069344B /* PipesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PipesManager.h; sourceTree = "<group>"; };
 		DF4485731400662D0069344B /* AirTunesServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AirTunesServer.cpp; sourceTree = "<group>"; };
@@ -2637,8 +2633,6 @@
 		F56C85AD131F42EA000AD0F6 /* GUIDialogMusicOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogMusicOSD.h; sourceTree = "<group>"; };
 		F56C85AE131F42EA000AD0F6 /* GUIDialogMusicOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogMusicOverlay.cpp; sourceTree = "<group>"; };
 		F56C85AF131F42EA000AD0F6 /* GUIDialogMusicOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogMusicOverlay.h; sourceTree = "<group>"; };
-		F56C85B0131F42EA000AD0F6 /* GUIDialogMusicScan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogMusicScan.cpp; sourceTree = "<group>"; };
-		F56C85B1131F42EA000AD0F6 /* GUIDialogMusicScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogMusicScan.h; sourceTree = "<group>"; };
 		F56C85B2131F42EA000AD0F6 /* GUIDialogSongInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogSongInfo.cpp; sourceTree = "<group>"; };
 		F56C85B3131F42EA000AD0F6 /* GUIDialogSongInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogSongInfo.h; sourceTree = "<group>"; };
 		F56C85B4131F42EA000AD0F6 /* GUIDialogVisualisationPresetList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogVisualisationPresetList.cpp; sourceTree = "<group>"; };
@@ -2673,10 +2667,6 @@
 		F56C85D3131F42EA000AD0F6 /* karaokelyricstextustar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = karaokelyricstextustar.h; sourceTree = "<group>"; };
 		F56C85D4131F42EA000AD0F6 /* karaokewindowbackground.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = karaokewindowbackground.cpp; sourceTree = "<group>"; };
 		F56C85D5131F42EA000AD0F6 /* karaokewindowbackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = karaokewindowbackground.h; sourceTree = "<group>"; };
-		F56C85DA131F42EA000AD0F6 /* DllLibid3tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DllLibid3tag.h; sourceTree = "<group>"; };
-		F56C85DD131F42EA000AD0F6 /* Id3Tag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Id3Tag.cpp; sourceTree = "<group>"; };
-		F56C85DE131F42EA000AD0F6 /* Id3Tag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Id3Tag.h; sourceTree = "<group>"; };
-		F56C85DF131F42EA000AD0F6 /* id3v1genre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = id3v1genre.h; sourceTree = "<group>"; };
 		F56C85E0131F42EA000AD0F6 /* ImusicInfoTagLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImusicInfoTagLoader.h; sourceTree = "<group>"; };
 		F56C85E1131F42EA000AD0F6 /* MusicInfoTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MusicInfoTag.cpp; sourceTree = "<group>"; };
 		F56C85E2131F42EA000AD0F6 /* MusicInfoTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicInfoTag.h; sourceTree = "<group>"; };
@@ -2990,8 +2980,6 @@
 		F56C8777131F42EC000AD0F6 /* GUIDialogVideoOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogVideoOSD.h; sourceTree = "<group>"; };
 		F56C8778131F42EC000AD0F6 /* GUIDialogVideoOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogVideoOverlay.cpp; sourceTree = "<group>"; };
 		F56C8779131F42EC000AD0F6 /* GUIDialogVideoOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogVideoOverlay.h; sourceTree = "<group>"; };
-		F56C877A131F42EC000AD0F6 /* GUIDialogVideoScan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogVideoScan.cpp; sourceTree = "<group>"; };
-		F56C877B131F42EC000AD0F6 /* GUIDialogVideoScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogVideoScan.h; sourceTree = "<group>"; };
 		F56C877C131F42EC000AD0F6 /* GUIDialogVideoSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogVideoSettings.cpp; sourceTree = "<group>"; };
 		F56C877D131F42EC000AD0F6 /* GUIDialogVideoSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIDialogVideoSettings.h; sourceTree = "<group>"; };
 		F56C877F131F42EC000AD0F6 /* GUIWindowFullScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIWindowFullScreen.cpp; sourceTree = "<group>"; };
@@ -3122,7 +3110,6 @@
 		F56C8BA3131F4466000AD0F6 /* XBMCDebugHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBMCDebugHelpers.h; sourceTree = "<group>"; };
 		F56C8BA6131F4466000AD0F6 /* XBMCIOS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "XBMCIOS-Info.plist"; sourceTree = "<group>"; };
 		F56C8BB8131F44AA000AD0F6 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
-		F56C8C03131F47EA000AD0F6 /* libapetag.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libapetag.a; path = lib/libapetag/.libs/libapetag.a; sourceTree = "<group>"; };
 		F56C8C0D131F4811000AD0F6 /* libsquish.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsquish.a; path = lib/libsquish/libsquish.a; sourceTree = "<group>"; };
 		F56C8C0E131F4811000AD0F6 /* librtv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librtv.a; path = lib/libRTV/librtv.a; sourceTree = "<group>"; };
 		F56C8C10131F4811000AD0F6 /* libxdaap.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxdaap.a; path = lib/libXDAAP/libxdaap.a; sourceTree = "<group>"; };
@@ -3232,7 +3219,6 @@
 				F56B15D512CD67A9009B4C96 /* CoreGraphics.framework in Frameworks */,
 				F56B160812CD6999009B4C96 /* ImageIO.framework in Frameworks */,
 				4D5D2E1E1301758F006ABC13 /* CFNetwork.framework in Frameworks */,
-				F56C8C09131F47EA000AD0F6 /* libapetag.a in Frameworks */,
 				F56C8C11131F4811000AD0F6 /* libsquish.a in Frameworks */,
 				F56C8C12131F4811000AD0F6 /* librtv.a in Frameworks */,
 				F56C8C14131F4811000AD0F6 /* libxdaap.a in Frameworks */,
@@ -3720,7 +3706,6 @@
 				F56C8046131F42E5000AD0F6 /* libexif */,
 				F56C8048131F42E5000AD0F6 /* libhdhomerun */,
 				F56C8051131F42E5000AD0F6 /* libhts */,
-				F56C8062131F42E5000AD0F6 /* libid3tag */,
 				F56C8063131F42E5000AD0F6 /* libRTV */,
 				F56C806E131F42E5000AD0F6 /* libsquish */,
 				F56C8070131F42E5000AD0F6 /* libUPnP */,
@@ -3782,13 +3767,6 @@
 				F56C8061131F42E5000AD0F6 /* sha1.h */,
 			);
 			path = libhts;
-			sourceTree = "<group>";
-		};
-		F56C8062131F42E5000AD0F6 /* libid3tag */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = libid3tag;
 			sourceTree = "<group>";
 		};
 		F56C8063131F42E5000AD0F6 /* libRTV */ = {
@@ -4730,6 +4708,8 @@
 			children = (
 				F56C827E131F42E7000AD0F6 /* DVDDemux.cpp */,
 				F56C827F131F42E7000AD0F6 /* DVDDemux.h */,
+				DF24EADC1621E67200034265 /* DVDDemuxBXA.cpp */,
+				DF24EADD1621E67200034265 /* DVDDemuxBXA.h */,
 				F56C827A131F42E7000AD0F6 /* DVDDemuxFFmpeg.cpp */,
 				F56C827B131F42E7000AD0F6 /* DVDDemuxFFmpeg.h */,
 				F56C827C131F42E7000AD0F6 /* DVDDemuxHTSP.cpp */,
@@ -4888,8 +4868,6 @@
 				F56C8307131F42E7000AD0F6 /* ASAPCodec.h */,
 				F56C830E131F42E7000AD0F6 /* AudioDecoder.cpp */,
 				F56C830F131F42E7000AD0F6 /* AudioDecoder.h */,
-				DF44856A140065C60069344B /* BXAcodec.cpp */,
-				DF44856B140065C60069344B /* BXAcodec.h */,
 				F56C8310131F42E7000AD0F6 /* CachingCodec.h */,
 				F56C8311131F42E7000AD0F6 /* CDDAcodec.cpp */,
 				F56C8312131F42E7000AD0F6 /* CDDAcodec.h */,
@@ -5637,8 +5615,6 @@
 				F56C85AD131F42EA000AD0F6 /* GUIDialogMusicOSD.h */,
 				F56C85AE131F42EA000AD0F6 /* GUIDialogMusicOverlay.cpp */,
 				F56C85AF131F42EA000AD0F6 /* GUIDialogMusicOverlay.h */,
-				F56C85B0131F42EA000AD0F6 /* GUIDialogMusicScan.cpp */,
-				F56C85B1131F42EA000AD0F6 /* GUIDialogMusicScan.h */,
 				F56C85B2131F42EA000AD0F6 /* GUIDialogSongInfo.cpp */,
 				F56C85B3131F42EA000AD0F6 /* GUIDialogSongInfo.h */,
 				F56C85B4131F42EA000AD0F6 /* GUIDialogVisualisationPresetList.cpp */,
@@ -5694,10 +5670,6 @@
 		F56C85D6131F42EA000AD0F6 /* tags */ = {
 			isa = PBXGroup;
 			children = (
-				F56C85DA131F42EA000AD0F6 /* DllLibid3tag.h */,
-				F56C85DD131F42EA000AD0F6 /* Id3Tag.cpp */,
-				F56C85DE131F42EA000AD0F6 /* Id3Tag.h */,
-				F56C85DF131F42EA000AD0F6 /* id3v1genre.h */,
 				F56C85E0131F42EA000AD0F6 /* ImusicInfoTagLoader.h */,
 				F56C85E1131F42EA000AD0F6 /* MusicInfoTag.cpp */,
 				F56C85E2131F42EA000AD0F6 /* MusicInfoTag.h */,
@@ -6240,8 +6212,6 @@
 				F56C8777131F42EC000AD0F6 /* GUIDialogVideoOSD.h */,
 				F56C8778131F42EC000AD0F6 /* GUIDialogVideoOverlay.cpp */,
 				F56C8779131F42EC000AD0F6 /* GUIDialogVideoOverlay.h */,
-				F56C877A131F42EC000AD0F6 /* GUIDialogVideoScan.cpp */,
-				F56C877B131F42EC000AD0F6 /* GUIDialogVideoScan.h */,
 				F56C877C131F42EC000AD0F6 /* GUIDialogVideoSettings.cpp */,
 				F56C877D131F42EC000AD0F6 /* GUIDialogVideoSettings.h */,
 			);
@@ -6370,7 +6340,6 @@
 		F589AE6D12890B6700D8079E /* Internal Libs */ = {
 			isa = PBXGroup;
 			children = (
-				F56C8C03131F47EA000AD0F6 /* libapetag.a */,
 				F56C8C0E131F4811000AD0F6 /* librtv.a */,
 				F56C8C0D131F4811000AD0F6 /* libsquish.a */,
 				F56C8C10131F4811000AD0F6 /* libxdaap.a */,
@@ -7180,7 +7149,6 @@
 				F56C8A6A131F42ED000AD0F6 /* GUIDialogMusicInfo.cpp in Sources */,
 				F56C8A6B131F42ED000AD0F6 /* GUIDialogMusicOSD.cpp in Sources */,
 				F56C8A6C131F42ED000AD0F6 /* GUIDialogMusicOverlay.cpp in Sources */,
-				F56C8A6D131F42ED000AD0F6 /* GUIDialogMusicScan.cpp in Sources */,
 				F56C8A6E131F42ED000AD0F6 /* GUIDialogSongInfo.cpp in Sources */,
 				F56C8A6F131F42ED000AD0F6 /* GUIDialogVisualisationPresetList.cpp in Sources */,
 				F56C8A70131F42ED000AD0F6 /* MusicAlbumInfo.cpp in Sources */,
@@ -7198,7 +7166,6 @@
 				F56C8A7C131F42ED000AD0F6 /* karaokelyricstextlrc.cpp in Sources */,
 				F56C8A7D131F42ED000AD0F6 /* karaokelyricstextustar.cpp in Sources */,
 				F56C8A7E131F42ED000AD0F6 /* karaokewindowbackground.cpp in Sources */,
-				F56C8A81131F42ED000AD0F6 /* Id3Tag.cpp in Sources */,
 				F56C8A82131F42ED000AD0F6 /* MusicInfoTag.cpp in Sources */,
 				F56C8A85131F42ED000AD0F6 /* MusicInfoTagLoaderASAP.cpp in Sources */,
 				F56C8A86131F42ED000AD0F6 /* MusicInfoTagLoaderCDDA.cpp in Sources */,
@@ -7349,7 +7316,6 @@
 				F56C8B3B131F42ED000AD0F6 /* GUIDialogVideoInfo.cpp in Sources */,
 				F56C8B3C131F42ED000AD0F6 /* GUIDialogVideoOSD.cpp in Sources */,
 				F56C8B3D131F42ED000AD0F6 /* GUIDialogVideoOverlay.cpp in Sources */,
-				F56C8B3E131F42ED000AD0F6 /* GUIDialogVideoScan.cpp in Sources */,
 				F56C8B3F131F42ED000AD0F6 /* GUIDialogVideoSettings.cpp in Sources */,
 				F56C8B40131F42ED000AD0F6 /* GUIWindowFullScreen.cpp in Sources */,
 				F56C8B41131F42ED000AD0F6 /* GUIWindowVideoBase.cpp in Sources */,
@@ -7449,7 +7415,6 @@
 				18968DDE14155E01005BA742 /* ApplicationOperations.cpp in Sources */,
 				DFCFC52A1413F7D60004D0BF /* AFPDirectory.cpp in Sources */,
 				3291892B1423A9B700E878CD /* JpegIO.cpp in Sources */,
-				DF44856C140065C60069344B /* BXAcodec.cpp in Sources */,
 				DF448572140065E10069344B /* PipesManager.cpp in Sources */,
 				DF4485751400662D0069344B /* AirTunesServer.cpp in Sources */,
 				DF98D9991434F49500A6EBE1 /* SkinVariable.cpp in Sources */,
@@ -7637,6 +7602,7 @@
 				DF91D88A161B7581004E6637 /* AddonsOperations.cpp in Sources */,
 				7C4458C8161E206100A905F6 /* Screenshot.cpp in Sources */,
 				1D638120161E20F2003603ED /* PeripheralImon.cpp in Sources */,
+				DF24EADE1621E67200034265 /* DVDDemuxBXA.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7709,7 +7675,6 @@
 					"\"$(SRCROOT)/lib/libXDAAP\"",
 					"\"$(SRCROOT)/lib/cmyth/libcmyth\"",
 					"\"$(SRCROOT)/lib/cmyth/librefmem\"",
-					"\"$(SRCROOT)/lib/libapetag/.libs\"",
 					"\"$(SRCROOT)/lib/libsquish\"",
 					"\"$(SRCROOT)/lib/SlingboxLib\"",
 					"\"$(SRCROOT)/xbmc/interfaces/http-api\"",
@@ -7833,7 +7798,6 @@
 					"\"$(SRCROOT)/lib/libXDAAP\"",
 					"\"$(SRCROOT)/lib/cmyth/libcmyth\"",
 					"\"$(SRCROOT)/lib/cmyth/librefmem\"",
-					"\"$(SRCROOT)/lib/libapetag/.libs\"",
 					"\"$(SRCROOT)/lib/libsquish\"",
 					"\"$(SRCROOT)/lib/SlingboxLib\"",
 					"\"$(SRCROOT)/xbmc/interfaces/http-api\"",

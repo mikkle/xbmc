@@ -4831,7 +4831,15 @@ msgctxt "#13432"
 msgid "Allow hardware acceleration (VideoToolbox)"
 msgstr ""
 
-#empty strings from id 13433 to 13499
+msgctxt "#13433"
+msgid "Play the next video automatically"
+msgstr ""
+
+msgctxt "#13434"
+msgid "Play only this"
+msgstr ""
+
+#empty strings from id 13435 to 13499
 
 msgctxt "#13500"
 msgid "A/V sync method"
@@ -6068,7 +6076,7 @@ msgid "or use phrases to find an exact match, like \"The wizard of Oz\"."
 msgstr ""
 
 msgctxt "#19003"
-msgid "Find similar programme"
+msgid "Find similar programs"
 msgstr ""
 
 msgctxt "#19004"

@@ -35,6 +35,7 @@
 #include "filesystem/Directory.h"
 #include "filesystem/File.h"
 #include "filesystem/SpecialProtocol.h"
+#include "dialogs/GUIDialogExtendedProgressBar.h"
 #include "dialogs/GUIDialogProgress.h"
 #include "dialogs/GUIDialogYesNo.h"
 #include "FileItem.h"
@@ -6310,7 +6311,7 @@ int CVideoDatabase::GetMusicVideoCount(const CStdString& strWhere)
     if (NULL == m_pDS.get()) return 0;
 
     CStdString strSQL;
-    strSQL.Format("select count(1) as nummovies from musicvideoview %s",strWhere.c_str());
+    strSQL.Format("select count(1) as nummovies from musicvideoview where %s",strWhere.c_str());
     m_pDS->query( strSQL.c_str() );
 
     int iResult = 0;
@@ -7017,7 +7018,7 @@ bool CVideoDatabase::GetRandomMusicVideo(CFileItem* item, int& idSong, const CSt
 
     // We don't use PrepareSQL here, as the WHERE clause is already formatted.
     CStdString strSQL;
-    strSQL.Format("select * from musicvideoview %s order by idMVideo limit 1 offset %i",strWhere.c_str(),iRandom);
+    strSQL.Format("select * from musicvideoview where %s order by idMVideo limit 1 offset %i",strWhere.c_str(),iRandom);
     CLog::Log(LOGDEBUG, "%s query = %s", __FUNCTION__, strSQL.c_str());
     // run query
     if (!m_pDS->query(strSQL.c_str()))
@@ -7473,7 +7474,7 @@ void CVideoDatabase::GetMusicVideoDirectorsByName(const CStdString& strSearch, C
   }
 }
 
-void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const set<int>* paths)
+void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const set<int>* paths)
 {
   CGUIDialogProgress *progress=NULL;
   try
@@ -7507,7 +7508,7 @@ void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const s
     m_pDS->query(sql.c_str());
     if (m_pDS->num_rows() == 0) return;
 
-    if (!pObserver)
+    if (!handle)
     {
       progress = (CGUIDialogProgress *)g_windowManager.GetWindow(WINDOW_DIALOG_PROGRESS);
       if (progress)
@@ -7523,10 +7524,8 @@ void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const s
     }
     else
     {
-      pObserver->OnDirectoryChanged("");
-      pObserver->OnSetTitle("");
-      pObserver->OnSetCurrentProgress(0,1);
-      pObserver->OnStateChanged(CLEANING_UP_DATABASE);
+      handle->SetTitle(g_localizeStrings.Get(700));
+      handle->SetText("");
     }
 
     CStdString filesToDelete = "";
@@ -7569,7 +7568,7 @@ void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const s
           filesToDelete += m_pDS->fv("files.idFile").get_asString() + ",";
       }
 
-      if (!pObserver)
+      if (!handle)
       {
         if (progress)
         {
@@ -7584,7 +7583,7 @@ void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const s
         }
       }
       else
-        pObserver->OnSetProgress(current,total);
+        handle->SetPercentage(current/(float)total*100);
 
       m_pDS->next();
       current++;
@@ -7845,8 +7844,8 @@ void CVideoDatabase::CleanDatabase(IVideoInfoScannerObserver* pObserver, const s
 
     CommitTransaction();
 
-    if (pObserver)
-      pObserver->OnStateChanged(COMPRESSING_DATABASE);
+    if (handle)
+      handle->SetTitle(g_localizeStrings.Get(331));
 
     Compress(false);
 
