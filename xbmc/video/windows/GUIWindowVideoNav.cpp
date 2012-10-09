@@ -527,8 +527,24 @@ void CGUIWindowVideoNav::UpdateButtons()
 
 bool CGUIWindowVideoNav::GetFilteredItems(const CStdString &filter, CFileItemList &items)
 {
-  bool listchanged = CGUIMediaWindow::GetFilteredItems(filter, items);
+  bool listchanged = false;
+  bool updateItems = false;
+  if (!m_canFilterAdvanced)
+    listchanged = CGUIMediaWindow::GetFilteredItems(filter, items);
+  else
+    listchanged = CGUIMediaWindow::GetAdvanceFilteredItems(items, updateItems);
+
   listchanged |= ApplyWatchedFilter(items);
+
+  // there are new items so we need to run the thumbloader
+  if (updateItems)
+  {
+    if (m_thumbLoader.IsLoading())
+      m_thumbLoader.StopThread();
+
+    m_thumbLoader.Load(items);
+  }
+
   return listchanged;
 }
 
@@ -1014,7 +1030,10 @@ void CGUIWindowVideoNav::GetContextButtons(int itemNumber, CContextButtons &butt
             buttons.Add(CONTEXT_BUTTON_STOP_SCANNING, 13353);
         }
         else
-          buttons.Add(CONTEXT_BUTTON_UPDATE_LIBRARY, 653);
+        {
+          if (!(item->IsPlugin() || item->IsScript() || m_vecItems->IsPlugin()))
+            buttons.Add(CONTEXT_BUTTON_UPDATE_LIBRARY, 653);
+        }
       }
 
       if (!m_vecItems->IsVideoDb() && !m_vecItems->IsVirtualDirectoryRoot())
