@@ -2810,8 +2810,6 @@ bool CMusicDatabase::GetCommonNav(const CStdString &strBaseDir, const CStdString
     CMusicDbUrl musicUrl;
     if (!BuildSQL(strBaseDir, strSQL, extFilter, strSQL, musicUrl))
       return false;
-
-    items.SetPath(musicUrl.ToString());
     
     strSQL = PrepareSQL(strSQL, !extFilter.fields.empty() ? extFilter.fields.c_str() : labelField.c_str());
     
@@ -2853,6 +2851,7 @@ bool CMusicDatabase::GetCommonNav(const CStdString &strBaseDir, const CStdString
       
       m_pDS->next();
     }
+    items.SetPath(musicUrl.ToString());
     
     // cleanup
     m_pDS->close();
@@ -2959,8 +2958,6 @@ bool CMusicDatabase::GetArtistsByWhere(const CStdString& strBaseDir, const Filte
     if (!BuildSQL(strSQLExtra, extFilter, strSQLExtra))
       return false;
 
-    items.SetPath(musicUrl.ToString());
-
     // Apply the limiting directly here if there's no special sorting but limiting
     if (extFilter.limit.empty() &&
         sortDescription.sortBy == SortByNone &&
@@ -3032,6 +3029,7 @@ bool CMusicDatabase::GetArtistsByWhere(const CStdString& strBaseDir, const Filte
         CLog::Log(LOGERROR, "%s - out of memory getting listing (got %i)", __FUNCTION__, items.Size());
       }
     }
+    items.SetPath(musicUrl.ToString());
 
     // cleanup
     m_pDS->close();
@@ -3153,8 +3151,6 @@ bool CMusicDatabase::GetAlbumsByWhere(const CStdString &baseDir, const Filter &f
     if (!BuildSQL(strSQLExtra, extFilter, strSQLExtra))
       return false;
 
-    items.SetPath(musicUrl.ToString());
-
     // Apply the limiting directly here if there's no special sorting but limiting
     if (extFilter.limit.empty() &&
         sortDescription.sortBy == SortByNone &&
@@ -3225,6 +3221,7 @@ bool CMusicDatabase::GetAlbumsByWhere(const CStdString &baseDir, const Filter &f
         CLog::Log(LOGERROR, "%s - out of memory getting listing (got %i)", __FUNCTION__, items.Size());
       }
     }
+    items.SetPath(musicUrl.ToString());
 
     // cleanup
     m_pDS->close();
@@ -3266,8 +3263,6 @@ bool CMusicDatabase::GetSongsByWhere(const CStdString &baseDir, const Filter &fi
     CStdString strSQLExtra;
     if (!BuildSQL(strSQLExtra, extFilter, strSQLExtra))
       return false;
-
-    items.SetPath(musicUrl.ToString());
 
     // Apply the limiting directly here if there's no special sorting but limiting
     if (extFilter.limit.empty() &&
@@ -3326,6 +3321,7 @@ bool CMusicDatabase::GetSongsByWhere(const CStdString &baseDir, const Filter &fi
         return (items.Size() > 0);
       }
     }
+    items.SetPath(musicUrl.ToString());
 
     // cleanup
     m_pDS->close();
