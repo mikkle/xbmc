@@ -82,10 +82,11 @@ void CPVRClient::ResetProperties(int iClientId /* = PVR_INVALID_CLIENT_ID */)
   m_bCanSeekStream        = false;
 }
 
-bool CPVRClient::Create(int iClientId)
+ADDON_STATUS CPVRClient::Create(int iClientId)
 {
+  ADDON_STATUS status(ADDON_STATUS_UNKNOWN);
   if (iClientId <= PVR_INVALID_CLIENT_ID || iClientId == PVR_VIRTUAL_CLIENT_ID)
-    return false;
+    return status;
 
   /* ensure that a previous instance is destroyed */
   Destroy();
@@ -98,16 +99,14 @@ bool CPVRClient::Create(int iClientId)
   CLog::Log(LOGDEBUG, "PVR - %s - creating PVR add-on instance '%s'", __FUNCTION__, Name().c_str());
   try
   {
-    bReadyToUse = CAddonDll<DllPVRClient, PVRClient, PVR_PROPERTIES>::Create() &&
-        GetAddonProperties();
+    if ((status = CAddonDll<DllPVRClient, PVRClient, PVR_PROPERTIES>::Create()) == ADDON_STATUS_OK)
+      bReadyToUse = GetAddonProperties();
   }
   catch (exception &e) { LogException(e, __FUNCTION__); }
 
   m_bReadyToUse = bReadyToUse;
-  if (!bReadyToUse)
-    ResetProperties(iClientId);
 
-  return bReadyToUse;
+  return status;
 }
 
 bool CPVRClient::DllLoaded(void) const
