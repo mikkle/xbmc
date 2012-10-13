@@ -7,6 +7,7 @@
 #include "interfaces/AnnouncementManager.h"
 #include "filesystem/Directory.h"
 #include "filesystem/MusicDatabaseDirectory.h"
+#include "filesystem/SpecialProtocol.h"
 #include "filesystem/VideoDatabaseDirectory.h"
 #include "guilib/Key.h"
 #include "music/tags/MusicInfoTag.h"
@@ -165,6 +166,23 @@ failed:
 }
 
 /*----------------------------------------------------------------------
+|   CUPnPServer::SetupIcons
++---------------------------------------------------------------------*/
+NPT_Result
+CUPnPServer::SetupIcons()
+{
+    NPT_String file_root = CSpecialProtocol::TranslatePath("special://xbmc/media/").c_str();
+    printf("%s\n", (const char*) file_root);
+    AddIcon(
+        PLT_DeviceIcon("image/png", 256, 256, 32, "/icon.png"),
+        file_root);
+    AddIcon(
+        PLT_DeviceIcon("image/png", 32, 32, 32, "/icon32x32.png"),
+        file_root);
+    return NPT_SUCCESS;
+}
+
+/*----------------------------------------------------------------------
 |   CUPnPServer::BuildSafeResourceUri
 +---------------------------------------------------------------------*/
 NPT_String CUPnPServer::BuildSafeResourceUri(const NPT_HttpUrl &rooturi,
@@ -268,8 +286,8 @@ CUPnPServer::Build(CFileItemPtr                  item,
                 if (item->GetVideoInfoTag()->m_type == "tvshow" || item->GetVideoInfoTag()->m_type == "season") {
                     // for tvshows and seasons, iEpisode and playCount are
                     // invalid
-                    item->GetVideoInfoTag()->m_iEpisode = item->GetProperty("totalepisodes").asInteger();
-                    item->GetVideoInfoTag()->m_playCount = item->GetProperty("watchedepisodes").asInteger();
+                    item->GetVideoInfoTag()->m_iEpisode = (int)item->GetProperty("totalepisodes").asInteger();
+                    item->GetVideoInfoTag()->m_playCount = (int)item->GetProperty("watchedepisodes").asInteger();
                 }
 
                 // try to grab title from tag
@@ -343,11 +361,11 @@ CUPnPServer::Announce(AnnouncementFlag flag, const char *sender, const char *mes
     else {
         // handle both updates & removals
         if (!data["item"].isNull()) {
-            item_id = data["item"]["id"].asInteger();
+            item_id = (int)data["item"]["id"].asInteger();
             item_type = data["item"]["type"].asString();
         }
         else {
-            item_id = data["id"].asInteger();
+            item_id = (int)data["id"].asInteger();
             item_type = data["type"].asString();
         }
 
@@ -614,11 +632,14 @@ CUPnPServer::BuildResponse(PLT_ActionReference&          action,
     NPT_UInt32 stop_index = min((unsigned long)(starting_index + max_count), (unsigned long)items.Size()); // don't return more than we can
 
     NPT_Cardinal count = 0;
+    NPT_Cardinal total = items.Size();
     NPT_String didl = didl_header;
     PLT_MediaObjectReference object;
     for (unsigned long i=starting_index; i<stop_index; ++i) {
         object = Build(items[i], true, context, thumb_loader, parent_id);
         if (object.IsNull()) {
+            // don't tell the client this item ever existed
+            --total;
             continue;
         }
 
@@ -637,11 +658,11 @@ CUPnPServer::BuildResponse(PLT_ActionReference&          action,
 
     CLog::Log(LOGDEBUG, "Returning UPnP response with %d items out of %d total matches",
         count,
-        items.Size());
+        total);
 
     NPT_CHECK(action->SetArgumentValue("Result", didl));
     NPT_CHECK(action->SetArgumentValue("NumberReturned", NPT_String::FromInteger(count)));
-    NPT_CHECK(action->SetArgumentValue("TotalMatches", NPT_String::FromInteger(items.Size())));
+    NPT_CHECK(action->SetArgumentValue("TotalMatches", NPT_String::FromInteger(total)));
     NPT_CHECK(action->SetArgumentValue("UpdateId", "0"));
     return NPT_SUCCESS;
 }
