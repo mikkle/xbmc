@@ -39,9 +39,6 @@
 #include "network/WebServer.h"
 #include "network/httprequesthandler/HTTPImageHandler.h"
 #include "network/httprequesthandler/HTTPVfsHandler.h"
-#ifdef HAS_HTTPAPI
-#include "network/httprequesthandler/HTTPApiHandler.h"
-#endif
 #ifdef HAS_JSONRPC
 #include "network/httprequesthandler/HTTPJsonRpcHandler.h"
 #endif
@@ -151,14 +148,8 @@
 #ifdef HAS_EVENT_SERVER
 #include "network/EventServer.h"
 #endif
-#ifdef HAS_JSONRPC
-#include "interfaces/json-rpc/InputOperations.h"
-#endif
 #ifdef HAS_DBUS
 #include <dbus/dbus.h>
-#endif
-#ifdef HAS_HTTPAPI
-#include "interfaces/http-api/XBMChttp.h"
 #endif
 #ifdef HAS_JSONRPC
 #include "interfaces/json-rpc/JSONRPC.h"
@@ -183,7 +174,6 @@
 // Windows includes
 #include "guilib/GUIWindowManager.h"
 #include "windows/GUIWindowHome.h"
-#include "guilib/GUIStandardWindow.h"
 #include "settings/GUIWindowSettings.h"
 #include "windows/GUIWindowFileManager.h"
 #include "settings/GUIWindowSettingsCategory.h"
@@ -383,9 +373,6 @@ CApplication::CApplication(void)
 #ifdef HAS_JSONRPC
   , m_httpJsonRpcHandler(*new CHTTPJsonRpcHandler)
 #endif
-#ifdef HAS_HTTPAPI
-  , m_httpApiHandler(*new CHTTPApiHandler)
-#endif
 #ifdef HAS_WEB_INTERFACE
   , m_httpWebinterfaceHandler(*new CHTTPWebinterfaceHandler)
   , m_httpWebinterfaceAddonsHandler(*new CHTTPWebinterfaceAddonsHandler)
@@ -456,9 +443,6 @@ CApplication::~CApplication(void)
   delete &m_WebServer;
   delete &m_httpImageHandler;
   delete &m_httpVfsHandler;
-#ifdef HAS_HTTPAPI
-  delete &m_httpApiHandler;
-#endif
 #ifdef HAS_JSONRPC
   delete &m_httpJsonRpcHandler;
 #endif
@@ -929,12 +913,13 @@ bool CApplication::InitWindow()
   }
   // set GUI res and force the clear of the screen
   g_graphicsContext.SetVideoResolution(g_guiSettings.m_LookAndFeelResolution);
+  g_fontManager.ReloadTTFFonts();
   return true;
 }
 
 bool CApplication::DestroyWindow()
 {
-  g_Windowing.DestroyRenderSystem();
+  g_fontManager.UnloadTTFFonts();
   return g_Windowing.DestroyWindow();
 }
 
@@ -1211,9 +1196,6 @@ bool CApplication::Initialize()
   CWebServer::RegisterRequestHandler(&m_httpVfsHandler);
 #ifdef HAS_JSONRPC
   CWebServer::RegisterRequestHandler(&m_httpJsonRpcHandler);
-#endif
-#ifdef HAS_HTTPAPI
-  CWebServer::RegisterRequestHandler(&m_httpApiHandler);
 #endif
 #ifdef HAS_WEB_INTERFACE
   CWebServer::RegisterRequestHandler(&m_httpWebinterfaceAddonsHandler);
@@ -1537,17 +1519,10 @@ bool CApplication::StartWebServer()
 #ifdef HAS_WEB_INTERFACE
       CZeroconf::GetInstance()->PublishService("servers.webserver", "_http._tcp", g_infoManager.GetLabel(SYSTEM_FRIENDLY_NAME), webPort, txt);
 #endif
-#ifdef HAS_HTTPAPI
-      CZeroconf::GetInstance()->PublishService("servers.webapi", "_xbmc-web._tcp", g_infoManager.GetLabel(SYSTEM_FRIENDLY_NAME), webPort, txt);
-#endif
 #ifdef HAS_JSONRPC
       CZeroconf::GetInstance()->PublishService("servers.jsonrpc-http", "_xbmc-jsonrpc-h._tcp", g_infoManager.GetLabel(SYSTEM_FRIENDLY_NAME), webPort, txt);
 #endif
     }
-#ifdef HAS_HTTPAPI
-    if (g_settings.m_HttpApiBroadcastLevel >= 1)
-      CApplicationMessenger::Get().HttpApi("broadcastlevel; StartUp;1");
-#endif
 
     return started;
   }
@@ -2156,7 +2131,7 @@ bool CApplication::LoadUserWindows()
           else if (strType.Equals("buttonmenu"))
             pWindow = new CGUIDialogButtonMenu(id + WINDOW_HOME, skinFile);
           else
-            pWindow = new CGUIStandardWindow(id + WINDOW_HOME, skinFile);
+            pWindow = new CGUIWindow(id + WINDOW_HOME, skinFile);
 
           // Check to make sure the pointer isn't still null
           if (pWindow == NULL)
@@ -2594,16 +2569,6 @@ bool CApplication::OnAppCommand(const CAction &action)
 
 bool CApplication::OnAction(const CAction &action)
 {
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world about this action, ignoring mouse moves
-  if (g_settings.m_HttpApiBroadcastLevel>=2 && action.GetID() != ACTION_MOUSE_MOVE)
-  {
-    CStdString tmp;
-    tmp.Format("%i",action.GetID());
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnAction:"+tmp+";2");
-  }
-#endif
-
   // special case for switching between GUI & fullscreen mode.
   if (action.GetID() == ACTION_SHOW_GUI)
   { // Switch to fullscreen mode if we can
@@ -2956,7 +2921,7 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
     // never set a frametime less than 2 fps to avoid problems when debuggin and on breaks
     if( frameTime > 0.5 ) frameTime = 0.5;
 
-    if (processGUI)
+    if (processGUI && m_renderGUI)
     {
       g_graphicsContext.Lock();
       // check if there are notifications to display
@@ -2980,19 +2945,17 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
 #endif
 
     // process input actions
-    ProcessHTTPApiButtons();
-    ProcessJsonRpcButtons();
     ProcessRemote(frameTime);
     ProcessGamepad(frameTime);
     ProcessEventServer(frameTime);
     ProcessPeripherals(frameTime);
-    if (processGUI)
+    if (processGUI && m_renderGUI)
     {
       m_pInertialScrollingHandler->ProcessInertialScroll(frameTime);
       m_seekHandler->Process();
     }
   }
-  if (processGUI)
+  if (processGUI && m_renderGUI)
   {
     if (!m_bStop)
       g_windowManager.Process(CTimeUtils::GetFrameTime());
@@ -3174,102 +3137,6 @@ bool CApplication::ProcessMouse()
                           mouseaction.GetName()));
 }
 
-void  CApplication::CheckForTitleChange()
-{
-#ifdef HAS_HTTPAPI
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-  {
-    if (IsPlayingVideo())
-    {
-      const CVideoInfoTag* tagVal = g_infoManager.GetCurrentMovieTag();
-      if (m_pXbmcHttp && tagVal && !(tagVal->m_strTitle.IsEmpty()))
-      {
-        CStdString msg=m_pXbmcHttp->GetOpenTag()+"MovieTitle:"+tagVal->m_strTitle+m_pXbmcHttp->GetCloseTag();
-        if (m_prevMedia!=msg && g_settings.m_HttpApiBroadcastLevel>=1)
-        {
-          CApplicationMessenger::Get().HttpApi("broadcastlevel; MediaChanged:"+msg+";1");
-          m_prevMedia=msg;
-        }
-      }
-    }
-    else if (IsPlayingAudio())
-    {
-      const CMusicInfoTag* tagVal=g_infoManager.GetCurrentSongTag();
-      if (m_pXbmcHttp && tagVal)
-      {
-        CStdString msg="";
-        if (!tagVal->GetTitle().IsEmpty())
-          msg=m_pXbmcHttp->GetOpenTag()+"AudioTitle:"+tagVal->GetTitle()+m_pXbmcHttp->GetCloseTag();
-        if (!tagVal->GetArtist().empty())
-          msg+=m_pXbmcHttp->GetOpenTag()+"AudioArtist:"+StringUtils::Join(tagVal->GetArtist(), g_advancedSettings.m_musicItemSeparator)+m_pXbmcHttp->GetCloseTag();
-        if (m_prevMedia!=msg)
-        {
-          CApplicationMessenger::Get().HttpApi("broadcastlevel; MediaChanged:"+msg+";1");
-          m_prevMedia=msg;
-        }
-      }
-    }
-  }
-#endif
-}
-
-bool CApplication::ProcessHTTPApiButtons()
-{
-#ifdef HAS_HTTPAPI
-  if (m_pXbmcHttp)
-  {
-    // copy key from webserver, and reset it in case we're called again before
-    // whatever happens in OnKey()
-    CKey keyHttp(m_pXbmcHttp->GetKey());
-    m_pXbmcHttp->ResetKey();
-    if (keyHttp.GetButtonCode() != KEY_INVALID)
-    {
-      if (keyHttp.GetButtonCode() == KEY_VMOUSE) //virtual mouse
-      {
-        int actionID = ACTION_MOUSE_MOVE;
-        if (keyHttp.GetLeftTrigger() == 1)
-          actionID = ACTION_MOUSE_LEFT_CLICK;
-        else if (keyHttp.GetLeftTrigger() == 2)
-          actionID = ACTION_MOUSE_RIGHT_CLICK;
-        else if (keyHttp.GetLeftTrigger() == 3)
-          actionID = ACTION_MOUSE_MIDDLE_CLICK;
-        else if (keyHttp.GetRightTrigger() == 1)
-          actionID = ACTION_MOUSE_DOUBLE_CLICK;
-        CAction action(actionID, keyHttp.GetLeftThumbX(), keyHttp.GetLeftThumbY());
-        OnAction(action);
-      }
-      else
-        OnKey(keyHttp);
-      return true;
-    }
-  }
-#endif
-  return false;
-}
-
-bool CApplication::ProcessJsonRpcButtons()
-{
-#ifdef HAS_JSONRPC
-  CKey tempKey(JSONRPC::CInputOperations::GetKey());
-  if (tempKey.GetButtonCode() == KEY_UNICODE && tempKey.GetUnicode() != 0)
-  {
-    XBMC_Event event = { 0 };
-    event.type = XBMC_KEYDOWN;
-    event.key.type = XBMC_KEYDOWN;
-    event.key.keysym.unicode = (uint16_t)tempKey.GetUnicode();
-    event.key.keysym.sym = (XBMCKey)tempKey.GetUnicode();
-
-    return OnEvent(event);
-  }
-  if (tempKey.GetButtonCode() != KEY_INVALID)
-  {
-    tempKey.SetFromService(true);
-    return OnKey(tempKey);
-  }
-#endif
-  return false;
-}
-
 bool CApplication::ProcessEventServer(float frameTime)
 {
 #ifdef HAS_EVENT_SERVER
@@ -3296,7 +3163,7 @@ bool CApplication::ProcessEventServer(float frameTime)
   es = CEventServer::GetInstance();
   if (!es || !es->Running() || es->GetNumberOfClients()==0)
     return false;
-  WORD wKeyID = es->GetButtonCode(joystickName, isAxis, fAmount);
+  unsigned int wKeyID = es->GetButtonCode(joystickName, isAxis, fAmount);
 
   if (wKeyID)
   {
@@ -3315,6 +3182,12 @@ bool CApplication::ProcessEventServer(float frameTime)
     else
     {
       CKey key;
+      if (wKeyID & ES_FLAG_UNICODE)
+      {
+        key = CKey((uint8_t)0, wKeyID & ~ES_FLAG_UNICODE, 0, 0, 0);
+        return OnKey(key);
+      }
+
       if(wKeyID == KEY_BUTTON_LEFT_ANALOG_TRIGGER)
         key = CKey(wKeyID, (BYTE)(255*fAmount), 0, 0.0, 0.0, 0.0, 0.0, frameTime);
       else if(wKeyID == KEY_BUTTON_RIGHT_ANALOG_TRIGGER)
@@ -3606,16 +3479,6 @@ void CApplication::Stop(int exitCode)
 
     g_alarmClock.StopThread();
 
-#ifdef HAS_HTTPAPI
-    if (m_pXbmcHttp)
-    {
-      if (g_settings.m_HttpApiBroadcastLevel >= 1)
-        CApplicationMessenger::Get().HttpApi("broadcastlevel; ShutDown;1");
-
-      m_pXbmcHttp->shuttingDown = true;
-    }
-#endif
-
     if( m_bSystemScreenSaverEnable )
       g_Windowing.EnableSystemScreenSaver(true);
 
@@ -3655,9 +3518,6 @@ void CApplication::Stop(int exitCode)
   CWebServer::UnregisterRequestHandler(&m_httpVfsHandler);
 #ifdef HAS_JSONRPC
   CWebServer::UnregisterRequestHandler(&m_httpJsonRpcHandler);
-#endif
-#ifdef HAS_HTTPAPI
-  CWebServer::UnregisterRequestHandler(&m_httpApiHandler);
 #endif
 #ifdef HAS_WEB_INTERFACE
   CWebServer::UnregisterRequestHandler(&m_httpWebinterfaceAddonsHandler);
@@ -4303,12 +4163,6 @@ void CApplication::OnPlayBackEnded()
   g_pythonParser.OnPlayBackEnded();
 #endif
 
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnPlayBackEnded;1");
-#endif
-
   CVariant data(CVariant::VariantTypeObject);
   data["end"] = true;
   CAnnouncementManager::Announce(Player, "xbmc", "OnStop", m_itemCurrentFile, data);
@@ -4337,12 +4191,6 @@ void CApplication::OnPlayBackStarted()
   g_pythonParser.OnPlayBackStarted();
 #endif
 
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnPlayBackStarted;1");
-#endif
-
   CGUIMessage msg(GUI_MSG_PLAYBACK_STARTED, 0, 0);
   g_windowManager.SendThreadMessage(msg);
 }
@@ -4353,12 +4201,6 @@ void CApplication::OnQueueNextItem()
   // (does nothing if python is not loaded)
 #ifdef HAS_PYTHON
   g_pythonParser.OnQueueNextItem(); // currently unimplemented
-#endif
-
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnQueueNextItem;1");
 #endif
 
   if(IsPlayingAudio())
@@ -4385,12 +4227,6 @@ void CApplication::OnPlayBackStopped()
   g_pythonParser.OnPlayBackStopped();
 #endif
 
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnPlayBackStopped;1");
-#endif
-
   CVariant data(CVariant::VariantTypeObject);
   data["end"] = false;
   CAnnouncementManager::Announce(Player, "xbmc", "OnStop", m_itemCurrentFile, data);
@@ -4408,12 +4244,6 @@ void CApplication::OnPlayBackPaused()
   g_pythonParser.OnPlayBackPaused();
 #endif
 
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnPlayBackPaused;1");
-#endif
-
   CVariant param;
   param["player"]["speed"] = 0;
   param["player"]["playerid"] = g_playlistPlayer.GetCurrentPlaylist();
@@ -4424,12 +4254,6 @@ void CApplication::OnPlayBackResumed()
 {
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackResumed();
-#endif
-
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-    CApplicationMessenger::Get().HttpApi("broadcastlevel; OnPlayBackResumed;1");
 #endif
 
   CVariant param;
@@ -4444,16 +4268,6 @@ void CApplication::OnPlayBackSpeedChanged(int iSpeed)
   g_pythonParser.OnPlayBackSpeedChanged(iSpeed);
 #endif
 
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-  {
-    CStdString tmp;
-    tmp.Format("broadcastlevel; OnPlayBackSpeedChanged:%i;1",iSpeed);
-    CApplicationMessenger::Get().HttpApi(tmp);
-  }
-#endif
-
   CVariant param;
   param["player"]["speed"] = iSpeed;
   param["player"]["playerid"] = g_playlistPlayer.GetCurrentPlaylist();
@@ -4464,16 +4278,6 @@ void CApplication::OnPlayBackSeek(int iTime, int seekOffset)
 {
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackSeek(iTime, seekOffset);
-#endif
-
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-  {
-    CStdString tmp;
-    tmp.Format("broadcastlevel; OnPlayBackSeek:%i;1",iTime);
-    CApplicationMessenger::Get().HttpApi(tmp);
-  }
 #endif
 
   CVariant param;
@@ -4489,16 +4293,6 @@ void CApplication::OnPlayBackSeekChapter(int iChapter)
 {
 #ifdef HAS_PYTHON
   g_pythonParser.OnPlayBackSeekChapter(iChapter);
-#endif
-
-#ifdef HAS_HTTPAPI
-  // Let's tell the outside world as well
-  if (g_settings.m_HttpApiBroadcastLevel>=1)
-  {
-    CStdString tmp;
-    tmp.Format("broadcastlevel; OnPlayBackSkeekChapter:%i;1",iChapter);
-    CApplicationMessenger::Get().HttpApi(tmp);
-  }
 #endif
 }
 
@@ -5344,9 +5138,6 @@ void CApplication::ProcessSlow()
     UPNP::CUPnP::GetInstance()->UpdateState();
 #endif
 
-  //Check to see if current playing Title has changed and whether we should broadcast the fact
-  CheckForTitleChange();
-
 #if defined(_LINUX) && defined(HAS_FILESYSTEM_SMB)
   smb.CheckIfIdle();
 #endif
@@ -6022,6 +5813,13 @@ bool CApplication::IsPresentFrame()
   bool ret = m_bPresentFrame;
 
   return ret;
+}
+
+void CApplication::SetRenderGUI(bool renderGUI)
+{
+  if (renderGUI && ! m_renderGUI)
+    g_windowManager.MarkDirty();
+  m_renderGUI = renderGUI;
 }
 
 #if defined(HAS_LINUX_NETWORK)

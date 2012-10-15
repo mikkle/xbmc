@@ -72,6 +72,7 @@ public:
   virtual bool OnMessage(CGUIMessage& message);
   bool ProcessSelector(CGUITexture &nib, unsigned int currentTime, float fScaleY, RangeSelector selector);
   void SetRangeSelection(bool rangeSelection);
+  bool GetRangeSelection() { return m_rangeSelection; }
   void SetRangeSelector(RangeSelector selector);
   void SwitchRangeSelector();
   void SetInfo(int iInfo);
@@ -112,14 +113,14 @@ protected:
   bool m_rangeSelection;
   RangeSelector m_currentSelector;
 
-  int m_iPercent[2];
+  int m_percentValues[2];
 
-  int m_iValue[2];
+  int m_intValues[2];
   int m_iStart;
   int m_iInterval;
   int m_iEnd;
 
-  float m_fValue[2];
+  float m_floatValues[2];
   float m_fStart;
   float m_fInterval;
   float m_fEnd;

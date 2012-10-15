@@ -718,7 +718,7 @@ void CGUIWindowSettingsCategory::UpdateSettings()
     else if (strSetting.Equals("pvrmanager.channelscan"))
     {
       CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
-      if (pControl) pControl->SetEnabled(g_guiSettings.GetBool("pvrmanager.enabled") && g_PVRClients->GetClientsSupportingChannelScan().size() > 0);
+      if (pControl) pControl->SetEnabled(g_guiSettings.GetBool("pvrmanager.enabled") && g_PVRClients && g_PVRClients->GetClientsSupportingChannelScan().size() > 0);
     }
     else if (strSetting.Equals("pvrmanager.channelmanager") || strSetting.Equals("pvrmenu.searchicons"))
     {
@@ -736,6 +736,11 @@ void CGUIWindowSettingsCategory::UpdateSettings()
     {
       CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
       if (pControl) pControl->SetEnabled(g_guiSettings.GetBool("services.esenabled"));
+    }
+    else if (strSetting.Equals("services.upnpannounce"))
+    {
+      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
+      pControl->SetEnabled(g_guiSettings.GetBool("services.upnpserver"));
     }
     else if (strSetting.Equals("audiocds.quality"))
     { // only visible if we are doing non-WAV ripping
@@ -1900,7 +1905,8 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingC
     g_windowManager.SendMessage(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_WINDOW_RESIZE);
   }
   else if (strSetting.Equals("videolibrary.flattentvshows") ||
-           strSetting.Equals("videolibrary.removeduplicates"))
+           strSetting.Equals("videolibrary.removeduplicates") ||
+           strSetting.Equals("videolibrary.groupmoviesets"))
   {
     CUtil::DeleteVideoDatabaseDirectoryCache();
   }

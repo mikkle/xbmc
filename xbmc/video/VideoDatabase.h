@@ -259,6 +259,7 @@ typedef enum // this enum MUST match the offset struct further down!! and make s
   VIDEODB_ID_EPISODE_BOOKMARK = 17,
   VIDEODB_ID_EPISODE_BASEPATH = 18,
   VIDEODB_ID_EPISODE_PARENTPATHID = 19,
+  VIDEODB_ID_EPISODE_UNIQUEID = 20,
   VIDEODB_ID_EPISODE_MAX
 } VIDEODB_EPISODE_IDS;
 
@@ -283,7 +284,8 @@ const struct SDbTableOffsets DbEpisodeOffsets[] =
   { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_iSpecialSortEpisode) },
   { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_iBookmarkId) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_basePath) },
-  { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_parentPathID) }
+  { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_parentPathID) },
+  { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strUniqueId) }
 };
 
 typedef enum // this enum MUST match the offset struct further down!! and make sure to keep min and max at -1 and sizeof(offsets)
@@ -572,10 +574,6 @@ public:
   bool LinkMovieToTvshow(int idMovie, int idShow, bool bRemove);
   bool IsLinkedToTvshow(int idMovie);
   bool GetLinksToTvShow(int idMovie, std::vector<int>& ids);
-
-  bool GetArbitraryQuery(const CStdString& strQuery, const CStdString& strOpenRecordSet, const CStdString& strCloseRecordSet,
-                         const CStdString& strOpenRecord, const CStdString& strCloseRecord, const CStdString& strOpenField, const CStdString& strCloseField, CStdString& strResult);
-  bool ArbitraryExec(const CStdString& strExec);
 
   // general browsing
   bool GetGenresNav(const CStdString& strBaseDir, CFileItemList& items, int idContent=-1, const Filter &filter = Filter(), bool countOnly = false);

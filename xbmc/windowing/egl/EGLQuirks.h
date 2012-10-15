@@ -1,7 +1,7 @@
 #pragma once
 
 /*
- *      Copyright (C) 2005-2012 Team XBMC
+ *      Copyright (C) 2011-2012 Team XBMC
  *      http://www.xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -20,17 +20,5 @@
  *
  */
 
-#include "GUIWindow.h"
-
-// This class is designed to be the base class for any standard
-// full screen window.  Default implementations for action keys
-// can be placed into this class to make creating new window
-// classes that much easier.
-
-class CGUIStandardWindow :
-      public CGUIWindow
-{
-public:
-  CGUIStandardWindow(int id, const CStdString &xmlFile);
-  virtual ~CGUIStandardWindow(void);
-};
+#define EGL_QUIRK_NONE 0
+#define EGL_QUIRK_NEED_WINDOW_FOR_RES 1

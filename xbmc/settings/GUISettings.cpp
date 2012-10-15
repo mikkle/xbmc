@@ -278,7 +278,7 @@ void CGUISettings::Initialize()
   AddGroup(SETTINGS_WEATHER, 8);
   CSettingsCategory* wea = AddCategory(SETTINGS_WEATHER, "weather", 16000);
   AddInt(NULL, "weather.currentlocation", 0, 1, 1, 1, 3, SPIN_CONTROL_INT_PLUS);
-  AddDefaultAddon(wea, "weather.addon", 24027, "weather.wunderground", ADDON_SCRIPT_WEATHER);
+  AddDefaultAddon(wea, "weather.addon", 24029, "weather.wunderground", ADDON_SCRIPT_WEATHER);
   AddString(wea, "weather.addonsettings", 21417, "", BUTTON_CONTROL_STANDARD, true);
 
   // My Music Settings
@@ -719,11 +719,7 @@ void CGUISettings::Initialize()
   adjustTypes.insert(make_pair(36036, ADJUST_REFRESHRATE_ON_STARTSTOP));
 
 #if !defined(TARGET_DARWIN_IOS)
-#if defined(TARGET_RASPBERRY_PI)
-  AddBool(vp, "videoplayer.adjustrefreshrate", 170, true);
-#else
   AddInt(vp, "videoplayer.adjustrefreshrate", 170, ADJUST_REFRESHRATE_OFF, adjustTypes, SPIN_CONTROL_TEXT);
-#endif
 //  AddBool(vp, "videoplayer.adjustrefreshrate", 170, false);
   AddInt(vp, "videoplayer.pauseafterrefreshchange", 13550, 0, 0, 1, MAXREFRESHCHANGEDELAY, SPIN_CONTROL_TEXT);
 #else
@@ -829,6 +825,7 @@ void CGUISettings::Initialize()
 
   CSettingsCategory* srvUpnp = AddCategory(SETTINGS_SERVICE, "upnp", 20187);
   AddBool(srvUpnp, "services.upnpserver", 21360, false);
+  AddBool(srvUpnp, "services.upnpannounce", 20188, true);
   AddBool(srvUpnp, "services.upnprenderer", 21881, false);
 
 #ifdef HAS_WEB_SERVER
@@ -996,7 +993,7 @@ void CGUISettings::Initialize()
   AddBool(pvrpwr, "pvrpowermanagement.enabled", 305, false);
   AddSeparator(pvrpwr, "pvrpowermanagement.sep1");
   AddInt(pvrpwr, "pvrpowermanagement.backendidletime", 19244, 15, 0, 5, 360, SPIN_CONTROL_INT_PLUS, MASK_MINS, TEXT_OFF);
-  AddString(pvrpwr, "pvrpowermanagement.setwakeupcmd", 19245, "/usr/bin/setwakeup.sh", EDIT_CONTROL_INPUT, true);
+  AddString(pvrpwr, "pvrpowermanagement.setwakeupcmd", 19245, "", EDIT_CONTROL_INPUT, true);
   AddInt(pvrpwr, "pvrpowermanagement.prewakeup", 19246, 15, 0, 1, 60, SPIN_CONTROL_INT_PLUS, MASK_MINS, TEXT_OFF);
   AddSeparator(pvrpwr, "pvrpowermanagement.sep2");
   AddBool(pvrpwr, "pvrpowermanagement.dailywakeup", 19247, false);

@@ -1172,73 +1172,6 @@ bool CMusicDatabase::SearchArtists(const CStdString& search, CFileItemList &arti
   return false;
 }
 
-bool CMusicDatabase::GetArbitraryQuery(const CStdString& strQuery, const CStdString& strOpenRecordSet, const CStdString& strCloseRecordSet,
-                                       const CStdString& strOpenRecord, const CStdString& strCloseRecord, const CStdString& strOpenField,
-                                       const CStdString& strCloseField, CStdString& strResult)
-{
-  try
-  {
-    strResult = "";
-    if (NULL == m_pDB.get()) return false;
-    if (NULL == m_pDS.get()) return false;
-    CStdString strSQL=strQuery;
-    if (!m_pDS->query(strSQL.c_str()))
-    {
-      strResult = m_pDB->getErrorMsg();
-      return false;
-    }
-    strResult=strOpenRecordSet;
-    while (!m_pDS->eof())
-    {
-      strResult += strOpenRecord;
-      for (int i=0; i<m_pDS->fieldCount(); i++)
-      {
-        strResult += strOpenField;
-        strResult += m_pDS->fv(i).get_asString();
-        strResult += strCloseField;
-      }
-      strResult += strCloseRecord;
-      m_pDS->next();
-    }
-    strResult += strCloseRecordSet;
-    m_pDS->close();
-    return true;
-  }
-  catch (...)
-  {
-    CLog::Log(LOGERROR, "%s(%s) failed", __FUNCTION__, strQuery.c_str());
-  }
-  try
-  {
-    if (NULL == m_pDB.get()) return false;
-      strResult = m_pDB->getErrorMsg();
-  }
-  catch (...)
-  {
-
-  }
-
-  return false;
-}
-
-bool CMusicDatabase::ArbitraryExec(const CStdString& strExec)
-{
-  try
-  {
-    if (NULL == m_pDB.get()) return false;
-    if (NULL == m_pDS.get()) return false;
-    CStdString strSQL = strExec;
-    m_pDS->exec(strSQL.c_str());
-    m_pDS->close();
-    return true;
-  }
-  catch (...)
-  {
-    CLog::Log(LOGERROR, "%s failed", __FUNCTION__);
-  }
-  return false;
-}
-
 bool CMusicDatabase::GetAlbumInfo(int idAlbum, CAlbum &info, VECSONGS* songs)
 {
   try
@@ -4179,6 +4112,10 @@ bool CMusicDatabase::RemoveSongsFromPath(const CStdString &path1, CSongMap &song
 
       m_pDS->close();
 
+      //TODO: move this below the m_pDS->exec block, once UPnP doesn't rely on this anymore
+      for (unsigned int i = 0; i < ids.size(); i++)
+        AnnounceRemove("song", ids[i]);
+
       // and delete all songs, and anything linked to them
       sql = "delete from song where idSong in " + songIds;
       m_pDS->exec(sql.c_str());
@@ -4189,8 +4126,6 @@ bool CMusicDatabase::RemoveSongsFromPath(const CStdString &path1, CSongMap &song
       sql = "delete from karaokedata where idSong in " + songIds;
       m_pDS->exec(sql.c_str());
 
-      for (unsigned int i = 0; i < ids.size(); i++)
-        AnnounceRemove("song", ids[i]);
     }
     // and remove the path as well (it'll be re-added later on with the new hash if it's non-empty)
     sql = "delete from path" + where;
@@ -5389,8 +5324,12 @@ bool CMusicDatabase::GetFilter(CDbUrl &musicUrl, Filter &filter)
         filter.AppendWhere("albumview.strAlbum <> ''");
     }
   }
-  else if (type == "songs")
+  else if (type == "songs" || type == "singles")
   {
+    option = options.find("singles");
+    if (option != options.end())
+      filter.AppendWhere(PrepareSQL("songview.idAlbum %sIN (SELECT idAlbum FROM album WHERE strAlbum = '')", option->second.asBoolean() ? "" : "NOT "));
+
     option = options.find("year");
     if (option != options.end())
       filter.AppendWhere(PrepareSQL("songview.iYear = %i", (int)option->second.asInteger()));

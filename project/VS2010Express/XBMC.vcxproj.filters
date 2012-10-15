@@ -127,9 +127,6 @@
     <Filter Include="input\windows">
       <UniqueIdentifier>{2f7a07e4-ac48-4e30-beb3-550e50b59c09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="interfaces\http-api">
-      <UniqueIdentifier>{3616033f-20f3-48c8-96bd-b07f2eed008e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="interfaces\json-rpc">
       <UniqueIdentifier>{15fc3844-6b50-4424-ba2c-ac9bd85d3ab0}</UniqueIdentifier>
     </Filter>
@@ -1135,9 +1132,6 @@
     <ClCompile Include="..\..\xbmc\guilib\GUISpinControlEx.cpp">
       <Filter>guilib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\xbmc\guilib\GUIStandardWindow.cpp">
-      <Filter>guilib</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\xbmc\guilib\GUIStaticItem.cpp">
       <Filter>guilib</Filter>
     </ClCompile>
@@ -1215,12 +1209,6 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\input\windows\IrssMessage.cpp">
       <Filter>input\windows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\xbmc\interfaces\http-api\HttpApi.cpp">
-      <Filter>interfaces\http-api</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\xbmc\interfaces\http-api\XBMChttp.cpp">
-      <Filter>interfaces\http-api</Filter>
     </ClCompile>
     <ClCompile Include="..\..\xbmc\interfaces\json-rpc\AudioLibrary.cpp">
       <Filter>interfaces\json-rpc</Filter>
@@ -2052,9 +2040,6 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\filesystem\AFPDirectory.cpp">
       <Filter>filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\xbmc\network\httprequesthandler\HTTPApiHandler.cpp">
-      <Filter>network\httprequesthandler</Filter>
     </ClCompile>
     <ClCompile Include="..\..\xbmc\network\httprequesthandler\HTTPVfsHandler.cpp">
       <Filter>network\httprequesthandler</Filter>
@@ -2935,6 +2920,9 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\dialogs\GUIDialogMediaFilter.cpp">
       <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\test\TestFileItem.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3948,9 +3936,6 @@
     <ClInclude Include="..\..\xbmc\guilib\GUISpinControlEx.h">
       <Filter>guilib</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\xbmc\guilib\GUIStandardWindow.h">
-      <Filter>guilib</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\xbmc\guilib\GUIStaticItem.h">
       <Filter>guilib</Filter>
     </ClInclude>
@@ -4058,12 +4043,6 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\input\windows\IrssMessage.h">
       <Filter>input\windows</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\xbmc\interfaces\http-api\HttpApi.h">
-      <Filter>interfaces\http-api</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\xbmc\interfaces\http-api\XBMChttp.h">
-      <Filter>interfaces\http-api</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\interfaces\json-rpc\AudioLibrary.h">
       <Filter>interfaces\json-rpc</Filter>
@@ -5307,9 +5286,6 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\network\httprequesthandler\IHTTPRequestHandler.h">
-      <Filter>network\httprequesthandler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\xbmc\network\httprequesthandler\HTTPApiHandler.h">
       <Filter>network\httprequesthandler</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\network\httprequesthandler\HTTPVfsHandler.h">

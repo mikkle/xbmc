@@ -586,8 +586,8 @@ bool CGUIWindowVideoBase::ShowIMDB(CFileItem *item, const ScraperPtr &info2)
       // show dialog that we're downloading the movie info
 
       // clear artwork
-      item->SetThumbnailImage("");
-      item->ClearProperty("fanart_image");
+      item->SetArt("thumb", "");
+      item->SetArt("fanart", "");
 
       CFileItemList list;
       CStdString strPath=item->GetPath();
@@ -674,7 +674,7 @@ bool CGUIWindowVideoBase::ShowIMDB(CFileItem *item, const ScraperPtr &info2)
         *item->GetVideoInfoTag() = movieDetails;
         pDlgInfo->SetMovie(item);
         pDlgInfo->DoModal();
-        item->SetThumbnailImage(pDlgInfo->GetThumbnail());
+        item->SetArt("thumb", pDlgInfo->GetThumbnail());
         needsRefresh = pDlgInfo->NeedRefresh();
         listNeedsUpdating = true;
       }
@@ -750,7 +750,7 @@ void CGUIWindowVideoBase::AddItemToPlayList(const CFileItemPtr &pItem, CFileItem
     GetDirectory(pItem->GetPath(), items);
     FormatAndSort(items);
 
-    int watchedMode = g_settings.GetWatchMode(m_vecItems->GetContent());
+    int watchedMode = g_settings.GetWatchMode(items.GetContent());
     bool unwatchedOnly = watchedMode == VIDEO_SHOW_UNWATCHED;
     bool watchedOnly = watchedMode == VIDEO_SHOW_WATCHED;
     for (int i = 0; i < items.Size(); ++i)
@@ -1595,7 +1595,7 @@ void CGUIWindowVideoBase::OnDeleteItem(CFileItemPtr item)
   }
 
   if (g_guiSettings.GetBool("filelists.allowfiledeletion") &&
-      CUtil::SupportsFileOperations(item->GetPath()))
+      CUtil::SupportsWriteFileOperations(item->GetPath()))
     CFileUtils::DeleteItem(item);
 }
 
