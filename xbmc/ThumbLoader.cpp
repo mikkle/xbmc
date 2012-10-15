@@ -191,8 +191,11 @@ static void SetupRarOptions(CFileItem& item, const CStdString& path)
 vector<string> CVideoThumbLoader::GetArtTypes(const string &type)
 {
   vector<string> ret;
-  ret.push_back("fanart");
-  ret.push_back("poster");
+  if (type != "episode")
+  {
+    ret.push_back("fanart");
+    ret.push_back("poster");
+  }
   if (type == "tvshow" || type == "season" || type.empty())
     ret.push_back("banner");
   ret.push_back("thumb");
@@ -468,6 +471,10 @@ void CVideoThumbLoader::OnJobComplete(unsigned int jobID, bool success, CJob* jo
     CThumbExtractor* loader = (CThumbExtractor*)job;
     loader->m_item.SetPath(loader->m_listpath);
     CVideoInfoTag* info = loader->m_item.GetVideoInfoTag();
+
+    if (loader->m_thumb && info->m_iDbId > 0 && !info->m_type.empty())
+      m_database->SetArtForItem(info->m_iDbId, info->m_type, "thumb", loader->m_item.GetArt("thumb"));
+
     if (m_pStreamDetailsObs)
       m_pStreamDetailsObs->OnStreamDetails(info->m_streamDetails, info->m_strFileNameAndPath, info->m_iFileId);
     if (m_pObserver)
