@@ -2581,6 +2581,9 @@
     <ClCompile Include="..\..\xbmc\filesystem\VideoDatabaseDirectory\DirectoryNodeTags.cpp">
       <Filter>filesystem\VideoDatabaseDirectory</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\utils\EdenVideoArtUpdater.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\xbmc\utils\EndianSwap.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -2929,6 +2932,9 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\test\TestFileItem.cpp">
       <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\interfaces\json-rpc\PVROperations.cpp">
+      <Filter>interfaces\json-rpc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4401,6 +4407,9 @@
     <ClInclude Include="..\..\xbmc\utils\DownloadQueueManager.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\xbmc\utils\EdenVideoArtUpdater.h">
+      <Filter>utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\xbmc\utils\EndianSwap.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -5727,6 +5736,9 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\dialogs\GUIDialogMediaFilter.h">
       <Filter>dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\interfaces\json-rpc\PVROperations.h">
+      <Filter>interfaces\json-rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
