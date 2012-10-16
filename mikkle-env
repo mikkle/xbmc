@@ -1,4 +1,4 @@
 export XBMC_ANDROID_SDK=/usr/local/android
 export XBMC_ANDROID_NDK=/usr/local/android-ndk-r7-crystax-5.beta2
-export XBMC_ANDROID_TARBALLS=/usr/local/tmp/xbmc-android/tarballs.neon
+export XBMC_ANDROID_TARBALLS=/usr/local/tmp/xbmc-android/tarballs.tegra2
 export CCACHE_DIR=/usr/local/ccache/android-tegra2
