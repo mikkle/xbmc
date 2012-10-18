@@ -1313,6 +1313,23 @@ bool CGUIEPGGridContainer::OnMouseWheel(char wheel, const CPoint &point)
 
 int CGUIEPGGridContainer::GetSelectedItem() const
 {
+  if (!m_gridIndex)
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - !m_gridIndex (false) - Failure Condition", __FUNCTION__ );
+  else
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - m_gridIndex (true)- OK Condition", __FUNCTION__ );
+  if (!m_epgItemsPtr.size())
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - !m_gridIndex (false) - Failure Condition", __FUNCTION__ );
+  else
+   CLog::Log(LOGDEBUG, "MIKKLE - %s - m_gridIndex (true) - OK Condition", __FUNCTION__ );
+  if (m_channelCursor + m_channelOffset >= (int)m_channelItems.size())
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - m_channelCursor + m_channelOffset >= (int)m_channelItems.size() - Failure Condition", __FUNCTION__ );
+  else
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - m_channelCursor + m_channelOffset < (int)m_channelItems.size() - OK Condition", __FUNCTION__ );
+  if(m_blockCursor + m_blockOffset >= (int)m_programmeItems.size())
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - m_blockCursor + m_blockOffset >= (int)m_programmeItems.size()) - Failure Condition", __FUNCTION__ );
+  else
+    CLog::Log(LOGDEBUG, "MIKKLE - %s - m_blockCursor + m_blockOffset < (int)m_programmeItems.size()) - OK Condition", __FUNCTION__ );
+    
   if (!m_gridIndex || !m_epgItemsPtr.size())
     return 0;
 
