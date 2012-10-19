@@ -179,7 +179,7 @@ void CPVRManager::Stop(void)
   SetState(ManagerStateStopping);
 
   /* stop the EPG updater, since it might be using the pvr add-ons */
-  g_EpgContainer.Unload();
+  g_EpgContainer.Stop();
 
   CLog::Log(LOGNOTICE, "PVRManager - stopping");
 
@@ -556,17 +556,9 @@ void CPVRManager::ResetEPG(void)
 {
   CLog::Log(LOGNOTICE,"PVRManager - %s - clearing the EPG database", __FUNCTION__);
 
-  StopUpdateThreads();
-  g_EpgContainer.Stop();
+  Stop();
   g_EpgContainer.Reset();
-
-  if (g_guiSettings.GetBool("pvrmanager.enabled"))
-  {
-    static_cast<CPVRChannelGroupInternal *>(m_channelGroups->GetGroupAllTV().get())->CreateChannelEpgs(true);
-    static_cast<CPVRChannelGroupInternal *>(m_channelGroups->GetGroupAllRadio().get())->CreateChannelEpgs(true);
-    g_EpgContainer.Start();
-    StartUpdateThreads();
-  }
+  Start();
 }
 
 bool CPVRManager::IsPlaying(void) const
