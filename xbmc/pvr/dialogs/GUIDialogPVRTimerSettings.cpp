@@ -49,7 +49,6 @@ CGUIDialogPVRTimerSettings::CGUIDialogPVRTimerSettings(void)
 {
   m_cancelled = true;
   m_tmp_day   = 11;
-  m_loadType = LOAD_EVERY_TIME;
 }
 
 void CGUIDialogPVRTimerSettings::AddChannelNames(CFileItemList &channelsList, SETTINGSTRINGS &channelNames, bool bRadio)
