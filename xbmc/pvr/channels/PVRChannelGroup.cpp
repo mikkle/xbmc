@@ -211,6 +211,16 @@ bool CPVRChannelGroup::MoveChannel(unsigned int iOldChannelNumber, unsigned int 
   return true;
 }
 
+bool CPVRChannelGroup::SetChannelIconPath(CPVRChannelPtr channel, const std::string& strIconPath)
+{
+  if (CFile::Exists(strIconPath))
+  {
+    channel->SetIconPath(strIconPath);
+    return true;
+  }
+  return false;
+}
+
 void CPVRChannelGroup::SearchAndSetChannelIcons(bool bUpdateDb /* = false */)
 {
   if (g_guiSettings.GetString("pvrmenu.iconpath").IsEmpty())
@@ -236,19 +246,20 @@ void CPVRChannelGroup::SearchAndSetChannelIcons(bool bUpdateDb /* = false */)
     CStdString strIconPath = strBasePath + groupMember.channel->ClientChannelName();
     CStdString strIconPathLower = strBasePath + strChannelName.ToLower();
     CStdString strIconPathUid;
-    strIconPathUid.Format("%s/%08d", strBasePath, groupMember.channel->UniqueID());
+    strIconPathUid.Format("%08d", groupMember.channel->UniqueID());
+    strIconPathUid = URIUtils::AddFileToFolder(strBasePath, strIconPathUid);
 
-    groupMember.channel->SetIconPath(strIconPath      + ".tbn") ||
-    groupMember.channel->SetIconPath(strIconPath      + ".jpg") ||
-    groupMember.channel->SetIconPath(strIconPath      + ".png") ||
+    SetChannelIconPath(groupMember.channel, strIconPath      + ".tbn") ||
+    SetChannelIconPath(groupMember.channel, strIconPath      + ".jpg") ||
+    SetChannelIconPath(groupMember.channel, strIconPath      + ".png") ||
 
-    groupMember.channel->SetIconPath(strIconPathLower + ".tbn") ||
-    groupMember.channel->SetIconPath(strIconPathLower + ".jpg") ||
-    groupMember.channel->SetIconPath(strIconPathLower + ".png") ||
+    SetChannelIconPath(groupMember.channel, strIconPathLower + ".tbn") ||
+    SetChannelIconPath(groupMember.channel, strIconPathLower + ".jpg") ||
+    SetChannelIconPath(groupMember.channel, strIconPathLower + ".png") ||
 
-    groupMember.channel->SetIconPath(strIconPathUid   + ".tbn") ||
-    groupMember.channel->SetIconPath(strIconPathUid   + ".jpg") ||
-    groupMember.channel->SetIconPath(strIconPathUid   + ".png");
+    SetChannelIconPath(groupMember.channel, strIconPathUid   + ".tbn") ||
+    SetChannelIconPath(groupMember.channel, strIconPathUid   + ".jpg") ||
+    SetChannelIconPath(groupMember.channel, strIconPathUid   + ".png");
 
     if (bUpdateDb)
       groupMember.channel->Persist();
@@ -880,11 +891,9 @@ bool CPVRChannelGroup::Renumber(void)
 
 void CPVRChannelGroup::ResetChannelNumberCache(void)
 {
-  CPVRChannelGroupPtr playingGroup = g_PVRManager.GetPlayingGroup(m_bRadio);
-  if (!playingGroup || *this != *playingGroup)
-    return;
-
   CSingleLock lock(m_critSection);
+  if (!m_bSelectedGroup)
+    return;
 
   /* reset the channel number cache */
   if (!IsInternalGroup())
@@ -1148,4 +1157,16 @@ bool CPVRChannelGroup::ToggleChannelLocked(const CFileItem &item)
   channel->SetLocked(!channel->IsLocked());
 
   return true;
+}
+
+void CPVRChannelGroup::SetSelectedGroup(bool bSetTo)
+{
+  CSingleLock lock(m_critSection);
+  m_bSelectedGroup = bSetTo;
+}
+
+bool CPVRChannelGroup::IsSelectedGroup(void) const
+{
+  CSingleLock lock(m_critSection);
+  return m_bSelectedGroup;
 }
