@@ -443,7 +443,7 @@ public:
   void GetEpisodesByFile(const CStdString& strFilenameAndPath, std::vector<CVideoInfoTag>& episodes);
 
   int SetDetailsForMovie(const CStdString& strFilenameAndPath, const CVideoInfoTag& details, const std::map<std::string, std::string> &artwork, int idMovie = -1);
-  int SetDetailsForTvShow(const CStdString& strPath, const CVideoInfoTag& details, const std::map<std::string, std::string> &artwork, const std::map<int, std::string> &seasonArt, int idTvShow = -1);
+  int SetDetailsForTvShow(const CStdString& strPath, const CVideoInfoTag& details, const std::map<std::string, std::string> &artwork, const std::map<int, std::map<std::string, std::string> > &seasonArt, int idTvShow = -1);
   int SetDetailsForEpisode(const CStdString& strFilenameAndPath, const CVideoInfoTag& details, const std::map<std::string, std::string> &artwork, int idShow, int idEpisode=-1);
   int SetDetailsForMusicVideo(const CStdString& strFilenameAndPath, const CVideoInfoTag& details, const std::map<std::string, std::string> &artwork, int idMVideo = -1);
   void SetStreamDetailsForFile(const CStreamDetails& details, const CStdString &strFileNameAndPath);
@@ -679,11 +679,12 @@ public:
   void SetArtForItem(int mediaId, const std::string &mediaType, const std::map<std::string, std::string> &art);
   bool GetArtForItem(int mediaId, const std::string &mediaType, std::map<std::string, std::string> &art);
   std::string GetArtForItem(int mediaId, const std::string &mediaType, const std::string &artType);
-  bool GetTvShowSeasonArt(int mediaId, std::map<int, std::string> &seasonArt);
+  bool GetTvShowSeasonArt(int mediaId, std::map<int, std::map<std::string, std::string> > &seasonArt);
 
   int AddTag(const std::string &tag);
   void AddTagToItem(int idItem, int idTag, const std::string &type);
   void RemoveTagFromItem(int idItem, int idTag, const std::string &type);
+  void RemoveTagsFromItem(int idItem, const std::string &type);
 
   virtual bool GetFilter(CDbUrl &videoUrl, Filter &filter, SortDescription &sorting);
 
@@ -763,6 +764,8 @@ protected:
   void GetDetailsFromDB(const dbiplus::sql_record* const record, int min, int max, const SDbTableOffsets *offsets, CVideoInfoTag &details, int idxOffset = 2);
   CStdString GetValueString(const CVideoInfoTag &details, int min, int max, const SDbTableOffsets *offsets) const;
 
+  void CleanupTags();
+
 private:
   virtual bool CreateTables();
   virtual bool UpdateOldVersion(int version);
@@ -804,7 +807,7 @@ private:
    */
   bool LookupByFolders(const CStdString &path, bool shows = false);
 
-  virtual int GetMinVersion() const { return 70; };
+  virtual int GetMinVersion() const { return 72; };
   virtual int GetExportVersion() const { return 1; };
   const char *GetBaseDBName() const { return "MyVideos"; };
 

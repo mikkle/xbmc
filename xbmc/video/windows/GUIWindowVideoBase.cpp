@@ -106,6 +106,15 @@ bool CGUIWindowVideoBase::OnAction(const CAction &action)
 {
   if (action.GetID() == ACTION_SCAN_ITEM)
     return OnContextButton(m_viewControl.GetSelectedItem(),CONTEXT_BUTTON_SCAN);
+  else if (action.GetID() == ACTION_SHOW_PLAYLIST)
+  {
+    if (g_playlistPlayer.GetCurrentPlaylist() == PLAYLIST_VIDEO ||
+        g_playlistPlayer.GetPlaylist(PLAYLIST_VIDEO).size() > 0)
+    {
+      g_windowManager.ActivateWindow(WINDOW_VIDEO_PLAYLIST);
+      return true;
+    }
+  }
 
   return CGUIMediaWindow::OnAction(action);
 }
@@ -277,6 +286,10 @@ void CGUIWindowVideoBase::OnInfo(CFileItem* pItem, const ADDON::ScraperPtr& scra
   CFileItem item(*pItem);
   if (item.IsVideoDb() && item.HasVideoInfoTag())
   {
+    if (item.GetVideoInfoTag()->m_type == "season")
+    { // clear out the art - we're really grabbing the info on the show here
+      item.SetArt(map<string, string>());
+    }
     item.SetPath(item.GetVideoInfoTag()->GetPath());
   }
   else
@@ -1819,9 +1832,11 @@ bool CGUIWindowVideoBase::GetDirectory(const CStdString &strDirectory, CFileItem
 
 bool CGUIWindowVideoBase::StackingAvailable(const CFileItemList &items) const
 {
+  CURL url(items.GetPath());
   return !(items.IsTuxBox()         || items.IsPlugin()  ||
            items.IsAddonsPath()     || items.IsRSS()     ||
-           items.IsInternetStream() || items.IsVideoDb());
+           items.IsInternetStream() || items.IsVideoDb() ||
+           url.GetProtocol() == "playlistvideo");
 }
 
 void CGUIWindowVideoBase::OnPrepareFileItems(CFileItemList &items)
@@ -2072,7 +2087,8 @@ bool CGUIWindowVideoBase::OnUnAssignContent(const CStdString &path, int label1, 
   db.Open();
   if (CGUIDialogYesNo::ShowAndGetInput(label1,label2,label3,20022,bCanceled))
   {
-    db.RemoveContentForPath(path);
+    CGUIDialogProgress *progress = (CGUIDialogProgress *)g_windowManager.GetWindow(WINDOW_DIALOG_PROGRESS);
+    db.RemoveContentForPath(path, progress);
     db.Close();
     CUtil::DeleteVideoDatabaseDirectoryCache();
     return true;

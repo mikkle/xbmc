@@ -497,6 +497,10 @@ JSONRPC_STATUS CVideoLibrary::SetMovieDetails(const CStdString &method, ITranspo
 
   UpdateVideoTag(parameterObject, infos, artwork);
 
+  // we need to manually remove tags/taglinks for now because they aren't replaced
+  // due to scrapers not supporting them
+  videodatabase.RemoveTagsFromItem(id, "movie");
+
   if (videodatabase.SetDetailsForMovie(infos.m_strFileNameAndPath, infos, artwork, id) <= 0)
     return InternalError;
 
@@ -527,13 +531,17 @@ JSONRPC_STATUS CVideoLibrary::SetTVShowDetails(const CStdString &method, ITransp
   std::map<std::string, std::string> artwork;
   videodatabase.GetArtForItem(infos.m_iDbId, infos.m_type, artwork);
 
-  std::map<int, std::string> seasonArt;
+  std::map<int, std::map<std::string, std::string> > seasonArt;
   videodatabase.GetTvShowSeasonArt(infos.m_iDbId, seasonArt);
 
   int playcount = infos.m_playCount;
   CDateTime lastPlayed = infos.m_lastPlayed;
 
   UpdateVideoTag(parameterObject, infos, artwork);
+
+  // we need to manually remove tags/taglinks for now because they aren't replaced
+  // due to scrapers not supporting them
+  videodatabase.RemoveTagsFromItem(id, "tvshow");
 
   if (videodatabase.SetDetailsForTvShow(infos.m_strFileNameAndPath, infos, artwork, seasonArt, id) <= 0)
     return InternalError;
@@ -620,6 +628,10 @@ JSONRPC_STATUS CVideoLibrary::SetMusicVideoDetails(const CStdString &method, ITr
 
   UpdateVideoTag(parameterObject, infos, artwork);
 
+  // we need to manually remove tags/taglinks for now because they aren't replaced
+  // due to scrapers not supporting them
+  videodatabase.RemoveTagsFromItem(id, "musicvideo");
+
   if (videodatabase.SetDetailsForMusicVideo(infos.m_strFileNameAndPath, infos, artwork, id) <= 0)
     return InternalError;
 
@@ -699,7 +711,7 @@ bool CVideoLibrary::FillFileItem(const CStdString &strFilename, CFileItem &item)
   if (!videodatabase.LoadVideoInfo(strFilename, details))
     return false;
 
-  item = CFileItem(details);
+  item.SetFromVideoInfoTag(details);
   return true;
 }
 

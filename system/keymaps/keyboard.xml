@@ -269,9 +269,9 @@
       <r>Rewind</r>
       <period>SkipNext</period>
       <comma>SkipPrevious</comma>
-      <return>ActivateWindow(MusicOSD)</return>
-      <enter>ActivateWindow(MusicOSD)</enter>
-      <m>ActivateWindow(MusicOSD)</m>
+      <return>OSD</return>
+      <enter>OSD</enter>
+      <m>OSD</m>
       <i>Info</i>
       <p>ActivateWindow(VisualisationPresetList)</p>
       <v>ActivateWindow(VisualisationSettings)</v>
@@ -484,6 +484,14 @@
       <backspace>Close</backspace>
     </keyboard>
   </NumericInput>
+  <FullscreenLiveTV>
+    <keyboard>
+      <left>PreviousChannelGroup</left>
+      <right>NextChannelGroup</right>
+      <up>ChannelUp</up>
+      <down>ChannelDown</down>
+    </keyboard>
+  </FullscreenLiveTV>
   <PVROSDChannels>
     <keyboard>
       <backspace>Close</backspace>

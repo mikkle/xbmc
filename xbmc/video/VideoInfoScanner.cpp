@@ -428,6 +428,8 @@ namespace VIDEO
       }
       if (ret == INFO_ADDED || ret == INFO_HAVE_ALREADY)
         FoundSomeInfo = true;
+      else if (ret == INFO_NOT_FOUND)
+        CLog::Log(LOGWARNING, "No information found for item '%s', it won't be added to the library.", pItem->GetPath().c_str());
 
       pURL = NULL;
 
@@ -897,7 +899,7 @@ namespace VIDEO
 
       // Grab the remainder from first regexp run
       // as second run might modify or empty it.
-      char *remainder = reg.GetReplaceString("\\3");
+      std::string remainder = reg.GetReplaceString("\\3");
 
       /*
        * Check if the files base path is a dedicated folder that contains
@@ -935,7 +937,7 @@ namespace VIDEO
         int offset = 0;
 
         // we want "long circuit" OR below so that both offsets are evaluated
-        while (((regexp2pos = reg2.RegFind(remainder + offset)) > -1) | ((regexppos = reg.RegFind(remainder + offset)) > -1))
+        while (((regexp2pos = reg2.RegFind(remainder.c_str() + offset)) > -1) | ((regexppos = reg.RegFind(remainder.c_str() + offset)) > -1))
         {
           if (((regexppos <= regexp2pos) && regexppos != -1) ||
              (regexppos >= 0 && regexp2pos == -1))
@@ -947,16 +949,13 @@ namespace VIDEO
                       g_advancedSettings.m_tvshowMultiPartEnumRegExp.c_str());
 
             episodeList.push_back(episode);
-            free(remainder);
             remainder = reg.GetReplaceString("\\3");
             offset = 0;
           }
           else if (((regexp2pos < regexppos) && regexp2pos != -1) ||
                    (regexp2pos >= 0 && regexppos == -1))
           {
-            char *ep = reg2.GetReplaceString("\\1");
-            episode.iEpisode = atoi(ep);
-            free(ep);
+            episode.iEpisode = atoi(reg2.GetReplaceString("\\1").c_str());
             CLog::Log(LOGDEBUG, "VideoInfoScanner: Adding multipart episode %u [%s]",
                       episode.iEpisode, g_advancedSettings.m_tvshowMultiPartEnumRegExp.c_str());
             episodeList.push_back(episode);
@@ -964,7 +963,6 @@ namespace VIDEO
           }
         }
       }
-      free(remainder);
       return true;
     }
     return false;
@@ -972,28 +970,28 @@ namespace VIDEO
 
   bool CVideoInfoScanner::GetEpisodeAndSeasonFromRegExp(CRegExp &reg, EPISODE &episodeInfo, int defaultSeason)
   {
-    char* season = reg.GetReplaceString("\\1");
-    char* episode = reg.GetReplaceString("\\2");
+    std::string season = reg.GetReplaceString("\\1");
+    std::string episode = reg.GetReplaceString("\\2");
 
-    if (season && episode)
+    if (!season.empty() || !episode.empty())
     {
       char* endptr = NULL;
-      if (strlen(season) == 0 && strlen(episode) > 0)
+      if (season.empty() && !episode.empty())
       { // no season specified -> assume defaultSeason
         episodeInfo.iSeason = defaultSeason;
-        if ((episodeInfo.iEpisode = CUtil::TranslateRomanNumeral(episode)) == -1)
-          episodeInfo.iEpisode = strtol(episode, &endptr, 10);
+        if ((episodeInfo.iEpisode = CUtil::TranslateRomanNumeral(episode.c_str())) == -1)
+          episodeInfo.iEpisode = strtol(episode.c_str(), &endptr, 10);
       }
-      else if (strlen(season) > 0 && strlen(episode) == 0)
+      else if (!season.empty() && episode.empty())
       { // no episode specification -> assume defaultSeason
         episodeInfo.iSeason = defaultSeason;
-        if ((episodeInfo.iEpisode = CUtil::TranslateRomanNumeral(season)) == -1)
-          episodeInfo.iEpisode = atoi(season);
+        if ((episodeInfo.iEpisode = CUtil::TranslateRomanNumeral(season.c_str())) == -1)
+          episodeInfo.iEpisode = atoi(season.c_str());
       }
       else
       { // season and episode specified
-        episodeInfo.iSeason = atoi(season);
-        episodeInfo.iEpisode = strtol(episode, &endptr, 10);
+        episodeInfo.iSeason = atoi(season.c_str());
+        episodeInfo.iEpisode = strtol(episode.c_str(), &endptr, 10);
       }
       if (endptr)
       {
@@ -1002,39 +1000,35 @@ namespace VIDEO
         else if (*endptr == '.')
           episodeInfo.iSubepisode = atoi(endptr+1);
       }
+      return true;
     }
-    free(season);
-    free(episode);
-    return (season && episode);
+    return false;
   }
 
   bool CVideoInfoScanner::GetAirDateFromRegExp(CRegExp &reg, EPISODE &episodeInfo)
   {
-    char* param1 = reg.GetReplaceString("\\1");
-    char* param2 = reg.GetReplaceString("\\2");
-    char* param3 = reg.GetReplaceString("\\3");
+    std::string param1 = reg.GetReplaceString("\\1");
+    std::string param2 = reg.GetReplaceString("\\2");
+    std::string param3 = reg.GetReplaceString("\\3");
 
-    if (param1 && param2 && param3)
+    if (!param1.empty() && !param2.empty() && !param3.empty())
     {
       // regular expression by date
-      int len1 = strlen( param1 );
-      int len2 = strlen( param2 );
-      int len3 = strlen( param3 );
+      int len1 = param1.size();
+      int len2 = param2.size();
+      int len3 = param3.size();
 
       if (len1==4 && len2==2 && len3==2)
       {
         // yyyy mm dd format
-        episodeInfo.cDate.SetDate(atoi(param1), atoi(param2), atoi(param3));
+        episodeInfo.cDate.SetDate(atoi(param1.c_str()), atoi(param2.c_str()), atoi(param3.c_str()));
       }
       else if (len1==2 && len2==2 && len3==4)
       {
         // mm dd yyyy format
-        episodeInfo.cDate.SetDate(atoi(param3), atoi(param1), atoi(param2));
+        episodeInfo.cDate.SetDate(atoi(param3.c_str()), atoi(param1.c_str()), atoi(param2.c_str()));
       }
     }
-    free(param1);
-    free(param2);
-    free(param3);
     return episodeInfo.cDate.IsValid();
   }
 
@@ -1097,10 +1091,11 @@ namespace VIDEO
       if (pItem->m_bIsFolder)
       {
         // get and cache season thumbs
-        map<int, string> seasonArt;
-        GetSeasonThumbs(movieDetails, seasonArt);
-        for (map<int, string>::iterator i = seasonArt.begin(); i != seasonArt.end(); ++i)
-          CTextureCache::Get().BackgroundCacheImage(i->second);
+        map<int, map<string, string> > seasonArt;
+        GetSeasonThumbs(movieDetails, seasonArt, CVideoThumbLoader::GetArtTypes("season"), useLocal);
+        for (map<int, map<string, string> >::iterator i = seasonArt.begin(); i != seasonArt.end(); ++i)
+          for (map<string, string>::iterator j = i->second.begin(); j != i->second.end(); ++j)
+            CTextureCache::Get().BackgroundCacheImage(j->second);
         lResult = m_database.SetDetailsForTvShow(pItem->GetPath(), movieDetails, art, seasonArt);
         movieDetails.m_iDbId = lResult;
         movieDetails.m_type = "tvshow";
@@ -1162,6 +1157,16 @@ namespace VIDEO
     }
   }
 
+  std::string CVideoInfoScanner::GetArtTypeFromSize(unsigned int width, unsigned int height)
+  {
+    std::string type = "thumb";
+    if (width*5 < height*4)
+      type = "poster";
+    else if (width*1 > height*4)
+      type = "banner";
+    return type;
+  }
+
   void CVideoInfoScanner::GetArtwork(CFileItem *pItem, const CONTENT_TYPE &content, bool bApplyToDir, bool useLocal, const std::string &actorArtPath)
   {
     CVideoInfoTag &movieDetails = *pItem->GetVideoInfoTag();
@@ -1169,6 +1174,59 @@ namespace VIDEO
     movieDetails.m_strPictureURL.Parse();
 
     CGUIListItem::ArtMap art;
+
+    // get and cache thumb images
+    vector<string> artTypes = CVideoThumbLoader::GetArtTypes(ContentToMediaType(content, pItem->m_bIsFolder));
+    vector<string>::iterator i = find(artTypes.begin(), artTypes.end(), "fanart");
+    if (i != artTypes.end())
+      artTypes.erase(i); // fanart is handled below
+    bool lookForThumb = find(artTypes.begin(), artTypes.end(), "thumb") == artTypes.end();
+
+    // find local art
+    if (useLocal)
+    {
+      for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
+      {
+        std::string image = CVideoThumbLoader::GetLocalArt(*pItem, *i, bApplyToDir);
+        if (!image.empty())
+          art.insert(make_pair(*i, image));
+      }
+      // find and classify the local thumb (backcompat) if available
+      if (lookForThumb)
+      {
+        std::string image = CVideoThumbLoader::GetLocalArt(*pItem, "thumb", bApplyToDir);
+        if (!image.empty())
+        { // cache the image and determine sizing
+          CTextureDetails details;
+          if (CTextureCache::Get().CacheImage(image, details))
+          {
+            std::string type = GetArtTypeFromSize(details.width, details.height);
+            if (art.find(type) == art.end())
+              art.insert(make_pair(type, image));
+          }
+        }
+      }
+    }
+
+    // find online art
+    for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
+    {
+      if (art.find(*i) == art.end())
+      {
+        std::string image = GetImage(pItem, false, bApplyToDir, *i);
+        if (!image.empty())
+          art.insert(make_pair(*i, image));
+      }
+    }
+
+    // use the first piece of online art as the first art type if no thumb type is available yet
+    if (art.empty() && lookForThumb)
+    {
+      std::string image = GetImage(pItem, false, bApplyToDir, "thumb");
+      if (!image.empty())
+        art.insert(make_pair(artTypes.front(), image));
+    }
+
     // get & save fanart image (treated separately due to it being stored in m_fanart)
     bool isEpisode = (content == CONTENT_TVSHOWS && !pItem->m_bIsFolder);
     if (!isEpisode)
@@ -1178,22 +1236,10 @@ namespace VIDEO
         art.insert(make_pair("fanart", fanart));
     }
 
-    // get and cache thumb images
-    vector<string> artTypes = CVideoThumbLoader::GetArtTypes(ContentToMediaType(content, pItem->m_bIsFolder));
-    for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
-    {
-      string type = *i;
-      if (type == "fanart")
-        continue; // handled above
-      std::string image = GetImage(pItem, useLocal, bApplyToDir, type);
-      if (!image.empty())
-        art.insert(make_pair(type, image));
-    }
-
     for (CGUIListItem::ArtMap::const_iterator i = art.begin(); i != art.end(); ++i)
       CTextureCache::Get().BackgroundCacheImage(i->second);
 
-    pItem->SetArt(art);
+    pItem->SetArt(art, false); // don't set fallbacks
 
     // parent folder to apply the thumb to and to search for local actor thumbs
     CStdString parentDir = GetParentDir(*pItem);
@@ -1619,36 +1665,85 @@ namespace VIDEO
     return "";
   }
 
-  void CVideoInfoScanner::GetSeasonThumbs(const CVideoInfoTag &show, map<int, string> &art, bool useLocal)
+  void CVideoInfoScanner::GetSeasonThumbs(const CVideoInfoTag &show, map<int, map<string, string> > &seasonArt, const vector<string> &artTypes, bool useLocal)
   {
-    show.m_strPictureURL.GetSeasonThumbs(art);
-    // override with any local thumbs
-    if (useLocal)
-    {
-      CFileItemList items;
-      CDirectory::GetDirectory(show.m_strPath, items, ".png|.jpg|.tbn", DIR_FLAG_NO_FILE_DIRS | DIR_FLAG_NO_FILE_INFO);
-      // run through all these items and see which ones match
-      CRegExp reg;
-      if (items.Size() && reg.RegComp("season[ ._-]?([0-9]+)\\.(tbn|jpg|png)"))
-      {
-        for (int i = 0; i < items.Size(); i++)
-        {
-          CStdString name = URIUtils::GetFileName(items[i]->GetPath());
-          URIUtils::RemoveExtension(name);
-          if (name == "season-all")
-            art[-1] = items[i]->GetPath();
-          else if (name == "season-specials")
-            art[0] = items[i]->GetPath();
-          else if (reg.RegFind(name) > -1)
-          {
-            char* seasonStr = reg.GetReplaceString("\\1");
-            int season = atoi(seasonStr);
-            free(seasonStr);
+    bool lookForThumb = find(artTypes.begin(), artTypes.end(), "thumb") == artTypes.end();
 
-            art[season] = items[i]->GetPath();
+    // find the maximum number of seasons we have thumbs for (local + remote)
+    int maxSeasons = show.m_strPictureURL.GetMaxSeasonThumb();
+
+    CFileItemList items;
+    CDirectory::GetDirectory(show.m_strPath, items, ".png|.jpg|.tbn", DIR_FLAG_NO_FILE_DIRS | DIR_FLAG_NO_FILE_INFO);
+    CRegExp reg;
+    if (items.Size() && reg.RegComp("season([0-9]+)(-[a-z]+)?\\.(tbn|jpg|png)"))
+    {
+      for (int i = 0; i < items.Size(); i++)
+      {
+        CStdString name = URIUtils::GetFileName(items[i]->GetPath());
+        if (reg.RegFind(name) > -1)
+        {
+          int season = atoi(reg.GetReplaceString("\\1").c_str());
+          if (season > maxSeasons)
+            maxSeasons = season;
+        }
+      }
+    }
+    for (int season = -1; season <= maxSeasons; season++)
+    {
+      map<string, string> art;
+      if (useLocal)
+      {
+        string basePath;
+        if (season == -1)
+          basePath = "season-all";
+        else if (season == 0)
+          basePath = "season-specials";
+        else
+          basePath = StringUtils::Format("season%02i", season);
+        CFileItem artItem(URIUtils::AddFileToFolder(show.m_strPath, basePath), false);
+
+        for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
+        {
+          std::string image = CVideoThumbLoader::GetLocalArt(artItem, *i, false);
+          if (!image.empty())
+            art.insert(make_pair(*i, image));
+        }
+        // find and classify the local thumb (backcompat) if available
+        if (lookForThumb)
+        {
+          std::string image = CVideoThumbLoader::GetLocalArt(artItem, "thumb", false);
+          if (!image.empty())
+          { // cache the image and determine sizing
+            CTextureDetails details;
+            if (CTextureCache::Get().CacheImage(image, details))
+            {
+              std::string type = GetArtTypeFromSize(details.width, details.height);
+              if (art.find(type) == art.end())
+                art.insert(make_pair(type, image));
+            }
           }
         }
       }
+
+      // find online art
+      for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
+      {
+        if (art.find(*i) == art.end())
+        {
+          string image = CScraperUrl::GetThumbURL(show.m_strPictureURL.GetSeasonThumb(season, *i));
+          if (!image.empty())
+            art.insert(make_pair(*i, image));
+        }
+      }
+      // use the first piece of online art as the first art type if no thumb type is available yet
+      if (art.empty() && lookForThumb)
+      {
+        string image = CScraperUrl::GetThumbURL(show.m_strPictureURL.GetSeasonThumb(season, "thumb"));
+        if (!image.empty())
+          art.insert(make_pair(artTypes.front(), image));
+      }
+
+      seasonArt.insert(make_pair(season, art));
     }
   }
 
@@ -1668,7 +1763,7 @@ namespace VIDEO
           URIUtils::RemoveExtension(compare);
           if (!items[j]->m_bIsFolder && compare == thumbFile)
           {
-            i->thumb = compare;
+            i->thumb = items[j]->GetPath();
             break;
           }
         }
