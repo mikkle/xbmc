@@ -71,6 +71,8 @@
 #include "URL.h"
 #include "utils/EdenVideoArtUpdater.h"
 #include "GUIInfoManager.h"
+#include "utils/GroupUtils.h"
+#include "filesystem/File.h"
 
 using namespace std;
 using namespace XFILE;
@@ -106,6 +108,15 @@ bool CGUIWindowVideoBase::OnAction(const CAction &action)
 {
   if (action.GetID() == ACTION_SCAN_ITEM)
     return OnContextButton(m_viewControl.GetSelectedItem(),CONTEXT_BUTTON_SCAN);
+  else if (action.GetID() == ACTION_SHOW_PLAYLIST)
+  {
+    if (g_playlistPlayer.GetCurrentPlaylist() == PLAYLIST_VIDEO ||
+        g_playlistPlayer.GetPlaylist(PLAYLIST_VIDEO).size() > 0)
+    {
+      g_windowManager.ActivateWindow(WINDOW_VIDEO_PLAYLIST);
+      return true;
+    }
+  }
 
   return CGUIMediaWindow::OnAction(action);
 }
@@ -277,6 +288,10 @@ void CGUIWindowVideoBase::OnInfo(CFileItem* pItem, const ADDON::ScraperPtr& scra
   CFileItem item(*pItem);
   if (item.IsVideoDb() && item.HasVideoInfoTag())
   {
+    if (item.GetVideoInfoTag()->m_type == "season")
+    { // clear out the art - we're really grabbing the info on the show here
+      item.ClearArt();
+    }
     item.SetPath(item.GetVideoInfoTag()->GetPath());
   }
   else
@@ -1059,6 +1074,22 @@ bool CGUIWindowVideoBase::ShowPlaySelection(CFileItemPtr& item)
     }
   }
 
+  CStdString ext = URIUtils::GetExtension(item->GetPath());
+  ext.ToLower();
+  if (ext == ".iso" ||  ext == ".img")
+  {
+    CURL url2("udf://");
+    url2.SetHostName(item->GetPath());
+    url2.SetFileName("BDMV/index.bdmv");
+    if (CFile::Exists(url2.Get()))
+    {
+      url2.SetFileName("");
+
+      CURL url("bluray://");
+      url.SetHostName(url2.Get());
+      return ShowPlaySelection(item, url.Get());
+    }
+  }
   return true;
 }
 
@@ -1592,7 +1623,8 @@ void CGUIWindowVideoBase::OnDeleteItem(CFileItemPtr item)
       return;
   }
 
-  if (g_guiSettings.GetBool("filelists.allowfiledeletion") &&
+  if ((g_guiSettings.GetBool("filelists.allowfiledeletion") ||
+       m_vecItems->GetPath().Equals("special://videoplaylists/")) &&
       CUtil::SupportsWriteFileOperations(item->GetPath()))
     CFileUtils::DeleteItem(item);
 }
@@ -1774,7 +1806,9 @@ bool CGUIWindowVideoBase::Update(const CStdString &strDirectory, bool updateFilt
   if (!CGUIMediaWindow::Update(strDirectory, updateFilterPath))
     return false;
 
-  m_thumbLoader.Load(*m_unfilteredItems);
+  // might already be running from GetGroupedItems
+  if (!m_thumbLoader.IsLoading())
+    m_thumbLoader.Load(*m_vecItems);
 
   return true;
 }
@@ -1819,13 +1853,38 @@ bool CGUIWindowVideoBase::GetDirectory(const CStdString &strDirectory, CFileItem
 
 bool CGUIWindowVideoBase::StackingAvailable(const CFileItemList &items) const
 {
+  CURL url(items.GetPath());
   return !(items.IsTuxBox()         || items.IsPlugin()  ||
            items.IsAddonsPath()     || items.IsRSS()     ||
-           items.IsInternetStream() || items.IsVideoDb());
+           items.IsInternetStream() || items.IsVideoDb() ||
+           url.GetProtocol() == "playlistvideo");
 }
 
-void CGUIWindowVideoBase::OnPrepareFileItems(CFileItemList &items)
+void CGUIWindowVideoBase::GetGroupedItems(CFileItemList &items)
 {
+  CGUIMediaWindow::GetGroupedItems(items);
+
+  CQueryParams params;
+  CVideoDatabaseDirectory dir;
+  dir.GetQueryParams(items.GetPath(), params);
+  VIDEODATABASEDIRECTORY::NODE_TYPE nodeType = CVideoDatabaseDirectory::GetDirectoryChildType(m_strFilterPath);
+  if (items.GetContent().Equals("movies") && params.GetSetId() <= 0 &&
+      nodeType == NODE_TYPE_TITLE_MOVIES &&
+      g_guiSettings.GetBool("videolibrary.groupmoviesets"))
+  {
+    CFileItemList groupedItems;
+    if (GroupUtils::Group(GroupBySet, items, groupedItems, GroupAttributeIgnoreSingleItems))
+    {
+      items.ClearItems();
+      items.Append(groupedItems);
+    }
+  }
+
+  // reload thumbs after filtering and grouping
+  if (m_thumbLoader.IsLoading())
+    m_thumbLoader.StopThread();
+
+  m_thumbLoader.Load(items);
 }
 
 bool CGUIWindowVideoBase::CheckFilterAdvanced(CFileItemList &items) const
@@ -2072,7 +2131,8 @@ bool CGUIWindowVideoBase::OnUnAssignContent(const CStdString &path, int label1, 
   db.Open();
   if (CGUIDialogYesNo::ShowAndGetInput(label1,label2,label3,20022,bCanceled))
   {
-    db.RemoveContentForPath(path);
+    CGUIDialogProgress *progress = (CGUIDialogProgress *)g_windowManager.GetWindow(WINDOW_DIALOG_PROGRESS);
+    db.RemoveContentForPath(path, progress);
     db.Close();
     CUtil::DeleteVideoDatabaseDirectoryCache();
     return true;

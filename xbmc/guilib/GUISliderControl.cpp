@@ -107,6 +107,7 @@ bool CGUISliderControl::ProcessSelector(CGUITexture &nib, unsigned int currentTi
   CAspectRatio ratio(CAspectRatio::AR_KEEP);
   ratio.align = ASPECT_ALIGN_LEFT | ASPECT_ALIGNY_CENTER;
   dirty |= nib.SetAspectRatio(ratio);
+  dirty |= nib.Process(currentTime);
   CRect rect = nib.GetRenderRect();
 
   float offset = GetProportion(selector) * m_width - rect.Width() / 2;
@@ -115,7 +116,7 @@ bool CGUISliderControl::ProcessSelector(CGUITexture &nib, unsigned int currentTi
   if (offset < 0)
     offset = 0;
   dirty |= nib.SetPosition(m_guiBackground.GetXPosition() + offset, m_guiBackground.GetYPosition());
-  dirty |= nib.Process(currentTime);
+  dirty |= nib.Process(currentTime); // need to process again as the position may have changed
 
   return dirty;
 }
@@ -284,7 +285,7 @@ void CGUISliderControl::SwitchRangeSelector()
     SetRangeSelector(RangeSelectorLower);
 }
 
-void CGUISliderControl::SetPercentage(int iPercent, RangeSelector selector /* = RangeSelectorLower */)
+void CGUISliderControl::SetPercentage(int iPercent, RangeSelector selector /* = RangeSelectorLower */, bool updateCurrent /* = false */)
 {
   if (iPercent > 100) iPercent = 100;
   else if (iPercent < 0) iPercent = 0;
@@ -296,11 +297,15 @@ void CGUISliderControl::SetPercentage(int iPercent, RangeSelector selector /* = 
   {
     m_percentValues[0] = iPercentLower;
     m_percentValues[1] = iPercentUpper;
+    if (updateCurrent)
+      m_currentSelector = selector;
   }
   else
   {
     m_percentValues[0] = iPercentUpper;
     m_percentValues[1] = iPercentLower;
+    if (updateCurrent)
+        m_currentSelector = (selector == RangeSelectorLower ? RangeSelectorUpper : RangeSelectorLower);
   }
 }
 
@@ -309,7 +314,7 @@ int CGUISliderControl::GetPercentage(RangeSelector selector /* = RangeSelectorLo
   return m_percentValues[selector];
 }
 
-void CGUISliderControl::SetIntValue(int iValue, RangeSelector selector /* = RangeSelectorLower */)
+void CGUISliderControl::SetIntValue(int iValue, RangeSelector selector /* = RangeSelectorLower */, bool updateCurrent /* = false */)
 {
   if (m_iType == SPIN_CONTROL_TYPE_FLOAT)
     SetFloatValue((float)iValue);
@@ -325,11 +330,15 @@ void CGUISliderControl::SetIntValue(int iValue, RangeSelector selector /* = Rang
     {
       m_intValues[0] = iValueLower;
       m_intValues[1] = iValueUpper;
+      if (updateCurrent)
+        m_currentSelector = selector;
     }
     else
     {
       m_intValues[0] = iValueUpper;
       m_intValues[1] = iValueLower;
+      if (updateCurrent)
+        m_currentSelector = (selector == RangeSelectorLower ? RangeSelectorUpper : RangeSelectorLower);
     }
   }
   else
@@ -346,7 +355,7 @@ int CGUISliderControl::GetIntValue(RangeSelector selector /* = RangeSelectorLowe
     return m_percentValues[selector];
 }
 
-void CGUISliderControl::SetFloatValue(float fValue, RangeSelector selector /* = RangeSelectorLower */)
+void CGUISliderControl::SetFloatValue(float fValue, RangeSelector selector /* = RangeSelectorLower */, bool updateCurrent /* = false */)
 {
   if (m_iType == SPIN_CONTROL_TYPE_FLOAT)
   {
@@ -360,11 +369,15 @@ void CGUISliderControl::SetFloatValue(float fValue, RangeSelector selector /* = 
     {
       m_floatValues[0] = fValueLower;
       m_floatValues[1] = fValueUpper;
+      if (updateCurrent)
+        m_currentSelector = selector;
     }
     else
     {
       m_floatValues[0] = fValueUpper;
       m_floatValues[1] = fValueLower;
+      if (updateCurrent)
+        m_currentSelector = (selector == RangeSelectorLower ? RangeSelectorUpper : RangeSelectorLower);
     }
   }
   else if (m_iType == SPIN_CONTROL_TYPE_INT)
@@ -469,42 +482,41 @@ bool CGUISliderControl::HitTest(const CPoint &point) const
   return false;
 }
 
-void CGUISliderControl::SetFromPosition(const CPoint &point)
+void CGUISliderControl::SetFromPosition(const CPoint &point, bool guessSelector /* = false */)
 {
   float fPercent = (point.x - m_guiBackground.GetXPosition()) / m_guiBackground.GetWidth();
   if (fPercent < 0) fPercent = 0;
   if (fPercent > 1) fPercent = 1;
 
-  RangeSelector selector = RangeSelectorLower;
+  if (m_rangeSelection && guessSelector)
+  {
+    // choose selector which value is closer to value calculated from position
+    if (fabs(GetPercentage(RangeSelectorLower) - 100 * fPercent) <= fabs(GetPercentage(RangeSelectorUpper) - 100 * fPercent))
+      m_currentSelector = RangeSelectorLower;
+    else
+      m_currentSelector = RangeSelectorUpper;
+  }
+
   switch (m_iType)
   {
   case SPIN_CONTROL_TYPE_FLOAT:
     {
       float fValue = m_fStart + (m_fEnd - m_fStart) * fPercent;
-      if (m_rangeSelection && fValue >= m_floatValues[1])
-        selector = RangeSelectorUpper;
-
-      SetFloatValue(fValue, selector);
+      SetFloatValue(fValue, m_currentSelector, true);
       break;
     }
 
   case SPIN_CONTROL_TYPE_INT:
     {
       int iValue = (int)(m_iStart + (float)(m_iEnd - m_iStart) * fPercent + 0.49f);
-      if (m_rangeSelection && iValue >= m_intValues[1])
-        selector = RangeSelectorUpper;
-
-      SetIntValue(iValue, selector);
+      SetIntValue(iValue, m_currentSelector, true);
       break;
     }
 
   default:
     {
       int iValue = (int)(fPercent * 100 + 0.49f);
-      if (m_rangeSelection && iValue >= m_percentValues[1])
-        selector = RangeSelectorUpper;
-
-      SetPercentage(iValue, selector);
+      SetPercentage(iValue, m_currentSelector, true);
       break;
     }
   }
@@ -517,10 +529,12 @@ EVENT_RESULT CGUISliderControl::OnMouseEvent(const CPoint &point, const CMouseEv
   if (event.m_id == ACTION_MOUSE_DRAG)
   {
     m_dragging = true;
+    bool guessSelector = false;
     if (event.m_state == 1)
     { // grab exclusive access
       CGUIMessage msg(GUI_MSG_EXCLUSIVE_MOUSE, GetID(), GetParentID());
       SendWindowMessage(msg);
+      guessSelector = true;
     }
     else if (event.m_state == 3)
     { // release exclusive access
@@ -528,12 +542,12 @@ EVENT_RESULT CGUISliderControl::OnMouseEvent(const CPoint &point, const CMouseEv
       CGUIMessage msg(GUI_MSG_EXCLUSIVE_MOUSE, 0, GetParentID());
       SendWindowMessage(msg);
     }
-    SetFromPosition(point);
+    SetFromPosition(point, guessSelector);
     return EVENT_RESULT_HANDLED;
   }
   else if (event.m_id == ACTION_MOUSE_LEFT_CLICK && m_guiBackground.HitTest(point))
   {
-    SetFromPosition(point);
+    SetFromPosition(point, true);
     return EVENT_RESULT_HANDLED;
   }
   else if (event.m_id == ACTION_MOUSE_WHEEL_UP)

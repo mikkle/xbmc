@@ -1041,7 +1041,7 @@ void CSoftAE::Run()
         delete m_sink;
         m_sink = NULL;
       }
-      if (!m_playingStreams.empty() || !m_playing_sounds.empty() || m_sounds.empty())
+      if (!m_playingStreams.empty() || !m_playing_sounds.empty() || !m_sounds.empty())
         m_softSuspend = false;
       m_wake.WaitMSec(SOFTAE_IDLE_WAIT_MSEC);
     }
@@ -1362,7 +1362,7 @@ unsigned int CSoftAE::RunStreamStage(unsigned int channelCount, void *out, bool 
     if (!frame)
       continue;
 
-    float volume = stream->GetVolume() * stream->GetReplayGain();
+    float volume = stream->GetVolume() * stream->GetReplayGain() * stream->RunLimiter(frame, channelCount);
     #ifdef __SSE__
     if (channelCount > 1)
       CAEUtil::SSEMulAddArray(dst, frame, volume, channelCount);
