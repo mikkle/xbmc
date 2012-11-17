@@ -122,7 +122,7 @@ namespace VIDEO
       if (!bCancelled)
       {
         if (m_bClean)
-          CleanDatabase(m_handle,&m_pathsToClean);
+          CleanDatabase(m_handle,&m_pathsToClean, false);
         else
         {
           if (m_handle)
@@ -192,11 +192,11 @@ namespace VIDEO
     StopThread();
   }
 
-  void CVideoInfoScanner::CleanDatabase(CGUIDialogProgressBarHandle* handle /*= NULL */, const set<int>* paths /*= NULL */)
+  void CVideoInfoScanner::CleanDatabase(CGUIDialogProgressBarHandle* handle /*= NULL */, const set<int>* paths /*= NULL */, bool showProgress /*= true */)
   {
     m_bRunning = true;
     m_database.Open();
-    m_database.CleanDatabase(handle, paths);
+    m_database.CleanDatabase(handle, paths, showProgress);
     m_database.Close();
     m_bRunning = false;
   }
@@ -1239,7 +1239,7 @@ namespace VIDEO
     for (CGUIListItem::ArtMap::const_iterator i = art.begin(); i != art.end(); ++i)
       CTextureCache::Get().BackgroundCacheImage(i->second);
 
-    pItem->SetArt(art, false); // don't set fallbacks
+    pItem->SetArt(art);
 
     // parent folder to apply the thumb to and to search for local actor thumbs
     CStdString parentDir = GetParentDir(*pItem);

@@ -107,6 +107,7 @@ namespace INFO
 #define PLAYER_CAN_PAUSE             50
 #define PLAYER_CAN_SEEK              51
 #define PLAYER_START_TIME            52
+#define PLAYER_TITLE                 53
 
 #define WEATHER_CONDITIONS          100
 #define WEATHER_TEMPERATURE         101
@@ -503,7 +504,7 @@ namespace INFO
 
 #define VERSION_MAJOR 12
 #define VERSION_MINOR 0
-#define VERSION_TAG "-ALPHA7"
+#define VERSION_TAG "-BETA1"
 
 #define LISTITEM_START              35000
 #define LISTITEM_THUMB              (LISTITEM_START)

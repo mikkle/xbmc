@@ -22,7 +22,6 @@
 
 #include "CoreAudioAE.h"
 
-#include "MathUtils.h"
 #include "CoreAudioAEStream.h"
 #include "CoreAudioAESound.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
@@ -33,6 +32,7 @@
 #include "utils/EndianSwap.h"
 #include "utils/log.h"
 #include "utils/TimeUtils.h"
+#include "utils/MathUtils.h"
 
 #define DELAY_FRAME_TIME  20
 #define BUFFERSIZE        16416
@@ -40,6 +40,9 @@
 CCoreAudioAE::CCoreAudioAE() :
   m_Initialized        (false         ),
   m_callbackRunning    (false         ),
+  m_lastStreamFormat   (AE_FMT_INVALID),
+  m_lastChLayoutCount  (0             ),
+  m_lastSampleRate     (0             ),
   m_chLayoutCount      (0             ),
   m_rawPassthrough     (false         ),
   m_volume             (1.0f          ),
@@ -436,10 +439,17 @@ IAEStream* CCoreAudioAE::MakeStream(enum AEDataFormat dataFormat,
 
   Stop();
 
-  if (m_Initialized)
+  // reinit the engine if pcm format changes or always on raw format
+  if (m_Initialized && ( m_lastStreamFormat != dataFormat ||
+                         m_lastChLayoutCount != channelLayout.Count() ||
+                         m_lastSampleRate != sampleRate ||
+                         COREAUDIO_IS_RAW(dataFormat)))
   {
     Deinitialize();
     m_Initialized = OpenCoreAudio(sampleRate, COREAUDIO_IS_RAW(dataFormat), dataFormat);
+    m_lastStreamFormat = dataFormat;
+    m_lastChLayoutCount = channelLayout.Count();
+    m_lastSampleRate = sampleRate;
   }
 
   /* if the stream was not initialized, do it now */

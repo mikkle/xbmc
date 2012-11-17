@@ -40,6 +40,7 @@
 		7C4458DB161E209100A905F6 /* Screenshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4458D9161E209100A905F6 /* Screenshot.cpp */; };
 		7C6EB586155E3EC80080368A /* ImageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6EB584155E3EC80080368A /* ImageFile.cpp */; };
 		7C6EB708155F3B160080368A /* HTTPImageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6EB706155F3B160080368A /* HTTPImageHandler.cpp */; };
+		7C7CEB4B165629BF0059C9EB /* AELimiter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C7CEB49165629BF0059C9EB /* AELimiter.cpp */; };
 		7C89627013B702F3003631FE /* GUIWindowScreensaverDim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C89626E13B702F3003631FE /* GUIWindowScreensaverDim.cpp */; };
 		7C99B7AA134072CD00FC2B16 /* GUIDialogPlayEject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C99B7A8134072CD00FC2B16 /* GUIDialogPlayEject.cpp */; };
 		7CC30DF2162925BE003E7579 /* MusicThumbLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC30DF0162925BE003E7579 /* MusicThumbLoader.cpp */; };
@@ -1027,6 +1028,7 @@
 		F5ED8D931551FAEA00842059 /* BlurayDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5ED8D911551FAEA00842059 /* BlurayDirectory.cpp */; };
 		F5ED90C91553994800842059 /* XBMCTinyXML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5ED90C71553994800842059 /* XBMCTinyXML.cpp */; };
 		F5ED90CC1553995B00842059 /* POUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5ED90CA1553995B00842059 /* POUtils.cpp */; };
+		F5EDC4A91651A75700B852D8 /* GroupUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5EDC4A71651A75700B852D8 /* GroupUtils.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1099,6 +1101,8 @@
 		7C6EB585155E3EC80080368A /* ImageFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFile.h; sourceTree = "<group>"; };
 		7C6EB706155F3B160080368A /* HTTPImageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPImageHandler.cpp; sourceTree = "<group>"; };
 		7C6EB707155F3B160080368A /* HTTPImageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPImageHandler.h; sourceTree = "<group>"; };
+		7C7CEB49165629BF0059C9EB /* AELimiter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AELimiter.cpp; sourceTree = "<group>"; };
+		7C7CEB4A165629BF0059C9EB /* AELimiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AELimiter.h; sourceTree = "<group>"; };
 		7C89626E13B702F3003631FE /* GUIWindowScreensaverDim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIWindowScreensaverDim.cpp; sourceTree = "<group>"; };
 		7C89626F13B702F3003631FE /* GUIWindowScreensaverDim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIWindowScreensaverDim.h; sourceTree = "<group>"; };
 		7C99B7A8134072CD00FC2B16 /* GUIDialogPlayEject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIDialogPlayEject.cpp; sourceTree = "<group>"; };
@@ -3231,6 +3235,8 @@
 		F5ED90C81553994800842059 /* XBMCTinyXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBMCTinyXML.h; sourceTree = "<group>"; };
 		F5ED90CA1553995B00842059 /* POUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = POUtils.cpp; sourceTree = "<group>"; };
 		F5ED90CB1553995B00842059 /* POUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POUtils.h; sourceTree = "<group>"; };
+		F5EDC4A71651A75700B852D8 /* GroupUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupUtils.cpp; sourceTree = "<group>"; };
+		F5EDC4A81651A75700B852D8 /* GroupUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupUtils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3645,6 +3651,8 @@
 				DFB662D115376810006B8FF1 /* AEConvert.h */,
 				7C0B9908154B80200065A238 /* AEDeviceInfo.cpp */,
 				7C0B9909154B80200065A238 /* AEDeviceInfo.h */,
+				7C7CEB49165629BF0059C9EB /* AELimiter.cpp */,
+				7C7CEB4A165629BF0059C9EB /* AELimiter.h */,
 				DFB662D215376810006B8FF1 /* AEPackIEC61937.cpp */,
 				DFB662D315376810006B8FF1 /* AEPackIEC61937.h */,
 				DFB662D415376810006B8FF1 /* AERemap.cpp */,
@@ -5744,6 +5752,8 @@
 				F56C770C131EC153000AD0F6 /* GlobalsHandling.h */,
 				F56C770D131EC153000AD0F6 /* GLUtils.cpp */,
 				F56C770E131EC153000AD0F6 /* GLUtils.h */,
+				F5EDC4A71651A75700B852D8 /* GroupUtils.cpp */,
+				F5EDC4A81651A75700B852D8 /* GroupUtils.h */,
 				F56C773B131EC154000AD0F6 /* HTMLTable.cpp */,
 				F56C773C131EC154000AD0F6 /* HTMLTable.h */,
 				F56C773D131EC154000AD0F6 /* HTMLUtil.cpp */,
@@ -7637,6 +7647,8 @@
 				DF402A95164462FC001C56B8 /* swig.cpp in Sources */,
 				DF402A96164462FC001C56B8 /* XBPython.cpp in Sources */,
 				DF402A97164462FC001C56B8 /* XBPyThread.cpp in Sources */,
+				F5EDC4A91651A75700B852D8 /* GroupUtils.cpp in Sources */,
+				7C7CEB4B165629BF0059C9EB /* AELimiter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
