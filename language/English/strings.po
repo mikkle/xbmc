@@ -4502,7 +4502,7 @@ msgid "Alarm!"
 msgstr ""
 
 msgctxt "#13212"
-msgid "Canceled with %im%is left"
+msgid "Cancelled with %im%is left"
 msgstr ""
 
 #. minutes (left from countdown)
@@ -6103,7 +6103,7 @@ msgstr ""
 #empty string with id 16023
 
 msgctxt "#16024"
-msgid "Canceling..."
+msgid "Cancelling..."
 msgstr ""
 
 msgctxt "#16025"
@@ -7006,9 +7006,7 @@ msgctxt "#19167"
 msgid "Scan for missing icons"
 msgstr ""
 
-msgctxt "#19168"
-msgid "Switch channel without pressing OK"
-msgstr ""
+#empty string with id 19168
 
 msgctxt "#19169"
 msgid "Hide video information box"
@@ -7460,6 +7458,10 @@ msgstr ""
 #: xbmc/settings/GUISettings.cpp
 msgctxt "#19280"
 msgid "Client specific settings"
+msgstr ""
+
+msgctxt "#19281"
+msgid "Confirm channel switches by pressing OK"
 msgstr ""
 
 #empty strings from id 19281 to 19498
