@@ -20,6 +20,7 @@
 
 #include "MusicInfoTag.h"
 #include "music/Album.h"
+#include "music/Artist.h"
 #include "utils/StringUtils.h"
 #include "settings/AdvancedSettings.h"
 #include "utils/Variant.h"
@@ -123,11 +124,6 @@ bool CMusicInfoTag::operator !=(const CMusicInfoTag& tag) const
   if (this == &tag) return false;
   if (m_strURL != tag.m_strURL) return true;
   if (m_strTitle != tag.m_strTitle) return true;
-  for (unsigned int index = 0; index < m_artist.size(); index++)
-  {
-    if (tag.m_artist.at(index).compare(m_artist.at(index)) != 0)
-      return true;
-  }
   if (m_bCompilation != tag.m_bCompilation) return true;
   if (m_artist != tag.m_artist) return true;
   if (m_albumArtist != tag.m_albumArtist) return true;
@@ -507,6 +503,16 @@ void CMusicInfoTag::SetReplayGainAlbumPeak(float albumPeak)
 {
   m_fAlbumPeak = albumPeak;
   m_iHasGainInfo |= REPLAY_GAIN_HAS_ALBUM_PEAK;
+}
+
+void CMusicInfoTag::SetArtist(const CArtist& artist)
+{
+  SetArtist(artist.strArtist);
+  SetAlbumArtist(artist.strArtist);
+  SetGenre(artist.genre);
+  m_iDbId = artist.idArtist;
+  m_type = "artist";
+  m_bLoaded = true;
 }
 
 void CMusicInfoTag::SetAlbum(const CAlbum& album)
