@@ -162,11 +162,11 @@ bool CVideoDatabase::CreateTables()
 
     CLog::Log(LOGINFO, "create path table");
     m_pDS->exec("CREATE TABLE path ( idPath integer primary key, strPath text, strContent text, strScraper text, strHash text, scanRecursive integer, useFolderNames bool, strSettings text, noUpdate bool, exclude bool, dateAdded text)");
-    m_pDS->exec("CREATE UNIQUE INDEX ix_path ON path ( strPath(255) )");
+    m_pDS->exec("CREATE INDEX ix_path ON path ( strPath(255) )");
 
     CLog::Log(LOGINFO, "create files table");
     m_pDS->exec("CREATE TABLE files ( idFile integer primary key, idPath integer, strFilename text, playCount integer, lastPlayed text, dateAdded text)");
-    m_pDS->exec("CREATE UNIQUE INDEX ix_files ON files ( idPath, strFilename(255) )");
+    m_pDS->exec("CREATE INDEX ix_files ON files ( idPath, strFilename(255) )");
 
     CLog::Log(LOGINFO, "create tvshow table");
     columns = "CREATE TABLE tvshow ( idShow integer primary key";
@@ -2365,6 +2365,21 @@ void CVideoDatabase::SetStreamDetailsForFileId(const CStreamDetails& details, in
         details.GetSubtitleLanguage(i).c_str()));
     }
 
+    // update the runtime information, if empty
+    if (details.GetVideoDuration())
+    {
+      vector< pair<string, int> > tables;
+      tables.push_back(make_pair("movie", VIDEODB_ID_RUNTIME));
+      tables.push_back(make_pair("episode", VIDEODB_ID_EPISODE_RUNTIME));
+      tables.push_back(make_pair("musicvideo", VIDEODB_ID_MUSICVIDEO_RUNTIME));
+      for (vector< pair<string, int> >::iterator i = tables.begin(); i != tables.end(); ++i)
+      {
+        CStdString sql = PrepareSQL("update %s set c%02d=%d where idFile=%d and c%02d=''",
+                                    i->first.c_str(), i->second, details.GetVideoDuration(), idFile, i->second);
+        m_pDS->exec(sql);
+      }
+    }
+
     CommitTransaction();
   }
   catch (...)
@@ -3150,7 +3165,7 @@ bool CVideoDatabase::GetStreamDetails(CVideoInfoTag& tag) const
   details.DetermineBestStreams();
 
   if (details.GetVideoDuration() > 0)
-    tag.m_strRuntime.Format("%i", details.GetVideoDuration() / 60 );
+    tag.m_duration = details.GetVideoDuration();
 
   return retVal;
 }
@@ -4258,9 +4273,44 @@ bool CVideoDatabase::UpdateOldVersion(int iVersion)
                 "DELETE FROM tag WHERE idTag=old.idTag AND idTag NOT IN (SELECT DISTINCT idTag FROM taglinks); "
                 "END");
   }
+  if (iVersion < 74)
+  { // update the runtime columns
+    vector< pair<string, int> > tables;
+    tables.push_back(make_pair("movie", VIDEODB_ID_RUNTIME));
+    tables.push_back(make_pair("episode", VIDEODB_ID_EPISODE_RUNTIME));
+    tables.push_back(make_pair("mvideo", VIDEODB_ID_MUSICVIDEO_RUNTIME));
+    for (vector< pair<string, int> >::iterator i = tables.begin(); i != tables.end(); ++i)
+    {
+      CStdString sql = PrepareSQL("select id%s,c%02d from %s where c%02d != ''", i->first.c_str(), i->second, (i->first=="mvideo")?"musicvideo":i->first.c_str(), i->second);
+      m_pDS->query(sql.c_str());
+      vector< pair<int, int> > videos;
+      while (!m_pDS->eof())
+      {
+        int duration = CVideoInfoTag::GetDurationFromMinuteString(m_pDS->fv(1).get_asString());
+        if (duration)
+          videos.push_back(make_pair(m_pDS->fv(0).get_asInt(), duration));
+        m_pDS->next();
+      }
+      m_pDS->close();
+      for (vector< pair<int, int> >::iterator j = videos.begin(); j != videos.end(); ++j)
+        m_pDS->exec(PrepareSQL("update %s set c%02d=%d where id%s=%d", (i->first=="mvideo")?"musicvideo":i->first.c_str(), i->second, j->second, i->first.c_str(), j->first));
+    }
+  }
+  if (iVersion < 75)
+  { // make indices on path, file non-unique (mysql has a prefix index, and prefixes aren't necessarily unique)
+    m_pDS->dropIndex("path", "ix_path");
+    m_pDS->dropIndex("files", "ix_files");
+    m_pDS->exec("CREATE INDEX ix_path ON path ( strPath(255) )");
+    m_pDS->exec("CREATE INDEX ix_files ON files ( idPath, strFilename(255) )");
+  }
   // always recreate the view after any table change
   CreateViews();
   return true;
+}
+
+int CVideoDatabase::GetMinVersion() const
+{
+  return 75;
 }
 
 bool CVideoDatabase::LookupByFolders(const CStdString &path, bool shows)
@@ -5473,7 +5523,7 @@ bool CVideoDatabase::GetStackedTvShowList(int idShow, CStdString& strIn) const
   return false;
 }
 
-bool CVideoDatabase::GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& items, int idActor, int idDirector, int idGenre, int idYear, int idShow)
+bool CVideoDatabase::GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& items, int idActor, int idDirector, int idGenre, int idYear, int idShow, bool getLinkedMovies /* = true */)
 {
   try
   {
@@ -5643,14 +5693,17 @@ bool CVideoDatabase::GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& 
     }
 
     // now add any linked movies
-    Filter movieFilter;
-    movieFilter.join  = PrepareSQL("join movielinktvshow on movielinktvshow.idMovie=movieview.idMovie");
-    movieFilter.where = PrepareSQL("movielinktvshow.idShow %s", strIn.c_str());
-    CFileItemList movieItems;
-    GetMoviesByWhere("videodb://1/2/", movieFilter, movieItems);
+    if (getLinkedMovies)
+    {
+      Filter movieFilter;
+      movieFilter.join  = PrepareSQL("join movielinktvshow on movielinktvshow.idMovie=movieview.idMovie");
+      movieFilter.where = PrepareSQL("movielinktvshow.idShow %s", strIn.c_str());
+      CFileItemList movieItems;
+      GetMoviesByWhere("videodb://1/2/", movieFilter, movieItems);
 
-    if (movieItems.Size() > 0)
-      items.Append(movieItems);
+      if (movieItems.Size() > 0)
+        items.Append(movieItems);
+    }
 
     return true;
   }
@@ -6393,6 +6446,16 @@ int CVideoDatabase::GetTvShowForEpisode(int idEpisode)
     CLog::Log(LOGERROR, "%s (%i) failed", __FUNCTION__, idEpisode);
   }
   return false;
+}
+
+int CVideoDatabase::GetSeasonForEpisode(int idEpisode)
+{
+  char column[5];
+  sprintf(column, "c%0d", VIDEODB_ID_EPISODE_SEASON);
+  CStdString id = GetSingleValue("episode", column, PrepareSQL("idEpisode=%i", idEpisode));
+  if (id.IsEmpty())
+    return -1;
+  return atoi(id.c_str());
 }
 
 bool CVideoDatabase::HasContent()
