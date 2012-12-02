@@ -175,7 +175,7 @@ const struct SDbTableOffsets
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strPictureURL.m_xml) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strIMDBNumber) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strSortTitle) },
-  { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strRuntime) },
+  { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_duration) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strMPAARating) },
   { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_iTop250) },
   { VIDEODB_TYPE_STRINGARRAY, my_offsetof(CVideoInfoTag,m_genre) },
@@ -274,7 +274,7 @@ const struct SDbTableOffsets DbEpisodeOffsets[] =
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strPictureURL.m_xml) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strPictureURL.m_spoof) },
   { VIDEODB_TYPE_COUNT, my_offsetof(CVideoInfoTag,m_playCount) }, // unused
-  { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strRuntime) },
+  { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_duration) },
   { VIDEODB_TYPE_STRINGARRAY, my_offsetof(CVideoInfoTag,m_director) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strProductionCode) },
   { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_iSeason) },
@@ -315,7 +315,7 @@ const struct SDbTableOffsets DbMusicVideoOffsets[] =
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strPictureURL.m_xml) },
   { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strPictureURL.m_spoof) },
   { VIDEODB_TYPE_COUNT, my_offsetof(CVideoInfoTag,m_playCount) }, // unused
-  { VIDEODB_TYPE_STRING, my_offsetof(CVideoInfoTag,m_strRuntime) },
+  { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_duration) },
   { VIDEODB_TYPE_STRINGARRAY, my_offsetof(CVideoInfoTag,m_director) },
   { VIDEODB_TYPE_STRINGARRAY, my_offsetof(CVideoInfoTag,m_studio) },
   { VIDEODB_TYPE_INT, my_offsetof(CVideoInfoTag,m_iYear) },
@@ -426,6 +426,7 @@ public:
   CStdString GetTvShowTitleById(int id);
   CStdString GetMusicVideoAlbumById(int id);
   int GetTvShowForEpisode(int idEpisode);
+  int GetSeasonForEpisode(int idEpisode);
 
   bool LoadVideoInfo(const CStdString& strFilenameAndPath, CVideoInfoTag& details);
   bool GetMovieInfo(const CStdString& strFilenameAndPath, CVideoInfoTag& details, int idMovie = -1);
@@ -589,7 +590,7 @@ public:
 
   bool GetMoviesNav(const CStdString& strBaseDir, CFileItemList& items, int idGenre=-1, int idYear=-1, int idActor=-1, int idDirector=-1, int idStudio=-1, int idCountry=-1, int idSet=-1, int idTag=-1, const SortDescription &sortDescription = SortDescription());
   bool GetTvShowsNav(const CStdString& strBaseDir, CFileItemList& items, int idGenre=-1, int idYear=-1, int idActor=-1, int idDirector=-1, int idStudio=-1, int idTag=-1, const SortDescription &sortDescription = SortDescription());
-  bool GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& items, int idActor=-1, int idDirector=-1, int idGenre=-1, int idYear=-1, int idShow=-1);
+  bool GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& items, int idActor=-1, int idDirector=-1, int idGenre=-1, int idYear=-1, int idShow=-1, bool getLinkedMovies = true);
   bool GetEpisodesNav(const CStdString& strBaseDir, CFileItemList& items, int idGenre=-1, int idYear=-1, int idActor=-1, int idDirector=-1, int idShow=-1, int idSeason=-1, const SortDescription &sortDescription = SortDescription());
   bool GetMusicVideosNav(const CStdString& strBaseDir, CFileItemList& items, int idGenre=-1, int idYear=-1, int idArtist=-1, int idDirector=-1, int idStudio=-1, int idAlbum=-1, int idTag=-1, const SortDescription &sortDescription = SortDescription());
   
@@ -805,7 +806,7 @@ private:
    */
   bool LookupByFolders(const CStdString &path, bool shows = false);
 
-  virtual int GetMinVersion() const { return 73; };
+  virtual int GetMinVersion() const;
   virtual int GetExportVersion() const { return 1; };
   const char *GetBaseDBName() const { return "MyVideos"; };
 
