@@ -55,6 +55,7 @@ class XBPython :
   public IPlayerCallback,
   public ANNOUNCEMENT::IAnnouncer
 {
+  void Finalize();
 public:
   XBPython();
   virtual ~XBPython();
@@ -79,13 +80,12 @@ public:
   void OnDatabaseUpdated(const std::string &database);
   void OnAbortRequested(const CStdString &ID="");
   void Initialize();
-  void Finalize();
   void FinalizeScript();
   void FreeResources();
   void Process();
 
   void PulseGlobalEvent();
-  void WaitForEvent(CEvent& hEvent);
+  bool WaitForEvent(CEvent& hEvent, unsigned int milliseconds);
 
   int ScriptsSize();
   int GetPythonScriptId(int scriptPosition);

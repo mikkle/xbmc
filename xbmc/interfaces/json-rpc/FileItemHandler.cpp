@@ -164,6 +164,12 @@ bool CFileItemHandler::GetField(const std::string &field, const CVariant &info, 
       result[field] = item->m_dateTime.GetAsLocalizedDateTime();
       return true;
     }
+
+    if (item->HasProperty(field))
+    {
+      result[field] = item->GetProperty(field);
+      return true;
+    }
   }
 
   return false;
@@ -183,7 +189,7 @@ void CFileItemHandler::FillDetails(const ISerializable *info, const CFileItemPtr
 
   for (std::set<std::string>::const_iterator fieldIt = originalFields.begin(); fieldIt != originalFields.end(); fieldIt++)
   {
-    if (GetField(*fieldIt, serialization, item, result, fetchedArt, thumbLoader))
+    if (GetField(*fieldIt, serialization, item, result, fetchedArt, thumbLoader) && result.isMember(*fieldIt) && !result[*fieldIt].empty())
       fields.erase(*fieldIt);
   }
 }
@@ -283,12 +289,11 @@ void CFileItemHandler::HandleFileItem(const char *ID, bool allowFile, const char
       {
         if (item->HasPVRChannelInfoTag())
           object["type"] = "channel";
-        else if (item->HasMusicInfoTag())
+        else if (item->HasMusicInfoTag() && !item->GetMusicInfoTag()->GetType().empty())
         {
-          if (item->m_bIsFolder && item->IsAlbum())
-            object["type"] = "album";
-          else
-            object["type"] = "song";
+          std::string type = item->GetMusicInfoTag()->GetType();
+          if (type == "album" || type == "song")
+            object["type"] = type;
         }
         else if (item->HasVideoInfoTag() && !item->GetVideoInfoTag()->m_type.empty())
         {

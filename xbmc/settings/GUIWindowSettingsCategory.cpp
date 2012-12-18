@@ -72,7 +72,7 @@
 #endif
 #endif
 #if defined(TARGET_DARWIN_OSX)
-#include "XBMCHelper.h"
+#include "osx/XBMCHelper.h"
 #endif
 #include "network/GUIDialogAccessPoints.h"
 #include "filesystem/Directory.h"
@@ -783,16 +783,10 @@ void CGUIWindowSettingsCategory::UpdateSettings()
           pControl->SetEnabled(g_guiSettings.GetInt("audiooutput.mode") == AUDIO_HDMI);
       }
     }
-    else if (strSetting.Equals("musicplayer.crossfade"))
-    {
-      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
-      if (pControl) pControl->SetEnabled(g_guiSettings.GetString("audiooutput.audiodevice").find("wasapi:") == CStdString::npos);
-    }
     else if (strSetting.Equals("musicplayer.crossfadealbumtracks"))
     {
       CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
-      if (pControl) pControl->SetEnabled(g_guiSettings.GetInt("musicplayer.crossfade") > 0 &&
-                                         g_guiSettings.GetString("audiooutput.audiodevice").find("wasapi:") == CStdString::npos);
+      if (pControl) pControl->SetEnabled(g_guiSettings.GetInt("musicplayer.crossfade") > 0);
     }
 #ifdef HAS_WEB_SERVER
     else if (strSetting.Equals("services.webserverusername") ||
@@ -928,6 +922,7 @@ void CGUIWindowSettingsCategory::UpdateSettings()
         pControl->SetEnabled(false);
     }
     else if (strSetting.Equals("screensaver.preview")           ||
+             strSetting.Equals("screensaver.time")              ||
              strSetting.Equals("screensaver.usedimonpause")     ||
              strSetting.Equals("screensaver.usemusicvisinstead"))
     {
@@ -1021,10 +1016,16 @@ void CGUIWindowSettingsCategory::UpdateSettings()
       if (pControl)
         pControl->SetEnabled(g_peripherals.GetNumberOfPeripherals() > 0);
     }
+    else if (strSetting.Equals("input.enablejoystick"))
+    {
+      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
+      if (pControl)
+        pControl->SetEnabled(CPeripheralImon::GetCountOfImonsConflictWithDInput() == 0);
+    }
   }
 
   g_guiSettings.SetChanged();
-  g_guiSettings.NotifyObservers(ObservableMessageGuiSettings, true);
+  g_guiSettings.NotifyObservers(ObservableMessageGuiSettings);
 }
 
 void CGUIWindowSettingsCategory::OnClick(CBaseSettingControl *pSettingControl)
@@ -1066,6 +1067,8 @@ void CGUIWindowSettingsCategory::OnClick(CBaseSettingControl *pSettingControl)
     CGUIDialogPeripheralManager *dialog = (CGUIDialogPeripheralManager *)g_windowManager.GetWindow(WINDOW_DIALOG_PERIPHERAL_MANAGER);
     if (dialog)
       dialog->DoModal();
+    // refresh settings
+    UpdateSettings();
     return;
   }
 
@@ -1447,11 +1450,11 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingC
   {
     g_Mouse.SetEnabled(g_guiSettings.GetBool("input.enablemouse"));
   }
-  else if (strSetting.Equals("input.enablejoystick") || strSetting.Equals("input.disablejoystickwithimon"))
+  else if (strSetting.Equals("input.enablejoystick"))
   {
 #if defined(HAS_SDL_JOYSTICK)
     g_Joystick.SetEnabled(g_guiSettings.GetBool("input.enablejoystick")  
-        && (CPeripheralImon::GetCountOfImonsConflictWithDInput() == 0 || !g_guiSettings.GetBool("input.disablejoystickwithimon")) );
+        && CPeripheralImon::GetCountOfImonsConflictWithDInput() == 0);
 #endif
   }
   else if (strSetting.Equals("videoscreen.screen"))
@@ -1541,6 +1544,14 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingC
     CStdString strLanguage = pControl->GetCurrentLabel();
     if (strLanguage != ".svn" && strLanguage != pSettingString->GetData())
       g_guiSettings.SetLanguage(strLanguage);
+
+    // user set language, no longer use the TV's language
+    vector<CPeripheral *> cecDevices;
+    if (g_peripherals.GetPeripheralsWithFeature(cecDevices, FEATURE_CEC) > 0)
+    {
+      for (vector<CPeripheral *>::iterator it = cecDevices.begin(); it != cecDevices.end(); it++)
+        (*it)->SetSetting("use_tv_menu_language", false);
+    }
   }
   else if (strSetting.Equals("lookandfeel.skintheme"))
   { //a new Theme was chosen
@@ -1779,9 +1790,9 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingC
   else if (strSetting.Equals("pvrmanager.enabled"))
   {
     if (g_guiSettings.GetBool("pvrmanager.enabled"))
-      g_application.StartPVRManager();
+      CApplicationMessenger::Get().ExecBuiltIn("XBMC.StartPVRManager", false);
     else
-      g_application.StopPVRManager();
+      CApplicationMessenger::Get().ExecBuiltIn("XBMC.StopPVRManager", false);
   }
   else if (strSetting.Equals("masterlock.lockcode"))
   {
@@ -1949,13 +1960,22 @@ void CGUIWindowSettingsCategory::OnSettingChanged(CBaseSettingControl *pSettingC
        dialog->DoModal();
     }
   }
+  else if (strSetting.Equals("pvrclient.menuhook") && g_PVRManager.IsStarted())
+  {
+    g_PVRManager.Get().Clients()->ProcessMenuHooks(-1, PVR_MENUHOOK_SETTING);
+  }
   else if (strSetting.compare(0, 12, "audiooutput.") == 0)
   {
     if (strSetting.Equals("audiooutput.audiodevice"))
     {
       CGUISpinControlEx *pControl = (CGUISpinControlEx *)GetControl(pSettingControl->GetID());
 #if defined(TARGET_DARWIN)
-      g_guiSettings.SetString("audiooutput.audiodevice", pControl->GetCurrentLabel());
+      // save the sinkname - since we don't have sinks on osx
+      // we need to get the fitting sinkname for the device label from the
+      // factory
+      std::string label2sink = pControl->GetCurrentLabel();
+      CAEFactory::VerifyOutputDevice(label2sink, false);
+      g_guiSettings.SetString("audiooutput.audiodevice", label2sink.c_str());
 #else
       g_guiSettings.SetString("audiooutput.audiodevice", m_AnalogAudioSinkMap[pControl->GetCurrentLabel()]);
 #endif
@@ -2063,7 +2083,6 @@ CGUIControl* CGUIWindowSettingsCategory::AddSetting(CSetting *pSetting, float wi
   {
     pControl = new CGUIEditControl(*m_pOriginalEdit);
     if (!pControl) return NULL;
-    ((CGUIEditControl *)pControl)->SettingsCategorySetTextAlign(XBFONT_CENTER_Y);
     ((CGUIEditControl *)pControl)->SetLabel(g_localizeStrings.Get(pSetting->GetLabel()));
     pControl->SetWidth(width);
     pSettingControl = new CEditSettingControl((CGUIEditControl *)pControl, iControlID, pSetting);
@@ -2072,7 +2091,6 @@ CGUIControl* CGUIWindowSettingsCategory::AddSetting(CSetting *pSetting, float wi
   {
     pControl = new CGUIButtonControl(*m_pOriginalButton);
     if (!pControl) return NULL;
-    ((CGUIButtonControl *)pControl)->SettingsCategorySetTextAlign(XBFONT_CENTER_Y);
     ((CGUIButtonControl *)pControl)->SetLabel(g_localizeStrings.Get(pSetting->GetLabel()));
     pControl->SetWidth(width);
     pSettingControl = new CButtonSettingControl((CGUIButtonControl *)pControl, iControlID, pSetting);
@@ -2764,7 +2782,7 @@ void CGUIWindowSettingsCategory::FillInViewModes(CSetting *pSetting, int windowI
     window->Initialize();
     for (int i = 50; i < 60; i++)
     {
-      CGUIBaseContainer *control = (CGUIBaseContainer *)window->GetControl(i);
+      IGUIContainer *control = (IGUIContainer *)window->GetControl(i);
       if (control)
       {
         int type = (control->GetType() << 16) | i;
@@ -2873,8 +2891,6 @@ void CGUIWindowSettingsCategory::FillInAudioDevices(CSetting* pSetting, bool Pas
     m_AnalogAudioSinkMap["Error - no devices found"] = "null:";
   }
 
-  int numberSinks = 0;
-
   int selectedValue = -1;
   AEDeviceList sinkList;
   CAEFactory::EnumerateOutputDevices(sinkList, Passthrough);
@@ -2882,7 +2898,6 @@ void CGUIWindowSettingsCategory::FillInAudioDevices(CSetting* pSetting, bool Pas
   if (sinkList.size()==0)
   {
     pControl->AddLabel("Error - no devices found", 0);
-    numberSinks = 1;
     selectedValue = 0;
   }
   else
@@ -2906,7 +2921,6 @@ void CGUIWindowSettingsCategory::FillInAudioDevices(CSetting* pSetting, bool Pas
       i++;
     }
 
-    numberSinks = sinkList.size();
 #if !defined(TARGET_DARWIN)
   }
 #endif
@@ -2914,8 +2928,11 @@ void CGUIWindowSettingsCategory::FillInAudioDevices(CSetting* pSetting, bool Pas
   if (selectedValue < 0)
   {
     CLog::Log(LOGWARNING, "Failed to find previously selected audio sink");
-    pControl->AddLabel(currentDevice, numberSinks);
-    pControl->SetValue(numberSinks);
+    pControl->SetValue(0);
+    if (!Passthrough)
+      ((CSettingString*)pSetting)->SetData(m_AnalogAudioSinkMap[pControl->GetCurrentLabel()]);
+    else
+      ((CSettingString*)pSetting)->SetData(m_DigitalAudioSinkMap[pControl->GetCurrentLabel()]);
   }
   else
     pControl->SetValue(selectedValue);

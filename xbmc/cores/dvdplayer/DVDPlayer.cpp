@@ -71,6 +71,7 @@
 #include "pvr/PVRManager.h"
 #include "pvr/channels/PVRChannel.h"
 #include "pvr/windows/GUIWindowPVR.h"
+#include "pvr/addons/PVRClients.h"
 #include "filesystem/PVRFile.h"
 #include "video/dialogs/GUIDialogFullScreenInfo.h"
 #include "utils/StreamUtils.h"
@@ -581,19 +582,6 @@ retry:
 
   if (!m_pInputStream->Open(m_filename.c_str(), m_mimetype))
   {
-      if(m_pInputStream->IsStreamType(DVDSTREAM_TYPE_DVD))
-      {
-        CLog::Log(LOGERROR, "CDVDPlayer::OpenInputStream - failed to open [%s] as DVD ISO, trying Bluray", m_filename.c_str());
-        m_mimetype = "bluray/iso";
-        filename = m_filename;
-        filename = filename + "/BDMV/index.bdmv";
-        int title = (int)m_item.GetProperty("BlurayStartingTitle").asInteger();
-        if( title )
-          filename.AppendFormat("?title=%d",title);
-
-        m_filename = filename;
-        goto retry;
-      }
     CLog::Log(LOGERROR, "CDVDPlayer::OpenInputStream - error opening [%s]", m_filename.c_str());
     return false;
   }
@@ -694,7 +682,7 @@ bool CDVDPlayer::OpenDemuxStream()
   return true;
 }
 
-void CDVDPlayer::OpenDefaultStreams()
+void CDVDPlayer::OpenDefaultStreams(bool reset)
 {
   // bypass for DVDs. The DVD Navigator has already dictated which streams to open.
   if (m_pInputStream->IsStreamType(DVDSTREAM_TYPE_DVD))
@@ -708,7 +696,7 @@ void CDVDPlayer::OpenDefaultStreams()
   valid   = false;
   for(SelectionStreams::iterator it = streams.begin(); it != streams.end() && !valid; ++it)
   {
-    if(OpenVideoStream(it->id, it->source))
+    if(OpenVideoStream(it->id, it->source, reset))
       valid = true;;
   }
   if(!valid)
@@ -723,7 +711,7 @@ void CDVDPlayer::OpenDefaultStreams()
 
   for(SelectionStreams::iterator it = streams.begin(); it != streams.end() && !valid; ++it)
   {
-    if(OpenAudioStream(it->id, it->source))
+    if(OpenAudioStream(it->id, it->source, reset))
       valid = true;
   }
   if(!valid)
@@ -800,7 +788,7 @@ bool CDVDPlayer::ReadPacket(DemuxPacket*& packet, CDemuxStream*& stream)
     {
         m_SelectionStreams.Clear(STREAM_NONE, STREAM_SOURCE_DEMUX);
         m_SelectionStreams.Update(m_pInputStream, m_pDemuxer);
-        OpenDefaultStreams();
+        OpenDefaultStreams(false);
         return true;
     }
 
@@ -1100,9 +1088,9 @@ void CDVDPlayer::Process()
       continue;
     }
 
-    // always yield to players if they have data
-    if((m_dvdPlayerAudio.HasData() || m_CurrentAudio.id < 0)
-    && (m_dvdPlayerVideo.HasData() || m_CurrentVideo.id < 0))
+    // always yield to players if they have data levels > 50 percent
+    if((m_dvdPlayerAudio.GetLevel() > 50 || m_CurrentAudio.id < 0)
+    && (m_dvdPlayerVideo.GetLevel() > 50 || m_CurrentVideo.id < 0))
       Sleep(0);
 
     DemuxPacket* pPacket = NULL;
@@ -2044,10 +2032,7 @@ void CDVDPlayer::HandleMessages()
 
         // set flag to indicate we have finished a seeking request
         if(!msg.GetTrickPlay())
-        {
-          g_infoManager.m_performingSeek = false;
           g_infoManager.SetDisplayAfterSeek();
-        }
 
         // dvd's will issue a HOP_CHANNEL that we need to skip
         if(m_pInputStream->IsStreamType(DVDSTREAM_TYPE_DVD))
@@ -2097,14 +2082,14 @@ void CDVDPlayer::HandleMessages()
             {
               m_dvd.iSelectedAudioStream = -1;
               CloseAudioStream(false);
-              m_messenger.Put(new CDVDMsgPlayerSeek(GetTime(), true, true, true));
+              m_messenger.Put(new CDVDMsgPlayerSeek(GetTime(), true, true, true, true, true));
             }
           }
           else
           {
             CloseAudioStream(false);
             OpenAudioStream(st.id, st.source);
-            m_messenger.Put(new CDVDMsgPlayerSeek(GetTime(), true, true, true));
+            m_messenger.Put(new CDVDMsgPlayerSeek(GetTime(), true, true, true, true, true));
           }
         }
       }
@@ -2791,7 +2776,7 @@ void CDVDPlayer::ToFFRW(int iSpeed)
   SetPlaySpeed(iSpeed * DVD_PLAYSPEED_NORMAL);
 }
 
-bool CDVDPlayer::OpenAudioStream(int iStream, int source)
+bool CDVDPlayer::OpenAudioStream(int iStream, int source, bool reset)
 {
   CLog::Log(LOGNOTICE, "Opening audio stream: %i source: %i", iStream, source);
 
@@ -2830,7 +2815,7 @@ bool CDVDPlayer::OpenAudioStream(int iStream, int source)
       return false;
     }
   }
-  else
+  else if (reset)
     m_dvdPlayerAudio.SendMessage(new CDVDMsg(CDVDMsg::GENERAL_RESET));
 
   /* store information about stream */
@@ -2849,7 +2834,7 @@ bool CDVDPlayer::OpenAudioStream(int iStream, int source)
   return true;
 }
 
-bool CDVDPlayer::OpenVideoStream(int iStream, int source)
+bool CDVDPlayer::OpenVideoStream(int iStream, int source, bool reset)
 {
   CLog::Log(LOGNOTICE, "Opening video stream: %i source: %i", iStream, source);
 
@@ -2875,6 +2860,17 @@ bool CDVDPlayer::OpenVideoStream(int iStream, int source)
     hint.software = true;
   }
 
+  boost::shared_ptr<CPVRClient> client;
+  if(m_pInputStream && m_pInputStream->IsStreamType(DVDSTREAM_TYPE_PVRMANAGER) &&
+     pStream->type == STREAM_VIDEO &&
+     g_PVRClients->GetPlayingClient(client) && client->HandlesDemuxing())
+  {
+    // set the fps in hints
+    const CDemuxStreamVideo *stream = static_cast<const CDemuxStreamVideo*>(pStream);
+    hint.fpsrate  = stream->iFpsRate;
+    hint.fpsscale = stream->iFpsScale;
+  }
+
   CDVDInputStream::IMenus* pMenus = dynamic_cast<CDVDInputStream::IMenus*>(m_pInputStream);
   if(pMenus && pMenus->IsInMenu())
     hint.stills = true;
@@ -2891,7 +2887,7 @@ bool CDVDPlayer::OpenVideoStream(int iStream, int source)
       return false;
     }
   }
-  else
+  else if (reset)
     m_dvdPlayerVideo.SendMessage(new CDVDMsg(CDVDMsg::GENERAL_RESET));
 
   /* store information about stream */
@@ -3574,6 +3570,7 @@ bool CDVDPlayer::OnAction(const CAction &action)
     {
       case ACTION_MOVE_UP:
       case ACTION_NEXT_ITEM:
+      case ACTION_CHANNEL_UP:
         m_messenger.Put(new CDVDMsg(CDVDMsg::PLAYER_CHANNEL_NEXT));
         g_infoManager.SetDisplayAfterSeek();
         ShowPVRChannelInfo();
@@ -3582,6 +3579,7 @@ bool CDVDPlayer::OnAction(const CAction &action)
 
       case ACTION_MOVE_DOWN:
       case ACTION_PREV_ITEM:
+      case ACTION_CHANNEL_DOWN:
         m_messenger.Put(new CDVDMsg(CDVDMsg::PLAYER_CHANNEL_PREV));
         g_infoManager.SetDisplayAfterSeek();
         ShowPVRChannelInfo();
@@ -3828,18 +3826,6 @@ void CDVDPlayer::UpdatePlayState(double timeout)
       state.recording = pChannel->IsRecording();
     }
 
-    if (m_pInputStream->IsStreamType(DVDSTREAM_TYPE_PVRMANAGER))
-    {
-      CDVDInputStreamPVRManager* pvrinputstream = static_cast<CDVDInputStreamPVRManager*>(m_pInputStream);
-      state.canpause = pvrinputstream->CanPause();
-      state.canseek = pvrinputstream->CanSeek();
-    }
-    else
-    {
-      state.canseek = GetTotalTime() > 0 ? true : false;
-      state.canpause = true;
-    }
-
     CDVDInputStream::IDisplayTime* pDisplayTime = dynamic_cast<CDVDInputStream::IDisplayTime*>(m_pInputStream);
     if (pDisplayTime && pDisplayTime->GetTotalTime() > 0)
     {
@@ -3854,6 +3840,18 @@ void CDVDPlayer::UpdatePlayState(double timeout)
         state.time       = XbmcThreads::SystemClockMillis() - m_dvd.iDVDStillStartTime;
         state.time_total = m_dvd.iDVDStillTime;
       }
+    }
+
+    if (m_pInputStream->IsStreamType(DVDSTREAM_TYPE_PVRMANAGER))
+    {
+      CDVDInputStreamPVRManager* pvrinputstream = static_cast<CDVDInputStreamPVRManager*>(m_pInputStream);
+      state.canpause = pvrinputstream->CanPause();
+      state.canseek  = pvrinputstream->CanSeek();
+    }
+    else
+    {
+      state.canseek  = state.time_total > 0 ? true : false;
+      state.canpause = true;
     }
   }
 

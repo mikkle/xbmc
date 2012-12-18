@@ -41,6 +41,7 @@
 #include "utils/log.h"
 #include "utils/URIUtils.h"
 #include "Autorun.h"
+#include "interfaces/AnnouncementManager.h"
 
 #define CONTROL_BTNVIEWASICONS      2
 #define CONTROL_BTNSORTBY           3
@@ -256,12 +257,12 @@ void CGUIWindowPictures::OnPrepareFileItems(CFileItemList& items)
     m_dlgProgress->Close();
 }
 
-bool CGUIWindowPictures::Update(const CStdString &strDirectory)
+bool CGUIWindowPictures::Update(const CStdString &strDirectory, bool updateFilterPath /* = true */)
 {
   if (m_thumbLoader.IsLoading())
     m_thumbLoader.StopThread();
 
-  if (!CGUIMediaWindow::Update(strDirectory))
+  if (!CGUIMediaWindow::Update(strDirectory, updateFilterPath))
     return false;
 
   m_vecItems->SetArt("thumb", "");
@@ -353,7 +354,14 @@ bool CGUIWindowPictures::ShowPicture(int iItem, bool startSlideShow)
   pSlideShow->Select(strPicture);
 
   if (startSlideShow)
-    pSlideShow->StartSlideShow(false);
+    pSlideShow->StartSlideShow();
+  else 
+  {
+    CVariant param;
+    param["player"]["speed"] = 1;
+    param["player"]["playerid"] = PLAYLIST_PICTURE;
+    ANNOUNCEMENT::CAnnouncementManager::Announce(ANNOUNCEMENT::Player, "xbmc", "OnPlay", pSlideShow->GetCurrentSlide(), param);
+  }
 
   m_slideShowStarted = true;
   g_windowManager.ActivateWindow(WINDOW_SLIDESHOW);

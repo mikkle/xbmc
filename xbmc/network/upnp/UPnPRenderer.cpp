@@ -90,6 +90,8 @@ CUPnPRenderer::SetupServices()
         ",http-get:*:audio/ac3:*"
         ",http-get:*:audio/vorbis:*"
         ",http-get:*:audio/speex:*"
+        ",http-get:*:audio/flac:*"
+        ",http-get:*:audio/x-flac:*"
         ",http-get:*:audio/x-aiff:*"
         ",http-get:*:audio/x-pn-realaudio:*"
         ",http-get:*:audio/x-realaudio:*"
@@ -106,6 +108,7 @@ CUPnPRenderer::SetupServices()
         ",http-get:*:image/png:*"
         ",http-get:*:image/tiff:*"
         ",http-get:*:video/avi:*"
+        ",http-get:*:video/divx:*"
         ",http-get:*:video/mpeg:*"
         ",http-get:*:video/fli:*"
         ",http-get:*:video/flv:*"
@@ -127,6 +130,8 @@ CUPnPRenderer::SetupServices()
         ",http-get:*:video/MP1S:*"
         ",http-get:*:video/MP2P:*"
         ",http-get:*:video/BMPEG:*"
+        ",http-get:*:video/xvid:*"
+        ",http-get:*:video/x-divx:*"
         ",http-get:*:video/x-matroska:*"
         ",http-get:*:video/x-ms-wmv:*"
         ",http-get:*:video/x-ms-avi:*"
@@ -137,6 +142,7 @@ CUPnPRenderer::SetupServices()
         ",http-get:*:video/x-ms-wmx:*"
         ",http-get:*:video/x-ms-wvx:*"
         ",http-get:*:video/x-msvideo:*"
+        ",http-get:*:video/x-xvid:*"
         );
     return NPT_SUCCESS;
 }

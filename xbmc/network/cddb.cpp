@@ -46,7 +46,6 @@
 #include <netdb.h>
 
 using namespace std;
-using namespace MUSIC_INFO;
 using namespace MEDIA_DETECT;
 using namespace AUTOPTR;
 using namespace CDDB;
@@ -506,7 +505,6 @@ void Xcddb::parseData(const char *buffer)
         strValue.Replace("\\n", "\n"); 
         strValue.Replace("\\t", "\t"); 
         strValue.Replace("\\\\", "\\"); 
-        g_charsetConverter.unknownToUTF8(strValue);
 
         std::map<CStdString, CStdString>::const_iterator it = keywords.find(strKeyword);
         if (it != keywords.end())

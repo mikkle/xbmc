@@ -131,7 +131,7 @@ bool CGUIInfoManager::OnMessage(CGUIMessage &message)
       CFileItemPtr item = boost::static_pointer_cast<CFileItem>(message.GetItem());
       if (m_currentFile->IsSamePath(item.get()))
       {
-        *m_currentFile = *item;
+        m_currentFile->UpdateInfo(*item);
         return true;
       }
     }
@@ -182,6 +182,7 @@ const infomap player_labels[] =  {{ "hasmedia",         PLAYER_HAS_MEDIA },     
                                   { "showtime",         PLAYER_SHOWTIME },
                                   { "showcodec",        PLAYER_SHOWCODEC },
                                   { "showinfo",         PLAYER_SHOWINFO },
+                                  { "title",            PLAYER_TITLE },
                                   { "muted",            PLAYER_MUTED },
                                   { "hasduration",      PLAYER_HASDURATION },
                                   { "passthrough",      PLAYER_PASSTHROUGH },
@@ -209,7 +210,8 @@ const infomap player_times[] =   {{ "seektime",         PLAYER_SEEKTIME },
                                   { "timespeed",        PLAYER_TIME_SPEED },
                                   { "time",             PLAYER_TIME },
                                   { "duration",         PLAYER_DURATION },
-                                  { "finishtime",       PLAYER_FINISH_TIME }};
+                                  { "finishtime",       PLAYER_FINISH_TIME },
+                                  { "starttime",        PLAYER_START_TIME}};
 
 const infomap weather[] =        {{ "isfetched",        WEATHER_IS_FETCHED },
                                   { "conditions",       WEATHER_CONDITIONS },         // labels from here
@@ -1376,6 +1378,14 @@ CStdString CGUIInfoManager::GetLabel(int info, int contextWindow, CStdString *fa
       strLabel = URIUtils::GetParentPath(strLabel);
     }
     break;
+  case PLAYER_TITLE:
+    {
+      if (g_application.IsPlayingVideo())
+        strLabel = GetLabel(VIDEOPLAYER_TITLE);
+      else
+        strLabel = GetLabel(MUSICPLAYER_TITLE);
+    }
+    break;
   case MUSICPLAYER_TITLE:
   case MUSICPLAYER_ALBUM:
   case MUSICPLAYER_ARTIST:
@@ -1561,7 +1571,7 @@ CStdString CGUIInfoManager::GetLabel(int info, int contextWindow, CStdString *fa
       {
         const CGUIControl *control = window->GetControl(window->GetViewContainerID());
         if (control && control->IsContainer())
-          strLabel = ((CGUIBaseContainer *)control)->GetLabel();
+          strLabel = ((IGUIContainer *)control)->GetLabel();
       }
       break;
     }
@@ -2490,7 +2500,7 @@ bool CGUIInfoManager::GetMultiInfoBool(const GUIInfo &info, int contextWindow, c
       {
         const CGUIControl *control = window->GetControl(data1);
         if (control && control->IsContainer())
-          item = ((CGUIBaseContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()).get();
+          item = ((IGUIContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()).get();
       }
     }
     if (item) // If we got a valid item, do the lookup
@@ -2774,7 +2784,7 @@ bool CGUIInfoManager::GetMultiInfoBool(const GUIInfo &info, int contextWindow, c
             const CGUIControl *control = window->GetControl(info.GetData1());
             if (control && control->IsContainer())
             {
-              CFileItemPtr item = boost::static_pointer_cast<CFileItem>(((CGUIBaseContainer *)control)->GetListItem(0));
+              CFileItemPtr item = boost::static_pointer_cast<CFileItem>(((IGUIContainer *)control)->GetListItem(0));
               if (item && item->m_iprogramCount == info.GetData2())  // programcount used to store item id
                 bReturn = true;
             }
@@ -2888,7 +2898,7 @@ bool CGUIInfoManager::GetMultiInfoInt(int &value, const GUIInfo &info, int conte
     {
       const CGUIControl *control = window->GetControl(data1);
       if (control && control->IsContainer())
-        item = boost::static_pointer_cast<CFileItem>(((CGUIBaseContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()));
+        item = boost::static_pointer_cast<CFileItem>(((IGUIContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()));
     }
 
     if (item) // If we got a valid item, do the lookup
@@ -2931,7 +2941,7 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
     {
       const CGUIControl *control = window->GetControl(data1);
       if (control && control->IsContainer())
-        item = boost::static_pointer_cast<CFileItem>(((CGUIBaseContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()));
+        item = boost::static_pointer_cast<CFileItem>(((IGUIContainer *)control)->GetListItem(info.GetData2(), info.GetInfoFlag()));
     }
 
     if (item) // If we got a valid item, do the lookup
@@ -2947,8 +2957,28 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
   }
   else if (info.m_info == PLAYER_FINISH_TIME)
   {
-    CDateTime time = CDateTime::GetCurrentDateTime();
-    time += CDateTimeSpan(0, 0, 0, GetPlayTimeRemaining());
+    CDateTime time;
+    CEpgInfoTag currentTag;
+    if (GetEpgInfoTag(currentTag))
+      time = currentTag.EndAsLocalTime();
+    else
+    {
+      time = CDateTime::GetCurrentDateTime();
+      time += CDateTimeSpan(0, 0, 0, GetPlayTimeRemaining());
+    }
+    return LocalizeTime(time, (TIME_FORMAT)info.GetData1());
+  }
+  else if (info.m_info == PLAYER_START_TIME)
+  {
+    CDateTime time;
+    CEpgInfoTag currentTag;
+    if (GetEpgInfoTag(currentTag))
+      time = currentTag.StartAsLocalTime();
+    else
+    {
+      time = CDateTime::GetCurrentDateTime();
+      time -= CDateTimeSpan(0, 0, 0, (int)GetPlayTime());
+    }
     return LocalizeTime(time, (TIME_FORMAT)info.GetData1());
   }
   else if (info.m_info == PLAYER_TIME_SPEED)
@@ -3008,7 +3038,7 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
     if (control)
     {
       if (control->IsContainer())
-        return ((CGUIBaseContainer *)control)->GetLabel(info.m_info);
+        return ((IGUIContainer *)control)->GetLabel(info.m_info);
       else if (control->GetControlType() == CGUIControl::GUICONTROL_TEXTBOX)
         return ((CGUITextBox *)control)->GetLabel(info.m_info);
     }
@@ -3136,13 +3166,13 @@ CStdString CGUIInfoManager::GetImage(int info, int contextWindow, CStdString *fa
   {
     CGUIWindow *window = GetWindowWithCondition(contextWindow, WINDOW_CONDITION_IS_MEDIA_WINDOW);
     if (window)
-      return ((CGUIMediaWindow *)window)->CurrentDirectory().GetArt("tvshowthumb");
+      return ((CGUIMediaWindow *)window)->CurrentDirectory().GetArt("tvshow.thumb");
   }
   else if (info == CONTAINER_SEASONTHUMB)
   {
     CGUIWindow *window = GetWindowWithCondition(contextWindow, WINDOW_CONDITION_IS_MEDIA_WINDOW);
     if (window)
-      return ((CGUIMediaWindow *)window)->CurrentDirectory().GetArt("seasonthumb");
+      return ((CGUIMediaWindow *)window)->CurrentDirectory().GetArt("season.thumb");
   }
   else if (info == LISTITEM_THUMB || info == LISTITEM_ICON || info == LISTITEM_ACTUAL_ICON ||
           info == LISTITEM_OVERLAY || info == LISTITEM_RATING || info == LISTITEM_STAR_RATING)
@@ -3876,8 +3906,17 @@ void CGUIInfoManager::SetCurrentItem(CFileItem &item)
   else
     SetCurrentMovie(item);
 
+  if (item.HasEPGInfoTag())
+    *m_currentFile->GetEPGInfoTag() = *item.GetEPGInfoTag();
+  else if (item.HasPVRChannelInfoTag())
+  {
+    CEpgInfoTag tag;
+    if (item.GetPVRChannelInfoTag()->GetEPGNow(tag))
+      *m_currentFile->GetEPGInfoTag() = tag;
+  }
+
   SetChanged();
-  NotifyObservers(ObservableMessageCurrentItem, true);
+  NotifyObservers(ObservableMessageCurrentItem);
 }
 
 void CGUIInfoManager::SetCurrentAlbumThumb(const CStdString thumbFileName)
@@ -4056,6 +4095,7 @@ CStdString CGUIInfoManager::GetBuild()
 
 void CGUIInfoManager::SetDisplayAfterSeek(unsigned int timeOut, int seekOffset)
 {
+  g_infoManager.m_performingSeek = false;
   if (timeOut>0)
   {
     m_AfterSeekTimeout = CTimeUtils::GetFrameTime() +  timeOut;
@@ -4454,8 +4494,8 @@ CStdString CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, CStdSt
       }
       else if (item->HasVideoInfoTag())
       {
-        if (!item->GetVideoInfoTag()->m_strRuntime.IsEmpty())
-          duration = item->GetVideoInfoTag()->m_strRuntime;
+        if (item->GetVideoInfoTag()->GetDuration() > 0)
+          duration.Format("%d", item->GetVideoInfoTag()->GetDuration() / 60);
       }
       else if (item->HasMusicInfoTag())
       {
@@ -5348,6 +5388,22 @@ bool CGUIInfoManager::ConditionsChangedValues(const std::map<int, bool>& map)
   {
     if (GetBoolValue(it->first) != it->second)
       return true;
+  }
+  return false;
+}
+
+bool CGUIInfoManager::GetEpgInfoTag(CEpgInfoTag& tag) const
+{
+  if (m_currentFile->HasEPGInfoTag())
+  {
+    CEpgInfoTag* currentTag =  m_currentFile->GetEPGInfoTag();
+    while (currentTag && !currentTag->IsActive())
+      currentTag = currentTag->GetNextEvent().get();
+    if (currentTag)
+    {
+      tag = *currentTag;
+      return true;
+    }
   }
   return false;
 }

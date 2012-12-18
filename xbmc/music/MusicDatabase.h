@@ -114,7 +114,7 @@ public:
   bool DeleteAlbumInfo(int idArtist);
   int SetArtistInfo(int idArtist, const CArtist& artist);
   bool DeleteArtistInfo(int idArtist);
-  bool GetAlbumInfo(int idAlbum, CAlbum &info, VECSONGS* songs);
+  bool GetAlbumInfo(int idAlbum, CAlbum &info, VECSONGS* songs, bool scrapedInfo = false);
   bool HasAlbumInfo(int idAlbum);
   bool GetArtistInfo(int idArtist, CArtist &info, bool needAll=true);
   bool GetSongByFileName(const CStdString& strFileName, CSong& song, int startOffset = 0);
@@ -128,10 +128,13 @@ public:
   bool GetAlbumFromSong(int idSong, CAlbum &album);
   bool GetAlbumFromSong(const CSong &song, CAlbum &album);
   
-  bool GetAlbumsByArtist(int idArtist, bool includeFeatured, std::vector<long>& albums);
-  bool GetArtistsByAlbum(int idAlbum, bool includeFeatured, std::vector<long>& artists);
-  bool GetSongsByArtist(int idArtist, bool includeFeatured, std::vector<long>& songs);
-  bool GetArtistsBySong(int idSong, bool includeFeatured, std::vector<long>& artists);
+  bool GetAlbumsByArtist(int idArtist, bool includeFeatured, std::vector<int>& albums);
+  bool GetArtistsByAlbum(int idAlbum, bool includeFeatured, std::vector<int>& artists);
+  bool GetSongsByArtist(int idArtist, bool includeFeatured, std::vector<int>& songs);
+  bool GetArtistsBySong(int idSong, bool includeFeatured, std::vector<int>& artists);
+
+  bool GetGenresByAlbum(int idAlbum, std::vector<int>& genres);
+  bool GetGenresBySong(int idSong, std::vector<int>& genres);
 
   bool GetTop100(const CStdString& strBaseDir, CFileItemList& items);
   bool GetTop100Albums(VECALBUMS& albums);
@@ -278,7 +281,7 @@ protected:
   std::map<CStdString, CAlbum> m_albumCache;
 
   virtual bool CreateTables();
-  virtual int GetMinVersion() const { return 28; };
+  virtual int GetMinVersion() const;
   const char *GetBaseDBName() const { return "MyMusic"; };
 
   int AddSong(const CSong& song, bool bCheck = true, int idAlbum = -1);
@@ -350,7 +353,8 @@ private:
     song_iKarNumber,
     song_iKarDelay,
     song_strKarEncoding,
-    song_bCompilation
+    song_bCompilation,
+    song_strAlbumArtists
   } SongFields;
 
   // Fields should be ordered as they

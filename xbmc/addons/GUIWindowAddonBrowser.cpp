@@ -351,12 +351,12 @@ void CGUIWindowAddonBrowser::SetItemLabel2(CFileItemPtr item)
   item->SetLabelPreformated(true);
 }
 
-bool CGUIWindowAddonBrowser::Update(const CStdString &strDirectory)
+bool CGUIWindowAddonBrowser::Update(const CStdString &strDirectory, bool updateFilterPath /* = true */)
 {
   if (m_thumbLoader.IsLoading())
     m_thumbLoader.StopThread();
 
-  if (!CGUIMediaWindow::Update(strDirectory))
+  if (!CGUIMediaWindow::Update(strDirectory, updateFilterPath))
     return false;
 
   m_thumbLoader.Load(*m_vecItems);
@@ -471,7 +471,7 @@ int CGUIWindowAddonBrowser::SelectAddonID(const vector<ADDON::TYPE> &types, CStd
     g_windowManager.ActivateWindow(WINDOW_ADDON_BROWSER, params);
     return 2;
   }
-  if (!multipleSelection && dialog->GetSelectedLabel() == -1)
+  if (!dialog->IsConfirmed())
     return 0;
   addonIDs.clear();
   const CFileItemList& list = dialog->GetSelectedItems();

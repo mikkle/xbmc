@@ -21,6 +21,7 @@
 #include "PVRChannelGroupInternal.h"
 
 #include "settings/GUISettings.h"
+#include "settings/AdvancedSettings.h"
 #include "guilib/GUIWindowManager.h"
 #include "dialogs/GUIDialogYesNo.h"
 #include "dialogs/GUIDialogOK.h"
@@ -55,13 +56,17 @@ CPVRChannelGroupInternal::~CPVRChannelGroupInternal(void)
   Unload();
 }
 
-int CPVRChannelGroupInternal::Load(void)
+bool CPVRChannelGroupInternal::Load(void)
 {
-  int iChannelCount = CPVRChannelGroup::Load();
-  UpdateChannelPaths();
-  CreateChannelEpgs();
+  if (CPVRChannelGroup::Load())
+  {
+    UpdateChannelPaths();
+    CreateChannelEpgs();
+    return true;
+  }
 
-  return iChannelCount;
+  CLog::Log(LOGERROR, "PVRChannelGroupInternal - %s - failed to load channels", __FUNCTION__);
+  return false;
 }
 
 void CPVRChannelGroupInternal::CheckGroupName(void)
@@ -82,7 +87,7 @@ void CPVRChannelGroupInternal::UpdateChannelPaths(void)
   for (unsigned int iChannelPtr = 0; iChannelPtr < m_members.size(); iChannelPtr++)
   {
     PVRChannelGroupMember member = m_members.at(iChannelPtr);
-    member.channel->UpdatePath(iChannelPtr);
+    member.channel->UpdatePath(this, iChannelPtr);
   }
 }
 
@@ -94,15 +99,11 @@ void CPVRChannelGroupInternal::UpdateFromClient(const CPVRChannel &channel, unsi
     realChannel->UpdateFromClient(channel);
   else
   {
-    PVRChannelGroupMember newMember = { CPVRChannelPtr(new CPVRChannel(channel)), iChannelNumber > 0 ? iChannelNumber : m_members.size() + 1 };
+    PVRChannelGroupMember newMember = { CPVRChannelPtr(new CPVRChannel(channel)), iChannelNumber > 0l ? iChannelNumber : (int)m_members.size() + 1 };
     m_members.push_back(newMember);
     m_bChanged = true;
 
-    if (m_bUsingBackendChannelOrder)
-      SortByClientChannelNumber();
-    else
-      SortByChannelNumber();
-    Renumber();
+    SortAndRenumber();
   }
 }
 
@@ -115,9 +116,7 @@ bool CPVRChannelGroupInternal::InsertInGroup(CPVRChannel &channel, int iChannelN
 bool CPVRChannelGroupInternal::Update(void)
 {
   CPVRChannelGroupInternal PVRChannels_tmp(m_bRadio);
-  PVRChannels_tmp.LoadFromClients();
-
-  return UpdateGroupEntries(PVRChannels_tmp);
+  return PVRChannels_tmp.LoadFromClients() && UpdateGroupEntries(PVRChannels_tmp);
 }
 
 bool CPVRChannelGroupInternal::AddToGroup(CPVRChannel &channel, int iChannelNumber /* = 0 */, bool bSortAndRenumber /* = true */)
@@ -142,7 +141,7 @@ bool CPVRChannelGroupInternal::AddToGroup(CPVRChannel &channel, int iChannelNumb
   }
 
   /* move this channel and persist */
-  bReturn = (iChannelNumber > 0) ?
+  bReturn = (iChannelNumber > 0l) ?
     MoveChannel(realChannel->ChannelNumber(), iChannelNumber, true) :
     MoveChannel(realChannel->ChannelNumber(), m_members.size() - m_iHiddenChannels, true);
 
@@ -181,7 +180,7 @@ bool CPVRChannelGroupInternal::RemoveFromGroup(const CPVRChannel &channel)
   }
 
   /* renumber this list */
-  Renumber();
+  SortAndRenumber();
 
   /* and persist */
   return realChannel->Persist() &&
@@ -243,14 +242,10 @@ int CPVRChannelGroupInternal::LoadFromDb(bool bCompress /* = false */)
   return Size() - iChannelCount;
 }
 
-int CPVRChannelGroupInternal::LoadFromClients(void)
+bool CPVRChannelGroupInternal::LoadFromClients(void)
 {
-  int iCurSize = Size();
-
   /* get the channels from the backends */
-  g_PVRClients->GetChannels(this);
-
-  return Size() - iCurSize;
+  return g_PVRClients->GetChannels(this) == PVR_ERROR_NO_ERROR;
 }
 
 bool CPVRChannelGroupInternal::Renumber(void)
@@ -264,7 +259,7 @@ bool CPVRChannelGroupInternal::Renumber(void)
     if (m_members.at(iChannelPtr).channel->IsHidden())
       m_iHiddenChannels++;
     else
-      m_members.at(iChannelPtr).channel->UpdatePath(iChannelPtr);
+      m_members.at(iChannelPtr).channel->UpdatePath(this, iChannelPtr);
   }
 
   return bReturn;
@@ -334,7 +329,9 @@ bool CPVRChannelGroupInternal::UpdateGroupEntries(const CPVRChannelGroup &channe
   if (CPVRChannelGroup::UpdateGroupEntries(channels))
   {
     /* try to find channel icons */
-    SearchAndSetChannelIcons();
+    if (g_advancedSettings.m_bPVRChannelIconsAutoScan)
+      SearchAndSetChannelIcons();
+
     g_PVRTimers->UpdateChannels();
     Persist();
 

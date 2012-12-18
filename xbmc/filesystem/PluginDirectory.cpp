@@ -39,6 +39,7 @@
 #include "utils/log.h"
 #include "utils/TimeUtils.h"
 #include "ApplicationMessenger.h"
+#include "Application.h"
 #include "URL.h"
 
 using namespace XFILE;
@@ -291,7 +292,7 @@ void CPluginDirectory::AddSortMethod(int handle, SORT_METHOD sortMethod, const C
       }
     case SORT_METHOD_DURATION:
       {
-        dir->m_listItems->AddSortMethod(SORT_METHOD_DURATION, 555, LABEL_MASKS("%T", "%D"));
+        dir->m_listItems->AddSortMethod(SORT_METHOD_DURATION, 180, LABEL_MASKS("%T", "%D"));
         break;
       }
     case SORT_METHOD_VIDEO_RATING:
@@ -328,19 +329,19 @@ void CPluginDirectory::AddSortMethod(int handle, SORT_METHOD sortMethod, const C
     case SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE:
       {
         if (g_guiSettings.GetBool("filelists.ignorethewhensorting"))
-          dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE, 369, LABEL_MASKS("%T", label2Mask));
+          dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE, 556, LABEL_MASKS("%T", label2Mask));
         else
-          dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_SORT_TITLE, 369, LABEL_MASKS("%T", label2Mask));
+          dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_SORT_TITLE, 556, LABEL_MASKS("%T", label2Mask));
         break;
       }
     case SORT_METHOD_MPAA_RATING:
       {
-        dir->m_listItems->AddSortMethod(SORT_METHOD_MPAA_RATING, 563, LABEL_MASKS("%T", "%O"));
+        dir->m_listItems->AddSortMethod(SORT_METHOD_MPAA_RATING, 20074, LABEL_MASKS("%T", "%O"));
         break;
       }
     case SORT_METHOD_VIDEO_RUNTIME:
       {
-        dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_RUNTIME, 555, LABEL_MASKS("%T", "%D"));
+        dir->m_listItems->AddSortMethod(SORT_METHOD_VIDEO_RUNTIME, 180, LABEL_MASKS("%T", "%D"));
         break;
       }
     case SORT_METHOD_STUDIO:
@@ -464,6 +465,7 @@ bool CPluginDirectory::WaitOnScriptResult(const CStdString &scriptPath, const CS
   unsigned int startTime = XbmcThreads::SystemClockMillis();
   CGUIDialogProgress *progressBar = NULL;
   bool cancelled = false;
+  bool inMainAppThread = g_application.IsCurrentThread();
 
   CLog::Log(LOGDEBUG, "%s - waiting on the %s plugin...", __FUNCTION__, scriptName.c_str());
   while (true)
@@ -521,6 +523,11 @@ bool CPluginDirectory::WaitOnScriptResult(const CStdString &scriptPath, const CS
         m_cancelled = true;
       }
     }
+    else // if the progressBar exists and we call StartModal or Progress we get the
+         //  ProcessRenderLoop call anyway.
+      if (inMainAppThread) 
+        g_windowManager.ProcessRenderLoop();
+
     if (!cancelled && m_cancelled)
     {
       cancelled = true;

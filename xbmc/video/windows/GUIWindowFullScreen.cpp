@@ -169,51 +169,31 @@ bool CGUIWindowFullScreen::OnAction(const CAction &action)
     break;
 
   case ACTION_STEP_BACK:
-    if (!g_application.CurrentFileItem().HasPVRChannelInfoTag())
-    {
-      if (m_timeCodePosition > 0)
-        SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_BACKWARD);
-      else
-        g_application.m_pPlayer->Seek(false, false);
-    }
+    if (m_timeCodePosition > 0)
+      SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_BACKWARD);
     else
-      SeekTV(false, false);
+      g_application.m_pPlayer->Seek(false, false);
     return true;
 
   case ACTION_STEP_FORWARD:
-    if (!g_application.CurrentFileItem().HasPVRChannelInfoTag())
-    {
-      if (m_timeCodePosition > 0)
-        SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_FORWARD);
-      else
-        g_application.m_pPlayer->Seek(true, false);
-    }
+    if (m_timeCodePosition > 0)
+      SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_FORWARD);
     else
-      SeekTV(true, false);
+      g_application.m_pPlayer->Seek(true, false);
     return true;
 
   case ACTION_BIG_STEP_BACK:
-    if (!g_application.CurrentFileItem().HasPVRChannelInfoTag())
-    {
-      if (m_timeCodePosition > 0)
-        SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_BACKWARD);
-      else
-        g_application.m_pPlayer->Seek(false, true);
-    }
+    if (m_timeCodePosition > 0)
+      SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_BACKWARD);
     else
-      SeekTV(false, true);
+      g_application.m_pPlayer->Seek(false, true);
     return true;
 
   case ACTION_BIG_STEP_FORWARD:
-    if (!g_application.CurrentFileItem().HasPVRChannelInfoTag())
-    {
-      if (m_timeCodePosition > 0)
-        SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_FORWARD);
-      else
-        g_application.m_pPlayer->Seek(true, true);
-    }
+    if (m_timeCodePosition > 0)
+      SeekToTimeCodeStamp(SEEK_RELATIVE, SEEK_FORWARD);
     else
-      SeekTV(true, true);
+      g_application.m_pPlayer->Seek(true, true);
     return true;
 
   case ACTION_NEXT_SCENE:
@@ -416,7 +396,7 @@ bool CGUIWindowFullScreen::OnAction(const CAction &action)
         }
         else
         {
-          int autoCloseTime = g_guiSettings.GetBool("pvrplayback.switchautoclose") ? 1500 : 0;
+          int autoCloseTime = g_guiSettings.GetBool("pvrplayback.confirmchannelswitch") ? 0 : g_advancedSettings.m_iPVRNumericChannelSwitchTimeout;
           CStdString strChannel;
           strChannel.Format("%i", action.GetID() - REMOTE_0);
           if (CGUIDialogNumeric::ShowAndGetNumber(strChannel, g_localizeStrings.Get(19000), autoCloseTime) || autoCloseTime)
@@ -635,6 +615,18 @@ bool CGUIWindowFullScreen::OnAction(const CAction &action)
       ShowSlider(action.GetID(), 660, g_settings.m_currentVideoSettings.m_VolumeAmplification, sliderMin, 1.0f, sliderMax);
 
       break;
+    }
+  case ACTION_PREVIOUS_CHANNELGROUP:
+    {
+      if (g_application.CurrentFileItem().HasPVRChannelInfoTag())
+        ChangetheTVGroup(false);
+      return true;
+    }
+  case ACTION_NEXT_CHANNELGROUP:
+    {
+      if (g_application.CurrentFileItem().HasPVRChannelInfoTag())
+        ChangetheTVGroup(true);
+      return true;
     }
   default:
       break;
@@ -960,10 +952,15 @@ void CGUIWindowFullScreen::FrameMove()
     g_application.m_pPlayer->GetVideoRect(SrcRect, DestRect);
     g_application.m_pPlayer->GetVideoAspectRatio(fAR);
     {
+      // Splitres scaling factor
+      RESOLUTION res = g_graphicsContext.GetVideoResolution();
+      float xscale = (float)g_settings.m_ResInfo[res].iScreenWidth  / (float)g_settings.m_ResInfo[res].iWidth;
+      float yscale = (float)g_settings.m_ResInfo[res].iScreenHeight / (float)g_settings.m_ResInfo[res].iHeight;
+
       CStdString strSizing;
       strSizing.Format(g_localizeStrings.Get(245),
                        (int)SrcRect.Width(), (int)SrcRect.Height(),
-                       (int)DestRect.Width(), (int)DestRect.Height(),
+                       (int)(DestRect.Width() * xscale), (int)(DestRect.Height() * yscale),
                        g_settings.m_fZoomAmount, fAR*g_settings.m_fPixelRatio, 
                        g_settings.m_fPixelRatio, g_settings.m_fVerticalShift);
       CGUIMessage msg(GUI_MSG_LABEL_SET, GetID(), LABEL_ROW2);
@@ -1177,14 +1174,6 @@ void CGUIWindowFullScreen::SeekToTimeCodeStamp(SEEK_TYPE type, SEEK_DIRECTION di
 
   m_timeCodePosition = 0;
   m_timeCodeShow = false;
-}
-
-void CGUIWindowFullScreen::SeekTV(bool bPlus, bool bLargeStep)
-{
-  if (bLargeStep)
-    OnAction(CAction(bPlus ? ACTION_NEXT_ITEM : ACTION_PREV_ITEM));
-  else if (!bLargeStep)
-    ChangetheTVGroup(bPlus);
 }
 
 double CGUIWindowFullScreen::GetTimeCodeStamp()

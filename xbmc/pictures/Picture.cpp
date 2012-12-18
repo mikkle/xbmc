@@ -46,9 +46,13 @@ bool CPicture::CreateThumbnailFromSurface(const unsigned char *buffer, int width
   if (URIUtils::GetExtension(thumbFile).Equals(".jpg"))
   {
 #if defined(HAS_OMXPLAYER)
-    COMXImage omxImage;
-    if (omxImage.CreateThumbnailFromSurface((BYTE *)buffer, width, height, XB_FMT_A8R8G8B8, stride, thumbFile.c_str()))
+    COMXImage *omxImage = new COMXImage();
+    if (omxImage && omxImage->CreateThumbnailFromSurface((BYTE *)buffer, width, height, XB_FMT_A8R8G8B8, stride, thumbFile.c_str()))
+    {
+      delete omxImage;
       return true;
+    }
+    delete omxImage;
 #endif
     CJpegIO jpegImage;
     if (jpegImage.CreateThumbnailFromSurface((BYTE *)buffer, width, height, XB_FMT_A8R8G8B8, stride, thumbFile.c_str()))
@@ -100,8 +104,8 @@ bool CPicture::CacheTexture(uint8_t *pixels, uint32_t width, uint32_t height, ui
   uint32_t max_height = g_advancedSettings.m_imageRes;
   if (g_advancedSettings.m_fanartRes > g_advancedSettings.m_imageRes)
   { // a separate fanart resolution is specified - check if the image is exactly equal to this res
-    if (width == (unsigned int)g_advancedSettings.m_fanartRes * 16/9 && height == (unsigned int)g_advancedSettings.m_fanartRes)
-    { // special case for fanart res
+    if (width * 9 == height * 16 && height >= g_advancedSettings.m_fanartRes)
+    { // special case for 16x9 images larger than the fanart res
       max_height = g_advancedSettings.m_fanartRes;
     }
   }
@@ -154,6 +158,7 @@ bool CPicture::CreateTiledThumb(const std::vector<std::string> &files, const std
   unsigned int tile_width = g_advancedSettings.GetThumbSize() / num_across;
   unsigned int tile_height = g_advancedSettings.GetThumbSize() / num_down;
   unsigned int tile_gap = 1;
+  bool success = false;
 
   // create a buffer for the resulting thumb
   uint32_t *buffer = (uint32_t *)calloc(g_advancedSettings.GetThumbSize() * g_advancedSettings.GetThumbSize(), 4);
@@ -175,6 +180,7 @@ bool CPicture::CreateTiledThumb(const std::vector<std::string> &files, const std
       {
         if (!texture->GetOrientation() || OrientateImage(scaled, width, height, texture->GetOrientation()))
         {
+          success = true; // Flag that we at least had one succesfull image processed
           // drop into the texture
           unsigned int posX = x*tile_width + (tile_width - width)/2;
           unsigned int posY = y*tile_height + (tile_height - height)/2;
@@ -193,10 +199,12 @@ bool CPicture::CreateTiledThumb(const std::vector<std::string> &files, const std
     }
   }
   // now save to a file
-  bool ret = CreateThumbnailFromSurface((uint8_t *)buffer, g_advancedSettings.GetThumbSize(), g_advancedSettings.GetThumbSize(),
-                                        g_advancedSettings.GetThumbSize() * 4, thumb);
+  if (success)
+    success = CreateThumbnailFromSurface((uint8_t *)buffer, g_advancedSettings.GetThumbSize(), g_advancedSettings.GetThumbSize(),
+                                      g_advancedSettings.GetThumbSize() * 4, thumb);
+
   free(buffer);
-  return ret;
+  return success;
 }
 
 void CPicture::GetScale(unsigned int width, unsigned int height, unsigned int &out_width, unsigned int &out_height)
@@ -218,9 +226,9 @@ bool CPicture::ScaleImage(uint8_t *in_pixels, unsigned int in_width, unsigned in
                                                          SWS_FAST_BILINEAR | SwScaleCPUFlags(), NULL, NULL, NULL);
 
   uint8_t *src[] = { in_pixels, 0, 0, 0 };
-  int     srcStride[] = { in_pitch, 0, 0, 0 };
+  int     srcStride[] = { (int)in_pitch, 0, 0, 0 };
   uint8_t *dst[] = { out_pixels , 0, 0, 0 };
-  int     dstStride[] = { out_pitch, 0, 0, 0 };
+  int     dstStride[] = { (int)out_pitch, 0, 0, 0 };
 
   if (context)
   {

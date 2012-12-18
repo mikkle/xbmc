@@ -322,11 +322,13 @@ CCurlFile::CCurlFile()
   m_bufferSize = 32768;
   m_binary = true;
   m_postdata = "";
+  m_postdataset = false;
   m_username = "";
   m_password = "";
   m_httpauth = "";
   m_state = new CReadState();
   m_skipshout = false;
+  m_httpresponse = -1;
 }
 
 //Has to be called before Open()
@@ -423,8 +425,8 @@ void CCurlFile::SetCommonOptions(CReadState* state)
   g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_URL, m_url.c_str());
   g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_TRANSFERTEXT, FALSE);
 
-  // setup POST data if it exists
-  if (!m_postdata.IsEmpty())
+  // setup POST data if it is set (and it may be empty)
+  if (m_postdataset)
   {
     g_curlInterface.easy_setopt(h, CURLOPT_POST, 1 );
     g_curlInterface.easy_setopt(h, CURLOPT_POSTFIELDSIZE, m_postdata.length());
@@ -730,17 +732,20 @@ void CCurlFile::ParseAndCorrectUrl(CURL &url2)
 
 bool CCurlFile::Post(const CStdString& strURL, const CStdString& strPostData, CStdString& strHTML)
 {
-  return Service(strURL, strPostData, strHTML);
+  m_postdata = strPostData;
+  m_postdataset = true;
+  return Service(strURL, strHTML);
 }
 
 bool CCurlFile::Get(const CStdString& strURL, CStdString& strHTML)
 {
-  return Service(strURL, "", strHTML);
+  m_postdata = "";
+  m_postdataset = false;
+  return Service(strURL, strHTML);
 }
 
-bool CCurlFile::Service(const CStdString& strURL, const CStdString& strPostData, CStdString& strHTML)
+bool CCurlFile::Service(const CStdString& strURL, CStdString& strHTML)
 {
-  m_postdata = strPostData;
   if (Open(strURL))
   {
     if (ReadData(strHTML))
@@ -840,8 +845,8 @@ bool CCurlFile::Open(const CURL& url)
   SetCommonOptions(m_state);
   SetRequestHeaders(m_state);
 
-  long response = m_state->Connect(m_bufferSize);
-  if( response < 0 || response >= 400)
+  m_httpresponse = m_state->Connect(m_bufferSize);
+  if( m_httpresponse < 0 || m_httpresponse >= 400)
     return false;
 
   SetCorrectHeaders(m_state);
@@ -1053,7 +1058,7 @@ int CCurlFile::Stat(const CURL& url, struct __stat64* buffer)
   // if file is already running, get info from it
   if( m_opened )
   {
-    CLog::Log(LOGWARNING, "%s - Stat called on open file", __FUNCTION__);
+    CLog::Log(LOGWARNING, "%s - Stat called on open file %s", __FUNCTION__, url.Get().c_str());
     if (buffer)
     {
       memset(buffer, 0, sizeof(struct __stat64));
@@ -1083,7 +1088,6 @@ int CCurlFile::Stat(const CURL& url, struct __stat64* buffer)
   }
 
   CURLcode result = g_curlInterface.easy_perform(m_state->m_easyHandle);
-
 
   if(result == CURLE_HTTP_RETURNED_ERROR)
   {
@@ -1158,15 +1162,12 @@ int CCurlFile::Stat(const CURL& url, struct __stat64* buffer)
     long filetime;
     if (CURLE_OK != g_curlInterface.easy_getinfo(m_state->m_easyHandle, CURLINFO_FILETIME, &filetime))
     {
-      CLog::Log(LOGWARNING, "%s - Cannot get curl filetime", __FUNCTION__);
+      CLog::Log(LOGWARNING, "%s - Cannot get curl filetime for %s", __FUNCTION__, url.Get().c_str());
     }
     else
     {
       if (filetime != -1)
-      {
-        CLog::Log(LOGDEBUG, "%s - curl filetime: %ld", __FUNCTION__, filetime);
         buffer->st_mtime = filetime;
-      }
     }
   }
   g_curlInterface.easy_release(&m_state->m_easyHandle, NULL);

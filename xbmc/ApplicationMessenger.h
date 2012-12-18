@@ -71,7 +71,6 @@ namespace MUSIC_INFO
 
 #define TMSG_PICTURE_SHOW         220
 #define TMSG_PICTURE_SLIDESHOW    221
-#define TMSG_SLIDESHOW_SCREENSAVER  222
 
 #define TMSG_SHUTDOWN             300
 #define TMSG_POWERDOWN            301
@@ -87,6 +86,7 @@ namespace MUSIC_INFO
 #define TMSG_SETLANGUAGE          311
 #define TMSG_RENDERER_FLUSH       312
 #define TMSG_INHIBITIDLESHUTDOWN  313
+#define TMSG_LOADPROFILE          314
 
 #define TMSG_NETWORKMESSAGE         500
 
@@ -180,7 +180,7 @@ public:
 
   void PlayFile(const CFileItem &item, bool bRestart = false); // thread safe version of g_application.PlayFile()
   void PictureShow(std::string filename);
-  void PictureSlideShow(std::string pathname, bool bScreensaver = false, bool addTBN = false);
+  void PictureSlideShow(std::string pathname, bool addTBN = false);
   void SetGUILanguage(const std::string &strLanguage);
   void Shutdown();
   void Powerdown();
@@ -201,6 +201,8 @@ public:
   void SetCurrentVideoTag(const CVideoInfoTag& tag);
   //! \brief Set the currently currently item
   void SetCurrentItem(const CFileItem& item);
+
+  void LoadProfile(unsigned int idx);
 
   CStdString GetResponse();
   int SetResponse(CStdString response);

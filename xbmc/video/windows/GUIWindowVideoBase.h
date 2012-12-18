@@ -85,12 +85,13 @@ protected:
   void OnScan(const CStdString& strPath, bool scanAll = false);
   virtual void OnInitWindow();
   virtual void UpdateButtons();
-  virtual bool Update(const CStdString &strDirectory);
+  virtual bool Update(const CStdString &strDirectory, bool updateFilterPath = true);
   virtual bool GetDirectory(const CStdString &strDirectory, CFileItemList &items);
   virtual void OnItemLoaded(CFileItem* pItem) {};
-  virtual void OnPrepareFileItems(CFileItemList &items);
+  virtual void GetGroupedItems(CFileItemList &items);
 
-  virtual bool CheckFilterAdvanced(CFileItemList &items);
+  virtual bool CheckFilterAdvanced(CFileItemList &items) const;
+  virtual bool CanContainFilter(const CStdString &strDirectory) const;
 
   virtual void GetContextButtons(int itemNumber, CContextButtons &buttons);
   void GetNonContextButtons(int itemNumber, CContextButtons &buttons);
@@ -132,7 +133,7 @@ protected:
 
   static bool OnUnAssignContent(const CStdString &path, int label1, int label2, int label3);
 
-  bool StackingAvailable(const CFileItemList &items) const;
+  static bool StackingAvailable(const CFileItemList &items);
 
   bool OnPlayStackPart(int item);
 

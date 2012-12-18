@@ -338,7 +338,7 @@ void CGUIDialogContextMenu::GetContextButtons(const CStdString &type, const CFil
       else
       {
         ADDON::AddonPtr plugin;
-        if (ADDON::CAddonMgr::Get().GetAddon(url.GetHostName(), plugin, ADDON::ADDON_PLUGIN))
+        if (ADDON::CAddonMgr::Get().GetAddon(url.GetHostName(), plugin))
         if (plugin->HasSettings())
           buttons.Add(CONTEXT_BUTTON_PLUGIN_SETTINGS, 1045); // Plugin Settings
       }
@@ -654,7 +654,7 @@ CMediaSource *CGUIDialogContextMenu::GetShare(const CStdString &type, const CFil
     }
     else
     {
-      if (!testShare.strPath.Equals(item->GetPath()))
+      if (!URIUtils::CompareWithoutSlashAtEnd(testShare.strPath, item->GetPath()))
         continue;
     }
     // paths match, what about share name - only match the leftmost

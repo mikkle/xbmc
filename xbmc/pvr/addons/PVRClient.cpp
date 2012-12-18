@@ -29,6 +29,7 @@
 #include "settings/AdvancedSettings.h"
 #include "utils/log.h"
 #include "settings/GUISettings.h"
+#include "Application.h"
 
 using namespace std;
 using namespace ADDON;
@@ -257,24 +258,26 @@ bool CPVRClient::IsCompatibleAPIVersion(const ADDON::AddonVersion &minVersion, c
   return (version >= myMinVersion && minVersion <= myVersion);
 }
 
+bool CPVRClient::CheckAPIVersion(void)
+{
+  /* check the API version */
+  AddonVersion minVersion = AddonVersion(XBMC_PVR_MIN_API_VERSION);
+  try { m_apiVersion = AddonVersion(m_pStruct->GetPVRAPIVersion()); }
+  catch (exception &e) { LogException(e, "GetPVRAPIVersion()"); return false;  }
+
+  if (!IsCompatibleAPIVersion(minVersion, m_apiVersion))
+  {
+    CLog::Log(LOGERROR, "PVR - Add-on '%s' is using an incompatible API version. XBMC minimum API version = '%s', add-on API version '%s'", Name().c_str(), minVersion.c_str(), m_apiVersion.c_str());
+    return false;
+  }
+
+  return true;
+}
+
 bool CPVRClient::GetAddonProperties(void)
 {
   CStdString strHostName, strBackendName, strConnectionString, strFriendlyName, strBackendVersion;
   PVR_ADDON_CAPABILITIES addonCapabilities;
-
-  /* check the API version */
-  AddonVersion minVersion = AddonVersion("0.0.0");
-  try { m_apiVersion = AddonVersion(m_pStruct->GetPVRAPIVersion()); }
-  catch (exception &e) { LogException(e, "GetPVRAPIVersion()"); return false;  }
-
-  try { minVersion = AddonVersion(m_pStruct->GetMininumPVRAPIVersion()); }
-  catch (exception &e) { LogException(e, "GetMininumPVRAPIVersion()"); return false;  }
-
-  if (!IsCompatibleAPIVersion(minVersion, m_apiVersion))
-  {
-    CLog::Log(LOGERROR, "PVR - Add-on '%s' is using an incompatible API version. Please contact the developer of this add-on: %s", GetFriendlyName().c_str(), Author().c_str());
-    return false;
-  }
 
   /* get the capabilities */
   try
@@ -871,6 +874,19 @@ int64_t CPVRClient::SeekStream(int64_t iFilePosition, int iWhence/* = SEEK_SET*/
   return -EINVAL;
 }
 
+bool CPVRClient::SeekTime(int time, bool backwards, double *startpts)
+{
+  if (IsPlaying())
+  {
+    // player time is added to time here, which is taken from the epg
+    // we can either substract it again here, or add special pvr cases in players
+    int iChangeTime = time - (int)g_application.m_pPlayer->GetTime();
+    try { return m_pStruct->SeekTime(iChangeTime, backwards, startpts); }
+    catch (exception &e) { LogException(e, "SeekTime()"); }
+  }
+  return false;
+}
+
 int64_t CPVRClient::GetStreamPosition(void)
 {
   if (IsPlayingLiveStream())
@@ -896,7 +912,7 @@ int64_t CPVRClient::GetStreamLength(void)
   else if (IsPlayingRecording())
   {
     try { return m_pStruct->LengthRecordedStream(); }
-    catch (exception &e) { LogException(e, "PositionRecordedStream()"); }
+    catch (exception &e) { LogException(e, "LengthRecordedStream()"); }
   }
   return -EINVAL;
 }
@@ -948,8 +964,7 @@ bool CPVRClient::SignalQuality(PVR_SIGNAL_STATUS &qualityinfo)
   {
     try
     {
-      PVR_ERROR retVal = m_pStruct->SignalStatus(qualityinfo);
-      return LogError(retVal, __FUNCTION__);
+      return m_pStruct->SignalStatus(qualityinfo) == PVR_ERROR_NO_ERROR;
     }
     catch (exception &e)
     {
@@ -1028,9 +1043,21 @@ DemuxPacket* CPVRClient::DemuxRead(void)
   return NULL;
 }
 
-bool CPVRClient::HaveMenuHooks(void) const
+bool CPVRClient::HaveMenuHooks(PVR_MENUHOOK_CAT cat) const
 {
-  return m_bReadyToUse ? m_menuhooks.size() > 0 : false;
+  bool bReturn(false);
+  if (m_bReadyToUse && m_menuhooks.size() > 0)
+  {
+    for (unsigned int i = 0; i < m_menuhooks.size(); i++)
+    {
+      if (m_menuhooks[i].category == cat || m_menuhooks[i].category == PVR_MENUHOOK_ALL)
+      {
+        bReturn = true;
+        break;
+      }
+    }
+  }
+  return bReturn;
 }
 
 PVR_MENUHOOKS *CPVRClient::GetMenuHooks(void)
@@ -1324,6 +1351,15 @@ void CPVRClient::PauseStream(bool bPaused)
   {
     try { m_pStruct->PauseStream(bPaused); }
     catch (exception &e) { LogException(e, "PauseStream()"); }
+  }
+}
+
+void CPVRClient::SetSpeed(int speed)
+{
+  if (IsPlaying())
+  {
+    try { m_pStruct->SetSpeed(speed); }
+    catch (exception &e) { LogException(e, "SetSpeed()"); }
   }
 }
 

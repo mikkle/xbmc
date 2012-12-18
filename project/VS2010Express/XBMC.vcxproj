@@ -387,6 +387,7 @@
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AEChannelInfo.cpp" />
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AEConvert.cpp" />
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AEDeviceInfo.cpp" />
+    <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AELimiter.cpp" />
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AEPackIEC61937.cpp" />
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AERemap.cpp" />
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Utils\AEStreamInfo.cpp" />
@@ -477,6 +478,7 @@
     <ClCompile Include="..\..\xbmc\filesystem\HTSPDirectory.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\HTSPSession.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\HTTPDirectory.cpp" />
+    <ClCompile Include="..\..\xbmc\filesystem\HTTPFile.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\IDirectory.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\IFile.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\ImageFile.cpp" />
@@ -754,6 +756,7 @@
     <ClCompile Include="..\..\xbmc\interfaces\python\generated\AddonModuleXbmcplugin.cpp" />
     <ClCompile Include="..\..\xbmc\interfaces\python\generated\AddonModuleXbmcvfs.cpp" />
     <ClCompile Include="..\..\xbmc\interfaces\python\LanguageHook.cpp" />
+    <ClCompile Include="..\..\xbmc\interfaces\python\PyContext.cpp" />
     <ClCompile Include="..\..\xbmc\interfaces\python\swig.cpp" />
     <ClCompile Include="..\..\xbmc\interfaces\python\test\TestSwig.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (DirectX)|Win32'">true</ExcludedFromBuild>
@@ -971,6 +974,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (DirectX)|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (OpenGL)|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\test\TestTextureCache.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (DirectX)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (OpenGL)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (DirectX)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (OpenGL)|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\xbmc\test\TestUtils.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (DirectX)|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (OpenGL)|Win32'">true</ExcludedFromBuild>
@@ -1009,6 +1018,7 @@
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AEChannelInfo.h" />
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AEConvert.h" />
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AEDeviceInfo.h" />
+    <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AELimiter.h" />
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AEPackIEC61937.h" />
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AERemap.h" />
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Utils\AEStreamInfo.h" />
@@ -1020,6 +1030,7 @@
     <ClInclude Include="..\..\xbmc\dialogs\GUIDialogKeyboardGeneric.h" />
     <ClInclude Include="..\..\xbmc\DbUrl.h" />
     <ClInclude Include="..\..\xbmc\dialogs\GUIDialogMediaFilter.h" />
+    <ClInclude Include="..\..\xbmc\filesystem\HTTPFile.h" />
     <ClInclude Include="..\..\xbmc\filesystem\ImageFile.h" />
     <ClInclude Include="..\..\xbmc\filesystem\VideoDatabaseDirectory\DirectoryNodeTags.h" />
     <ClInclude Include="..\..\xbmc\filesystem\windows\WINFileSMB.h" />
@@ -1067,6 +1078,7 @@
     <ClInclude Include="..\..\xbmc\interfaces\python\CallbackHandler.h" />
     <ClInclude Include="..\..\xbmc\interfaces\python\LanguageHook.h" />
     <ClInclude Include="..\..\xbmc\interfaces\python\preamble.h" />
+    <ClInclude Include="..\..\xbmc\interfaces\python\PyContext.h" />
     <ClInclude Include="..\..\xbmc\interfaces\python\pythreadstate.h" />
     <ClInclude Include="..\..\xbmc\interfaces\python\swig.h" />
     <ClInclude Include="..\..\xbmc\interfaces\python\XBPython.h" />
@@ -1203,6 +1215,13 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\interfaces\json-rpc\AddonsOperations.h" />
     <ClCompile Include="..\..\xbmc\ThumbLoader.cpp" />
+    <ClCompile Include="..\..\xbmc\utils\test\TestUrlOptions.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (DirectX)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug (OpenGL)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (DirectX)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (OpenGL)|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\xbmc\video\VideoThumbLoader.cpp" />
     <ClCompile Include="..\..\xbmc\music\MusicThumbLoader.cpp" />
     <ClCompile Include="..\..\xbmc\ThumbnailCache.cpp" />
@@ -1241,6 +1260,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Testsuite|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (DirectX)|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\utils\GroupUtils.cpp" />
     <ClCompile Include="..\..\xbmc\utils\HTMLTable.cpp" />
     <ClCompile Include="..\..\xbmc\utils\HTMLUtil.cpp" />
     <ClCompile Include="..\..\xbmc\utils\HttpHeader.cpp" />
@@ -2387,6 +2407,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Testsuite|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release (DirectX)|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\xbmc\utils\GroupUtils.h" />
     <ClInclude Include="..\..\xbmc\utils\HTMLTable.h" />
     <ClInclude Include="..\..\xbmc\utils\HTMLUtil.h" />
     <ClInclude Include="..\..\xbmc\utils\HttpHeader.h" />

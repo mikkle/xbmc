@@ -47,6 +47,7 @@
 #include "music/MusicDatabase.h"
 #include "URL.h"
 #include "video/VideoThumbLoader.h"
+#include "filesystem/Directory.h"
 
 using namespace std;
 using namespace XFILE;
@@ -89,39 +90,6 @@ bool CGUIDialogVideoInfo::OnMessage(CGUIMessage& message)
       ClearCastList();
     }
     break;
-
-  case GUI_MSG_WINDOW_INIT:
-    {
-      m_bRefresh = false;
-      m_bRefreshAll = true;
-      m_hasUpdatedThumb = false;
-
-      CGUIDialog::OnMessage(message);
-      m_bViewReview = true;
-
-      CVideoDatabase database;
-      ADDON::ScraperPtr scraper;
-
-      if(database.Open())
-      {
-        scraper = database.GetScraperForPath(m_movieItem->GetVideoInfoTag()->GetPath());
-        database.Close();
-      }
-
-      CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_REFRESH, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Left(2).Equals("xx") && scraper);
-      CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_GET_THUMB, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Mid(2).Equals("plugin"));
-
-      VIDEODB_CONTENT_TYPE type = (VIDEODB_CONTENT_TYPE)m_movieItem->GetVideoContentType();
-      if (type == VIDEODB_CONTENT_TVSHOWS || type == VIDEODB_CONTENT_MOVIES)
-        CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_GET_FANART, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Mid(2).Equals("plugin"));
-      else
-        CONTROL_DISABLE(CONTROL_BTN_GET_FANART);
-
-      Update();
-      return true;
-    }
-    break;
-
 
   case GUI_MSG_CLICKED:
     {
@@ -222,6 +190,36 @@ bool CGUIDialogVideoInfo::OnMessage(CGUIMessage& message)
   return CGUIDialog::OnMessage(message);
 }
 
+void CGUIDialogVideoInfo::OnInitWindow()
+{
+  m_bRefresh = false;
+  m_bRefreshAll = true;
+  m_hasUpdatedThumb = false;
+  m_bViewReview = true;
+
+  CVideoDatabase database;
+  ADDON::ScraperPtr scraper;
+
+  if(database.Open())
+  {
+    scraper = database.GetScraperForPath(m_movieItem->GetVideoInfoTag()->GetPath());
+    database.Close();
+  }
+
+  CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_REFRESH, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Left(2).Equals("xx") && scraper);
+  CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_GET_THUMB, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Mid(2).Equals("plugin"));
+
+  VIDEODB_CONTENT_TYPE type = (VIDEODB_CONTENT_TYPE)m_movieItem->GetVideoContentType();
+  if (type == VIDEODB_CONTENT_TVSHOWS || type == VIDEODB_CONTENT_MOVIES)
+    CONTROL_ENABLE_ON_CONDITION(CONTROL_BTN_GET_FANART, (g_settings.GetCurrentProfile().canWriteDatabases() || g_passwordManager.bMasterUser) && !m_movieItem->GetVideoInfoTag()->m_strIMDBNumber.Mid(2).Equals("plugin"));
+  else
+    CONTROL_DISABLE(CONTROL_BTN_GET_FANART);
+
+  Update();
+
+  CGUIDialog::OnInitWindow();
+}
+
 bool CGUIDialogVideoInfo::OnAction(const CAction &action)
 {
   if (action.GetID() == ACTION_SHOW_INFO)
@@ -315,9 +313,12 @@ void CGUIDialogVideoInfo::SetMovie(const CFileItem *item)
           if (seasonID < 0)
             seasonID = db.GetSeasonId(m_movieItem->GetVideoInfoTag()->m_iIdShow,
                                       m_movieItem->GetVideoInfoTag()->m_iSeason);
-          string thumb = db.GetArtForItem(seasonID, "season", "thumb");
-          if (!thumb.empty())
-            m_movieItem->SetArt("seasonthumb", thumb);
+          CGUIListItem::ArtMap thumbs;
+          if (db.GetArtForItem(seasonID, "season", thumbs))
+          {
+            for (CGUIListItem::ArtMap::iterator i = thumbs.begin(); i != thumbs.end(); i++)
+              m_movieItem->SetArt("season." + i->first, i->second);
+          }
         }
         db.Close();
       }
@@ -592,39 +593,51 @@ void CGUIDialogVideoInfo::Play(bool resume)
   }
 }
 
-// Get Thumb from user choice.
-// Options are:
-// 1.  Current thumb
-// 2.  IMDb thumb
-// 3.  Local thumb
-// 4.  No thumb (if no Local thumb is available)
-void CGUIDialogVideoInfo::OnGetArt()
+string CGUIDialogVideoInfo::ChooseArtType(const CFileItem &videoItem, map<string, string> &currentArt)
 {
   // prompt for choice
   CGUIDialogSelect *dialog = (CGUIDialogSelect*)g_windowManager.GetWindow(WINDOW_DIALOG_SELECT);
-  if (!dialog)
-    return;
+  if (!dialog || !videoItem.HasVideoInfoTag())
+    return "";
 
   CFileItemList items;
   dialog->SetHeading(13511);
   dialog->Reset();
   dialog->SetUseDetails(true);
 
-  vector<string> artTypes = CVideoThumbLoader::GetArtTypes(m_movieItem->GetVideoInfoTag()->m_type);
+  CVideoDatabase db;
+  db.Open();
+
+  vector<string> artTypes = CVideoThumbLoader::GetArtTypes(videoItem.GetVideoInfoTag()->m_type);
+
+  // add in any stored art for this item that is non-empty.
+  db.GetArtForItem(videoItem.GetVideoInfoTag()->m_iDbId, videoItem.GetVideoInfoTag()->m_type, currentArt);
+  for (CGUIListItem::ArtMap::iterator i = currentArt.begin(); i != currentArt.end(); ++i)
+  {
+    if (!i->second.empty() && find(artTypes.begin(), artTypes.end(), i->first) == artTypes.end())
+      artTypes.push_back(i->first);
+  }
+
   for (vector<string>::const_iterator i = artTypes.begin(); i != artTypes.end(); ++i)
   {
     string type = *i;
     CFileItemPtr item(new CFileItem(type, "false"));
     item->SetLabel(type);
-    if (m_movieItem->HasArt(type))
-      item->SetArt("thumb", m_movieItem->GetArt(type));
+    if (videoItem.HasArt(type))
+      item->SetArt("thumb", videoItem.GetArt(type));
     items.Add(item);
   }
 
   dialog->SetItems(&items);
   dialog->DoModal();
 
-  string type = dialog->GetSelectedItem()->GetLabel();
+  return dialog->GetSelectedItem()->GetLabel();
+}
+
+void CGUIDialogVideoInfo::OnGetArt()
+{
+  map<string, string> currentArt;
+  string type = ChooseArtType(*m_movieItem, currentArt);
   if (type.empty())
     return; // cancelled
 
@@ -634,19 +647,28 @@ void CGUIDialogVideoInfo::OnGetArt()
     return;
   }
 
-  items.Clear();
+  CFileItemList items;
+
   // Current thumb
-  if (CFile::Exists(m_movieItem->GetArt(type)))
+  if (m_movieItem->HasArt(type))
   {
     CFileItemPtr item(new CFileItem("thumb://Current", false));
     item->SetArt("thumb", m_movieItem->GetArt(type));
     item->SetLabel(g_localizeStrings.Get(13512));
     items.Add(item);
   }
+  else if ((type == "poster" || type == "banner") && currentArt.find("thumb") != currentArt.end())
+  { // add the 'thumb' type in
+    CFileItemPtr item(new CFileItem("thumb://Thumb", false));
+    item->SetArt("thumb", currentArt["thumb"]);
+    item->SetLabel(g_localizeStrings.Get(13512));
+    items.Add(item);
+  }
 
   // Grab the thumbnails from the web
   vector<CStdString> thumbs;
-  m_movieItem->GetVideoInfoTag()->m_strPictureURL.GetThumbURLs(thumbs, type);
+  int season = (m_movieItem->GetVideoInfoTag()->m_type == "season") ? m_movieItem->GetVideoInfoTag()->m_iSeason : -1;
+  m_movieItem->GetVideoInfoTag()->m_strPictureURL.GetThumbURLs(thumbs, type, season);
 
   for (unsigned int i = 0; i < thumbs.size(); ++i)
   {
@@ -682,6 +704,7 @@ void CGUIDialogVideoInfo::OnGetArt()
 
   CStdString result;
   VECSOURCES sources(g_settings.m_videoSources);
+  AddItemPathToFileBrowserSources(sources, *m_movieItem);
   g_mediaManager.GetLocalDrives(sources);
   if (!CGUIDialogFileBrowser::ShowAndGetImage(items, sources, g_localizeStrings.Get(13511), result))
     return;   // user cancelled
@@ -695,12 +718,14 @@ void CGUIDialogVideoInfo::OnGetArt()
     int number = atoi(result.Mid(14));
     newThumb = thumbs[number];
   }
+  else if (result == "thumb://Thumb")
+    newThumb = currentArt["thumb"];
   else if (result == "thumb://Local")
     newThumb = localThumb;
   else if (CFile::Exists(result))
     newThumb = result;
   else // none
-    newThumb = "-"; // force local thumbs to be ignored
+    newThumb.clear();
 
   // update thumb in the database
   CVideoDatabase db;
@@ -709,7 +734,6 @@ void CGUIDialogVideoInfo::OnGetArt()
     db.SetArtForItem(m_movieItem->GetVideoInfoTag()->m_iDbId, m_movieItem->GetVideoInfoTag()->m_type, type, newThumb);
     db.Close();
   }
-
   CUtil::DeleteVideoDatabaseDirectoryCache(); // to get them new thumbs to show
   m_movieItem->SetArt(type, newThumb);
   if (m_movieItem->HasProperty("set_folder_thumb"))
@@ -776,6 +800,7 @@ void CGUIDialogVideoInfo::OnGetFanart()
 
   CStdString result;
   VECSOURCES sources(g_settings.m_videoSources);
+  AddItemPathToFileBrowserSources(sources, item);
   g_mediaManager.GetLocalDrives(sources);
   bool flip=false;
   if (!CGUIDialogFileBrowser::ShowAndGetImage(items, sources, g_localizeStrings.Get(20437), result, &flip, 20445) || result.Equals("fanart://Current"))
@@ -825,7 +850,7 @@ void CGUIDialogVideoInfo::PlayTrailer()
   *item.GetVideoInfoTag() = *m_movieItem->GetVideoInfoTag();
   item.GetVideoInfoTag()->m_streamDetails.Reset();
   item.GetVideoInfoTag()->m_strTitle.Format("%s (%s)",m_movieItem->GetVideoInfoTag()->m_strTitle.c_str(),g_localizeStrings.Get(20410));
-  item.SetArt("thumb", m_movieItem->GetArt("thumb"));
+  CVideoThumbLoader::SetArt(item, m_movieItem->GetArt());
   item.GetVideoInfoTag()->m_iDbId = -1;
   item.GetVideoInfoTag()->m_iFileId = -1;
 
@@ -853,4 +878,28 @@ void CGUIDialogVideoInfo::SetLabel(int iControl, const CStdString &strLabel)
 std::string CGUIDialogVideoInfo::GetThumbnail() const
 {
   return m_movieItem->GetArt("thumb");
+}
+
+void CGUIDialogVideoInfo::AddItemPathToFileBrowserSources(VECSOURCES &sources, const CFileItem &item)
+{
+  if (!item.HasVideoInfoTag())
+    return;
+
+  CStdString itemDir = item.GetVideoInfoTag()->m_basePath;
+
+  //season
+  if (itemDir.IsEmpty())
+    itemDir = item.GetVideoInfoTag()->GetPath();
+
+  CFileItem itemTmp(itemDir, false);
+  if (itemTmp.IsVideo())
+    itemDir = URIUtils::GetParentPath(itemDir);
+
+  if (!itemDir.IsEmpty() && CDirectory::Exists(itemDir))
+  {
+    CMediaSource itemSource;
+    itemSource.strName = g_localizeStrings.Get(36041);
+    itemSource.strPath = itemDir;
+    sources.push_back(itemSource);
+  }
 }

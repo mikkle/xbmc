@@ -295,11 +295,11 @@
 #endif
 
 #ifdef TARGET_DARWIN_OSX
-#include "CocoaInterface.h"
-#include "XBMCHelper.h"
+#include "osx/CocoaInterface.h"
+#include "osx/XBMCHelper.h"
 #endif
 #ifdef TARGET_DARWIN
-#include "DarwinUtils.h"
+#include "osx/DarwinUtils.h"
 #endif
 
 
@@ -773,6 +773,7 @@ bool CApplication::Create()
 
 bool CApplication::CreateGUI()
 {
+  m_renderGUI = true;
 #ifdef HAS_SDL
   CLog::Log(LOGNOTICE, "Setup SDL");
 
@@ -1211,118 +1212,118 @@ bool CApplication::Initialize()
   {
     g_guiSettings.GetSetting("powermanagement.displaysoff")->SetVisible(m_dpms->IsSupported());
 
-    g_windowManager.Add(new CGUIWindowHome);                     // window id = 0
-    g_windowManager.Add(new CGUIWindowPrograms);                 // window id = 1
-    g_windowManager.Add(new CGUIWindowPictures);                 // window id = 2
-    g_windowManager.Add(new CGUIWindowFileManager);      // window id = 3
-    g_windowManager.Add(new CGUIWindowSettings);                 // window id = 4
-    g_windowManager.Add(new CGUIWindowSystemInfo);               // window id = 7
+    g_windowManager.Add(new CGUIWindowHome);
+    g_windowManager.Add(new CGUIWindowPrograms);
+    g_windowManager.Add(new CGUIWindowPictures);
+    g_windowManager.Add(new CGUIWindowFileManager);
+    g_windowManager.Add(new CGUIWindowSettings);
+    g_windowManager.Add(new CGUIWindowSystemInfo);
 #ifdef HAS_GL
-    g_windowManager.Add(new CGUIWindowTestPatternGL);      // window id = 8
+    g_windowManager.Add(new CGUIWindowTestPatternGL);
 #endif
 #ifdef HAS_DX
-    g_windowManager.Add(new CGUIWindowTestPatternDX);      // window id = 8
+    g_windowManager.Add(new CGUIWindowTestPatternDX);
 #endif
-    g_windowManager.Add(new CGUIWindowSettingsScreenCalibration); // window id = 11
-    g_windowManager.Add(new CGUIWindowSettingsCategory);         // window id = 12 slideshow:window id 2007
-    g_windowManager.Add(new CGUIWindowVideoNav);                 // window id = 36
-    g_windowManager.Add(new CGUIWindowVideoPlaylist);            // window id = 28
-    g_windowManager.Add(new CGUIWindowLoginScreen);            // window id = 29
-    g_windowManager.Add(new CGUIWindowSettingsProfile);          // window id = 34
-    g_windowManager.Add(new CGUIWindow(WINDOW_SKIN_SETTINGS, "SkinSettings.xml")); // window id = 35
-    g_windowManager.Add(new CGUIWindowAddonBrowser);          // window id = 40
-    g_windowManager.Add(new CGUIWindowScreensaverDim);            // window id = 97
-    g_windowManager.Add(new CGUIWindowDebugInfo);            // window id = 98
-    g_windowManager.Add(new CGUIWindowPointer);            // window id = 99
-    g_windowManager.Add(new CGUIDialogYesNo);              // window id = 100
-    g_windowManager.Add(new CGUIDialogProgress);           // window id = 101
-    g_windowManager.Add(new CGUIDialogExtendedProgressBar);     // window id = 148
-    g_windowManager.Add(new CGUIDialogKeyboardGeneric);    // window id = 103
-    g_windowManager.Add(new CGUIDialogVolumeBar);          // window id = 104
-    g_windowManager.Add(new CGUIDialogSeekBar);            // window id = 115
-    g_windowManager.Add(new CGUIDialogSubMenu);            // window id = 105
-    g_windowManager.Add(new CGUIDialogContextMenu);        // window id = 106
-    g_windowManager.Add(new CGUIDialogKaiToast);           // window id = 107
-    g_windowManager.Add(new CGUIDialogNumeric);            // window id = 109
-    g_windowManager.Add(new CGUIDialogGamepad);            // window id = 110
-    g_windowManager.Add(new CGUIDialogButtonMenu);         // window id = 111
-    g_windowManager.Add(new CGUIDialogMuteBug);            // window id = 113
-    g_windowManager.Add(new CGUIDialogPlayerControls);     // window id = 114
+    g_windowManager.Add(new CGUIWindowSettingsScreenCalibration);
+    g_windowManager.Add(new CGUIWindowSettingsCategory);
+    g_windowManager.Add(new CGUIWindowVideoNav);
+    g_windowManager.Add(new CGUIWindowVideoPlaylist);
+    g_windowManager.Add(new CGUIWindowLoginScreen);
+    g_windowManager.Add(new CGUIWindowSettingsProfile);
+    g_windowManager.Add(new CGUIWindow(WINDOW_SKIN_SETTINGS, "SkinSettings.xml"));
+    g_windowManager.Add(new CGUIWindowAddonBrowser);
+    g_windowManager.Add(new CGUIWindowScreensaverDim);
+    g_windowManager.Add(new CGUIWindowDebugInfo);
+    g_windowManager.Add(new CGUIWindowPointer);
+    g_windowManager.Add(new CGUIDialogYesNo);
+    g_windowManager.Add(new CGUIDialogProgress);
+    g_windowManager.Add(new CGUIDialogExtendedProgressBar);
+    g_windowManager.Add(new CGUIDialogKeyboardGeneric);
+    g_windowManager.Add(new CGUIDialogVolumeBar);
+    g_windowManager.Add(new CGUIDialogSeekBar);
+    g_windowManager.Add(new CGUIDialogSubMenu);
+    g_windowManager.Add(new CGUIDialogContextMenu);
+    g_windowManager.Add(new CGUIDialogKaiToast);
+    g_windowManager.Add(new CGUIDialogNumeric);
+    g_windowManager.Add(new CGUIDialogGamepad);
+    g_windowManager.Add(new CGUIDialogButtonMenu);
+    g_windowManager.Add(new CGUIDialogMuteBug);
+    g_windowManager.Add(new CGUIDialogPlayerControls);
 #ifdef HAS_KARAOKE
-    g_windowManager.Add(new CGUIDialogKaraokeSongSelectorSmall); // window id 143
-    g_windowManager.Add(new CGUIDialogKaraokeSongSelectorLarge); // window id 144
+    g_windowManager.Add(new CGUIDialogKaraokeSongSelectorSmall);
+    g_windowManager.Add(new CGUIDialogKaraokeSongSelectorLarge);
 #endif
-    g_windowManager.Add(new CGUIDialogSlider);             // window id = 145
-    g_windowManager.Add(new CGUIDialogMusicOSD);           // window id = 120
-    g_windowManager.Add(new CGUIDialogVisualisationPresetList);   // window id = 122
-    g_windowManager.Add(new CGUIDialogVideoSettings);             // window id = 123
-    g_windowManager.Add(new CGUIDialogAudioSubtitleSettings);     // window id = 124
-    g_windowManager.Add(new CGUIDialogVideoBookmarks);      // window id = 125
+    g_windowManager.Add(new CGUIDialogSlider);
+    g_windowManager.Add(new CGUIDialogMusicOSD);
+    g_windowManager.Add(new CGUIDialogVisualisationPresetList);
+    g_windowManager.Add(new CGUIDialogVideoSettings);
+    g_windowManager.Add(new CGUIDialogAudioSubtitleSettings);
+    g_windowManager.Add(new CGUIDialogVideoBookmarks);
     // Don't add the filebrowser dialog - it's created and added when it's needed
-    g_windowManager.Add(new CGUIDialogNetworkSetup);  // window id = 128
-    g_windowManager.Add(new CGUIDialogMediaSource);   // window id = 129
-    g_windowManager.Add(new CGUIDialogProfileSettings); // window id = 130
-    g_windowManager.Add(new CGUIDialogFavourites);     // window id = 134
-    g_windowManager.Add(new CGUIDialogSongInfo);       // window id = 135
-    g_windowManager.Add(new CGUIDialogSmartPlaylistEditor);       // window id = 136
-    g_windowManager.Add(new CGUIDialogSmartPlaylistRule);       // window id = 137
-    g_windowManager.Add(new CGUIDialogBusy);      // window id = 138
-    g_windowManager.Add(new CGUIDialogPictureInfo);      // window id = 139
+    g_windowManager.Add(new CGUIDialogNetworkSetup);
+    g_windowManager.Add(new CGUIDialogMediaSource);
+    g_windowManager.Add(new CGUIDialogProfileSettings);
+    g_windowManager.Add(new CGUIDialogFavourites);
+    g_windowManager.Add(new CGUIDialogSongInfo);
+    g_windowManager.Add(new CGUIDialogSmartPlaylistEditor);
+    g_windowManager.Add(new CGUIDialogSmartPlaylistRule);
+    g_windowManager.Add(new CGUIDialogBusy);
+    g_windowManager.Add(new CGUIDialogPictureInfo);
     g_windowManager.Add(new CGUIDialogAddonInfo);
-    g_windowManager.Add(new CGUIDialogAddonSettings);      // window id = 140
+    g_windowManager.Add(new CGUIDialogAddonSettings);
 #ifdef HAS_LINUX_NETWORK
-    g_windowManager.Add(new CGUIDialogAccessPoints);      // window id = 141
+    g_windowManager.Add(new CGUIDialogAccessPoints);
 #endif
 
-    g_windowManager.Add(new CGUIDialogLockSettings); // window id = 131
+    g_windowManager.Add(new CGUIDialogLockSettings);
 
-    g_windowManager.Add(new CGUIDialogContentSettings);        // window id = 132
+    g_windowManager.Add(new CGUIDialogContentSettings);
 
     g_windowManager.Add(new CGUIDialogPlayEject);
 
     g_windowManager.Add(new CGUIDialogPeripheralManager);
     g_windowManager.Add(new CGUIDialogPeripheralSettings);
     
-    g_windowManager.Add(new CGUIDialogMediaFilter);   // window id = 151
+    g_windowManager.Add(new CGUIDialogMediaFilter);
 
-    g_windowManager.Add(new CGUIWindowMusicPlayList);          // window id = 500
-    g_windowManager.Add(new CGUIWindowMusicSongs);             // window id = 501
-    g_windowManager.Add(new CGUIWindowMusicNav);               // window id = 502
-    g_windowManager.Add(new CGUIWindowMusicPlaylistEditor);    // window id = 503
+    g_windowManager.Add(new CGUIWindowMusicPlayList);
+    g_windowManager.Add(new CGUIWindowMusicSongs);
+    g_windowManager.Add(new CGUIWindowMusicNav);
+    g_windowManager.Add(new CGUIWindowMusicPlaylistEditor);
 
     /* Load PVR related Windows and Dialogs */
-    g_windowManager.Add(new CGUIDialogTeletext);               // window id = 600
-    g_windowManager.Add(new CGUIWindowPVR);                    // window id = 601
-    g_windowManager.Add(new CGUIDialogPVRGuideInfo);           // window id = 602
-    g_windowManager.Add(new CGUIDialogPVRRecordingInfo);       // window id = 603
-    g_windowManager.Add(new CGUIDialogPVRTimerSettings);       // window id = 604
-    g_windowManager.Add(new CGUIDialogPVRGroupManager);        // window id = 605
-    g_windowManager.Add(new CGUIDialogPVRChannelManager);      // window id = 606
-    g_windowManager.Add(new CGUIDialogPVRGuideSearch);         // window id = 607
-    g_windowManager.Add(new CGUIDialogPVRChannelsOSD);         // window id = 610
-    g_windowManager.Add(new CGUIDialogPVRGuideOSD);            // window id = 611
-    g_windowManager.Add(new CGUIDialogPVRDirectorOSD);         // window id = 612
-    g_windowManager.Add(new CGUIDialogPVRCutterOSD);           // window id = 613
+    g_windowManager.Add(new CGUIDialogTeletext);
+    g_windowManager.Add(new CGUIWindowPVR);
+    g_windowManager.Add(new CGUIDialogPVRGuideInfo);
+    g_windowManager.Add(new CGUIDialogPVRRecordingInfo);
+    g_windowManager.Add(new CGUIDialogPVRTimerSettings);
+    g_windowManager.Add(new CGUIDialogPVRGroupManager);
+    g_windowManager.Add(new CGUIDialogPVRChannelManager);
+    g_windowManager.Add(new CGUIDialogPVRGuideSearch);
+    g_windowManager.Add(new CGUIDialogPVRChannelsOSD);
+    g_windowManager.Add(new CGUIDialogPVRGuideOSD);
+    g_windowManager.Add(new CGUIDialogPVRDirectorOSD);
+    g_windowManager.Add(new CGUIDialogPVRCutterOSD);
 
-    g_windowManager.Add(new CGUIDialogSelect);             // window id = 2000
-    g_windowManager.Add(new CGUIDialogMusicInfo);          // window id = 2001
-    g_windowManager.Add(new CGUIDialogOK);                 // window id = 2002
-    g_windowManager.Add(new CGUIDialogVideoInfo);          // window id = 2003
+    g_windowManager.Add(new CGUIDialogSelect);
+    g_windowManager.Add(new CGUIDialogMusicInfo);
+    g_windowManager.Add(new CGUIDialogOK);
+    g_windowManager.Add(new CGUIDialogVideoInfo);
     g_windowManager.Add(new CGUIDialogTextViewer);
-    g_windowManager.Add(new CGUIWindowFullScreen);         // window id = 2005
-    g_windowManager.Add(new CGUIWindowVisualisation);      // window id = 2006
-    g_windowManager.Add(new CGUIWindowSlideShow);          // window id = 2007
-    g_windowManager.Add(new CGUIDialogFileStacking);       // window id = 2008
+    g_windowManager.Add(new CGUIWindowFullScreen);
+    g_windowManager.Add(new CGUIWindowVisualisation);
+    g_windowManager.Add(new CGUIWindowSlideShow);
+    g_windowManager.Add(new CGUIDialogFileStacking);
 #ifdef HAS_KARAOKE
-    g_windowManager.Add(new CGUIWindowKaraokeLyrics);      // window id = 2009
+    g_windowManager.Add(new CGUIWindowKaraokeLyrics);
 #endif
 
-    g_windowManager.Add(new CGUIDialogVideoOSD);           // window id = 2901
-    g_windowManager.Add(new CGUIDialogMusicOverlay);       // window id = 2903
-    g_windowManager.Add(new CGUIDialogVideoOverlay);       // window id = 2904
-    g_windowManager.Add(new CGUIWindowScreensaver);        // window id = 2900 Screensaver
-    g_windowManager.Add(new CGUIWindowWeather);            // window id = 2600 WEATHER
-    g_windowManager.Add(new CGUIWindowStartup);            // startup window (id 2999)
+    g_windowManager.Add(new CGUIDialogVideoOSD);
+    g_windowManager.Add(new CGUIDialogMusicOverlay);
+    g_windowManager.Add(new CGUIDialogVideoOverlay);
+    g_windowManager.Add(new CGUIWindowScreensaver);
+    g_windowManager.Add(new CGUIWindowWeather);
+    g_windowManager.Add(new CGUIWindowStartup);
 
     /* window id's 3000 - 3100 are reserved for python */
 
@@ -1332,8 +1333,6 @@ bool CApplication::Initialize()
         CLog::Log(LOGERROR, "Default skin '%s' not found! Terminating..", DEFAULT_SKIN);
         return false;
     }
-
-    StartPVRManager();
 
     if (g_advancedSettings.m_splashImage)
       SAFE_DELETE(m_splash);
@@ -1354,7 +1353,16 @@ bool CApplication::Initialize()
       CJSONRPC::Initialize();
 #endif
       ADDON::CAddonMgr::Get().StartServices(false);
-      g_windowManager.ActivateWindow(g_SkinInfo->GetFirstWindow());
+      if (g_SkinInfo->GetFirstWindow() == WINDOW_PVR)
+      {
+        g_windowManager.ActivateWindow(WINDOW_HOME);
+        StartPVRManager(true);
+      }
+      else
+      {
+        StartPVRManager(false);
+        g_windowManager.ActivateWindow(g_SkinInfo->GetFirstWindow());
+      }
     }
 
   }
@@ -1396,7 +1404,7 @@ bool CApplication::Initialize()
 
 #ifdef HAS_SDL_JOYSTICK
   g_Joystick.SetEnabled(g_guiSettings.GetBool("input.enablejoystick") &&
-                    (CPeripheralImon::GetCountOfImonsConflictWithDInput() == 0 || !g_guiSettings.GetBool("input.disablejoystickwithimon")) );
+                    CPeripheralImon::GetCountOfImonsConflictWithDInput() == 0 );
 #endif
 
   return true;
@@ -1793,10 +1801,10 @@ void CApplication::StopZeroconf()
 #endif
 }
 
-void CApplication::StartPVRManager()
+void CApplication::StartPVRManager(bool bOpenPVRWindow /* = false */)
 {
   if (g_guiSettings.GetBool("pvrmanager.enabled"))
-    g_PVRManager.Start(true);
+    g_PVRManager.Start(true, bOpenPVRWindow);
 }
 
 void CApplication::StopPVRManager()
@@ -2195,7 +2203,7 @@ float CApplication::GetDimScreenSaverLevel() const
   if (!m_bScreenSave || !m_screenSaver ||
       (m_screenSaver->ID() != "screensaver.xbmc.builtin.dim" &&
        m_screenSaver->ID() != "screensaver.xbmc.builtin.black" &&
-       m_screenSaver->ID() != "screensaver.xbmc.builtin.slideshow"))
+       !m_screenSaver->ID().empty()))
     return 0;
 
   if (!m_screenSaver->GetSetting("level").IsEmpty())
@@ -2424,9 +2432,18 @@ bool CApplication::OnKey(const CKey& key)
       // if player is in some sort of menu, (ie DVDMENU) map buttons differently
       action = CButtonTranslator::GetInstance().GetAction(WINDOW_VIDEO_MENU, key);
     }
+    else if (g_PVRManager.IsStarted() && g_application.CurrentFileItem().HasPVRChannelInfoTag())
+    {
+      // check for PVR specific keymaps in FULLSCREEN_VIDEO window
+      action = CButtonTranslator::GetInstance().GetAction(WINDOW_FULLSCREEN_LIVETV, key, false);
+
+      // if no PVR specific action/mapping is found, fall back to default
+      if (action.GetID() == 0)
+        action = CButtonTranslator::GetInstance().GetAction(iWin, key);
+    }
     else
     {
-      // no then use the fullscreen window section of keymap.xml to map key->action
+      // in any other case use the fullscreen window section of keymap.xml to map key->action
       action = CButtonTranslator::GetInstance().GetAction(iWin, key);
     }
   }
@@ -2514,23 +2531,7 @@ bool CApplication::OnKey(const CKey& key)
   if (!key.IsAnalogButton())
     CLog::Log(LOGDEBUG, "%s: %s pressed, action is %s", __FUNCTION__, g_Keyboard.GetKeyName((int) key.GetButtonCode()).c_str(), action.GetName().c_str());
 
-  bool bResult = false;
-
-  // play sound before the action unless the button is held,
-  // where we execute after the action as held actions aren't fired every time.
-  if(action.GetHoldTime())
-  {
-    bResult = OnAction(action);
-    if(bResult)
-      g_audioManager.PlayActionSound(action);
-  }
-  else
-  {
-    g_audioManager.PlayActionSound(action);
-    bResult = OnAction(action);
-  }
-
-  return bResult;
+  return ExecuteInputAction(action);
 }
 
 // OnAppCommand is called in response to a XBMC_APPCOMMAND event.
@@ -2723,6 +2724,13 @@ bool CApplication::OnAction(const CAction &action)
 
   if (IsPlaying())
   {
+    // forward channel switches to the player - he knows what to do
+    if (action.GetID() == ACTION_CHANNEL_UP || action.GetID() == ACTION_CHANNEL_DOWN)
+    {
+      m_pPlayer->OnAction(action);
+      return true;
+    }
+
     // pause : pauses current audio song
     if (action.GetID() == ACTION_PAUSE && m_iPlaySpeed == 1)
     {
@@ -2868,9 +2876,9 @@ bool CApplication::OnAction(const CAction &action)
   if (action.GetID() == ACTION_SHOW_PLAYLIST)
   {
     int iPlaylist = g_playlistPlayer.GetCurrentPlaylist();
-    if (iPlaylist == PLAYLIST_VIDEO)
+    if (iPlaylist == PLAYLIST_VIDEO && g_windowManager.GetActiveWindow() != WINDOW_VIDEO_PLAYLIST)
       g_windowManager.ActivateWindow(WINDOW_VIDEO_PLAYLIST);
-    else if (iPlaylist == PLAYLIST_MUSIC)
+    else if (iPlaylist == PLAYLIST_MUSIC && g_windowManager.GetActiveWindow() != WINDOW_MUSIC_PLAYLIST)
       g_windowManager.ActivateWindow(WINDOW_MUSIC_PLAYLIST);
     return true;
   }
@@ -2991,10 +2999,9 @@ bool CApplication::ProcessGamepad(float frameTime)
     if (CButtonTranslator::GetInstance().TranslateJoystickString(iWin, g_Joystick.GetJoystick().c_str(), bid, JACTIVE_BUTTON, actionID, actionName, fullrange))
     {
       CAction action(actionID, 1.0f, 0.0f, actionName);
-      g_audioManager.PlayActionSound(action);
       g_Joystick.Reset();
       g_Mouse.SetActive(false);
-      return OnAction(action);
+      return ExecuteInputAction(action);
     }
     else
     {
@@ -3020,10 +3027,9 @@ bool CApplication::ProcessGamepad(float frameTime)
       }
 
       CAction action(actionID, fullrange ? (g_Joystick.GetAmount() + 1.0f)/2.0f : fabs(g_Joystick.GetAmount()), 0.0f, actionName);
-      g_audioManager.PlayActionSound(action);
       g_Joystick.Reset();
       g_Mouse.SetActive(false);
-      return OnAction(action);
+      return ExecuteInputAction(action);
     }
     else
     {
@@ -3052,10 +3058,9 @@ bool CApplication::ProcessGamepad(float frameTime)
     if (bid && CButtonTranslator::GetInstance().TranslateJoystickString(iWin, g_Joystick.GetJoystick().c_str(), bid, JACTIVE_HAT, actionID, actionName, fullrange))
     {
       CAction action(actionID, 1.0f, 0.0f, actionName);
-      g_audioManager.PlayActionSound(action);
       g_Joystick.Reset();
       g_Mouse.SetActive(false);
-      return OnAction(action);
+      return ExecuteInputAction(action);
     }
   }
 #endif
@@ -3102,12 +3107,8 @@ bool CApplication::ProcessMouse()
     return true;
 
   // Retrieve the corresponding action
-  int iWin;
+  int iWin = GetActiveWindowID();
   CKey key(mousecommand | KEY_MOUSE, (unsigned int) 0);
-  if (g_windowManager.HasModalDialog())
-    iWin = g_windowManager.GetTopMostModalDialogID() & WINDOW_ID_MASK;
-  else
-    iWin = g_windowManager.GetActiveWindow() & WINDOW_ID_MASK;
   CAction mouseaction = CButtonTranslator::GetInstance().GetAction(iWin, key);
 
   // If we couldn't find an action return false to indicate we have not
@@ -3257,33 +3258,32 @@ bool CApplication::ProcessJoystickEvent(const std::string& joystickName, int wKe
 
    // Translate using regular joystick translator.
    if (CButtonTranslator::GetInstance().TranslateJoystickString(iWin, joystickName.c_str(), wKeyID, isAxis ? JACTIVE_AXIS : JACTIVE_BUTTON, actionID, actionName, fullRange))
-   {
-     CAction action(actionID, fAmount, 0.0f, actionName, holdTime);
-     bool bResult = false;
-
-     // play sound before the action unless the button is held,
-     // where we execute after the action as held actions aren't fired every time.
-     if(action.GetHoldTime())
-     {
-       bResult = OnAction(action);
-       if(bResult)
-         g_audioManager.PlayActionSound(action);
-     }
-     else
-     {
-       g_audioManager.PlayActionSound(action);
-       bResult = OnAction(action);
-     }
-
-     return bResult;
-   }
+     return ExecuteInputAction( CAction(actionID, fAmount, 0.0f, actionName, holdTime) );
    else
-   {
      CLog::Log(LOGDEBUG, "ERROR mapping joystick action. Joystick: %s %i",joystickName.c_str(), wKeyID);
-   }
 #endif
 
    return false;
+}
+
+bool CApplication::ExecuteInputAction(CAction action)
+{
+  bool bResult = false;
+
+  // play sound before the action unless the button is held,
+  // where we execute after the action as held actions aren't fired every time.
+  if(action.GetHoldTime())
+  {
+    bResult = OnAction(action);
+    if(bResult)
+      g_audioManager.PlayActionSound(action);
+  }
+  else
+  {
+    g_audioManager.PlayActionSound(action);
+    bResult = OnAction(action);
+  }
+  return bResult;
 }
 
 int CApplication::GetActiveWindowID(void)
@@ -3295,9 +3295,16 @@ int CApplication::GetActiveWindowID(void)
   if (g_windowManager.HasModalDialog())
     iWin = g_windowManager.GetTopMostModalDialogID() & WINDOW_ID_MASK;
 
-  // If the window is FullScreenVideo check if we're in a DVD menu
-  if (iWin == WINDOW_FULLSCREEN_VIDEO && g_application.m_pPlayer && g_application.m_pPlayer->IsInMenu())
-    iWin = WINDOW_VIDEO_MENU;
+  // If the window is FullScreenVideo check for special cases
+  if (iWin == WINDOW_FULLSCREEN_VIDEO)
+  {
+    // check if we're in a DVD menu
+    if(g_application.m_pPlayer && g_application.m_pPlayer->IsInMenu())
+      iWin = WINDOW_VIDEO_MENU;
+    // check for LiveTV and switch to it's virtual window
+    else if (g_PVRManager.IsStarted() && g_application.CurrentFileItem().HasPVRChannelInfoTag())
+      iWin = WINDOW_FULLSCREEN_LIVETV;
+  }
 
   // Return the window id
   return iWin;
@@ -3840,7 +3847,9 @@ bool CApplication::PlayFile(const CFileItem& item, bool bRestart)
     g_settings.m_currentVideoSettings = g_settings.m_defaultVideoSettings;
     // see if we have saved options in the database
 
-    m_iPlaySpeed = 1;
+    SetPlaySpeed(1);
+    m_iPlaySpeed = 1;     // Reset both CApp's & Player's speed else we'll get confused
+
     *m_itemCurrentFile = item;
     m_nextPlaylistItem = -1;
     m_currentStackPosition = 0;
@@ -4519,6 +4528,7 @@ bool CApplication::ToggleDPMS(bool manual)
 
 bool CApplication::WakeUpScreenSaverAndDPMS(bool bPowerOffKeyPressed /* = false */)
 {
+  bool result;
 
 #ifdef HAS_LCD
     // turn on lcd backlight
@@ -4535,10 +4545,19 @@ bool CApplication::WakeUpScreenSaverAndDPMS(bool bPowerOffKeyPressed /* = false 
     // (DPMS came first), activate screensaver now.
     ToggleDPMS(false);
     ResetScreenSaverTimer();
-    return !m_bScreenSave || WakeUpScreenSaver(bPowerOffKeyPressed);
+    result = !m_bScreenSave || WakeUpScreenSaver(bPowerOffKeyPressed);
   }
   else
-    return WakeUpScreenSaver(bPowerOffKeyPressed);
+    result = WakeUpScreenSaver(bPowerOffKeyPressed);
+
+  if(result)
+  {
+    // allow listeners to ignore the deactivation if it preceeds a powerdown/suspend etc
+    CVariant data(bPowerOffKeyPressed);
+    CAnnouncementManager::Announce(GUI, "xbmc", "OnScreensaverDeactivated", data);
+  }
+
+  return result;
 }
 
 bool CApplication::WakeUpScreenSaver(bool bPowerOffKeyPressed /* = false */)
@@ -4553,7 +4572,7 @@ bool CApplication::WakeUpScreenSaver(bool bPowerOffKeyPressed /* = false */)
       if (g_settings.GetMasterProfile().getLockMode() != LOCK_MODE_EVERYONE &&
           (g_settings.UsingLoginScreen() || g_guiSettings.GetBool("masterlock.startuplock")) &&
           g_settings.GetCurrentProfile().getLockMode() != LOCK_MODE_EVERYONE &&
-          m_screenSaver->ID() != "screensaver.xbmc.builtin.dim" && m_screenSaver->ID() != "screensaver.xbmc.builtin.black" && m_screenSaver->ID() != "visualization")
+          m_screenSaver->ID() != "screensaver.xbmc.builtin.dim" && m_screenSaver->ID() != "screensaver.xbmc.builtin.black" && !m_screenSaver->ID().empty() && m_screenSaver->ID() != "visualization")
       {
         m_iScreenSaveLock = 2;
         CGUIMessage msg(GUI_MSG_CHECK_LOCK,0,0);
@@ -4573,16 +4592,12 @@ bool CApplication::WakeUpScreenSaver(bool bPowerOffKeyPressed /* = false */)
     m_iScreenSaveLock = 0;
     ResetScreenSaverTimer();
 
-    // allow listeners to ignore the deactivation if it preceeds a powerdown/suspend etc
-    CVariant data(bPowerOffKeyPressed);
-    CAnnouncementManager::Announce(GUI, "xbmc", "OnScreensaverDeactivated", data);
-
     if (m_screenSaver->ID() == "visualization")
     {
       // we can just continue as usual from vis mode
       return false;
     }
-    else if (m_screenSaver->ID() == "screensaver.xbmc.builtin.dim" || m_screenSaver->ID() == "screensaver.xbmc.builtin.black")
+    else if (m_screenSaver->ID() == "screensaver.xbmc.builtin.dim" || m_screenSaver->ID() == "screensaver.xbmc.builtin.black" || m_screenSaver->ID().empty())
       return true;
     else if (!m_screenSaver->ID().IsEmpty())
     { // we're in screensaver window
@@ -4689,22 +4704,7 @@ void CApplication::ActivateScreenSaver(bool forceType /*= false */)
       return;
     }
   }
-  // Picture slideshow
-  if (m_screenSaver->ID() == "screensaver.xbmc.builtin.slideshow")
-  {
-    // reset our codec info - don't want that on screen
-    g_infoManager.SetShowCodec(false);
-    CStdString type = m_screenSaver->GetSetting("type");
-    CStdString path = m_screenSaver->GetSetting("path");
-    if (type == "2" && path.IsEmpty())
-      type = "0";
-    if (type == "0")
-      path = "special://profile/Thumbnails/Video/Fanart";
-    if (type == "1")
-      path = "special://profile/Thumbnails/Music/Fanart";
-    CApplicationMessenger::Get().PictureSlideShow(path, true, type != "2");
-  }
-  else if (m_screenSaver->ID() == "screensaver.xbmc.builtin.dim")
+  if (m_screenSaver->ID() == "screensaver.xbmc.builtin.dim" || m_screenSaver->ID().empty())
     return;
   else if (m_screenSaver->ID() == "screensaver.xbmc.builtin.black")
     return;
@@ -4856,10 +4856,24 @@ bool CApplication::OnMessage(CGUIMessage& message)
         if (m_pPlayer) m_pPlayer->OnNothingToQueueNotify();
         return true; // nothing to do
       }
+
       // ok, grab the next song
-      CFileItemPtr item = playlist[iNext];
+      CFileItem file(*playlist[iNext]);
+      // handle plugin://
+      CURL url(file.GetPath());
+      if (url.GetProtocol() == "plugin")
+        XFILE::CPluginDirectory::GetPluginResult(url.Get(), file);
+
+#ifdef HAS_UPNP
+      if (URIUtils::IsUPnP(file.GetPath()))
+      {
+        if (!XFILE::CUPnPDirectory::GetResource(file.GetPath(), file))
+          return true;
+      }
+#endif
+
       // ok - send the file to the player if it wants it
-      if (m_pPlayer && m_pPlayer->QueueNextFile(*item))
+      if (m_pPlayer && m_pPlayer->QueueNextFile(file))
       { // player wants the next file
         m_nextPlaylistItem = iNext;
       }

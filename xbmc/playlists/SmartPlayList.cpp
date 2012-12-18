@@ -62,9 +62,9 @@ static const translateField fields[] = {
   { "styles",            FieldStyles,                  SortByNone,                     CSmartPlaylistRule::TEXT_FIELD,       176 },
   { "type",              FieldAlbumType,               SortByAlbumType,                CSmartPlaylistRule::TEXT_FIELD,       564 },
   { "label",             FieldMusicLabel,              SortByNone,                     CSmartPlaylistRule::TEXT_FIELD,       21899 },
-  { "title",             FieldTitle,                   SortByTitle,                    CSmartPlaylistRule::TEXT_FIELD,       556 },
+  { "title",             FieldTitle,                   SortByTitle,                    CSmartPlaylistRule::BROWSEABLE_FIELD, 556 },
   { "sorttitle",         FieldSortTitle,               SortBySortTitle,                CSmartPlaylistRule::TEXT_FIELD,       556 },
-  { "year",              FieldYear,                    SortByYear,                     CSmartPlaylistRule::BROWSEABLE_FIELD, 562 },
+  { "year",              FieldYear,                    SortByYear,                     CSmartPlaylistRule::BROWSEABLE_NUMERIC_FIELD, 562 },
   { "time",              FieldTime,                    SortByTime,                     CSmartPlaylistRule::SECONDS_FIELD,    180 },
   { "playcount",         FieldPlaycount,               SortByPlaycount,                CSmartPlaylistRule::NUMERIC_FIELD,    567 },
   { "lastplayed",        FieldLastPlayed,              SortByLastPlayed,               CSmartPlaylistRule::DATE_FIELD,       568 },
@@ -91,7 +91,7 @@ static const translateField fields[] = {
   { "season",            FieldSeason,                  SortBySeason,                   CSmartPlaylistRule::NUMERIC_FIELD,    20373 },
   { "episode",           FieldEpisodeNumber,           SortByEpisodeNumber,            CSmartPlaylistRule::NUMERIC_FIELD,    20359 },
   { "numepisodes",       FieldNumberOfEpisodes,        SortByNumberOfEpisodes,         CSmartPlaylistRule::NUMERIC_FIELD,    20360 },
-  { "numwatched",        FieldNumberOfWatchedEpisodes, SortByNumberOfWatchedEpisodes,  CSmartPlaylistRule::NUMERIC_FIELD,    21441 },
+  { "numwatched",        FieldNumberOfWatchedEpisodes, SortByNumberOfWatchedEpisodes,  CSmartPlaylistRule::NUMERIC_FIELD,    21457 },
   { "videoresolution",   FieldVideoResolution,         SortByVideoResolution,          CSmartPlaylistRule::NUMERIC_FIELD,    21443 },
   { "videocodec",        FieldVideoCodec,              SortByVideoCodec,               CSmartPlaylistRule::TEXTIN_FIELD,     21445 },
   { "videoaspect",       FieldVideoAspectRatio,        SortByVideoAspectRatio,         CSmartPlaylistRule::NUMERIC_FIELD,    21374 },
@@ -323,13 +323,6 @@ CStdString CSmartPlaylistRule::GetLocalizedField(Field field)
 {
   for (unsigned int i = 0; i < NUM_FIELDS; i++)
     if (field == fields[i].field) return g_localizeStrings.Get(fields[i].localizedString);
-  return g_localizeStrings.Get(16018);
-}
-
-CStdString CSmartPlaylistRule::GetLocalizedOrder(SortBy order)
-{
-  for (unsigned int i = 0; i < NUM_FIELDS; i++)
-    if (order == fields[i].sort) return g_localizeStrings.Get(fields[i].localizedString);
   return g_localizeStrings.Get(16018);
 }
 
@@ -617,16 +610,27 @@ CStdString CSmartPlaylistRule::GetLocalizedOperator(SEARCH_OPERATOR oper)
   return g_localizeStrings.Get(16018);
 }
 
-CStdString CSmartPlaylistRule::GetLocalizedRule(const CStdString &type) const
+CStdString CSmartPlaylistRule::GetLocalizedRule() const
 {
   CStdString rule;
-  rule.Format("%s %s %s", GetLocalizedField(m_field).c_str(), GetLocalizedOperator(m_operator).c_str(), GetLocalizedParameter(type).c_str());
+  rule.Format("%s %s %s", GetLocalizedField(m_field).c_str(), GetLocalizedOperator(m_operator).c_str(), GetParameter().c_str());
   return rule;
 }
 
-CStdString CSmartPlaylistRule::GetLocalizedParameter(const CStdString &type) const
+CStdString CSmartPlaylistRule::GetParameter() const
 {
   return StringUtils::JoinString(m_parameter, " / ");
+}
+
+void CSmartPlaylistRule::SetParameter(const CStdString &value)
+{
+  m_parameter.clear();
+  StringUtils::SplitString(value, " / ", m_parameter);
+}
+
+void CSmartPlaylistRule::SetParameter(const std::vector<CStdString> &values)
+{
+  m_parameter.assign(values.begin(), values.end());
 }
 
 CStdString CSmartPlaylistRule::GetVideoResolutionQuery(const CStdString &parameter) const
@@ -689,9 +693,20 @@ CStdString CSmartPlaylistRule::GetWhereClause(const CDatabase &db, const CStdStr
     case OPERATOR_DOES_NOT_CONTAIN:
       negate = " NOT"; operatorString = " LIKE '%%%s%%'"; break;
     case OPERATOR_EQUALS:
-      operatorString = " LIKE '%s'"; break;
+      if (GetFieldType(m_field) == NUMERIC_FIELD || GetFieldType(m_field) == SECONDS_FIELD)
+        operatorString = " = %s";
+      else
+        operatorString = " LIKE '%s'";
+      break;
     case OPERATOR_DOES_NOT_EQUAL:
-      negate = " NOT"; operatorString = " LIKE '%s'"; break;
+      if (GetFieldType(m_field) == NUMERIC_FIELD || GetFieldType(m_field) == SECONDS_FIELD)
+        operatorString = " != %s";
+      else
+      {
+        negate = " NOT";
+        operatorString = " LIKE '%s'";
+      }
+      break;
     case OPERATOR_STARTS_WITH:
       operatorString = " LIKE '%s%%'"; break;
     case OPERATOR_ENDS_WITH:
@@ -887,6 +902,8 @@ CStdString CSmartPlaylistRule::GetWhereClause(const CDatabase &db, const CStdStr
         query = GetField(FieldId, strType) + negate + " IN (SELECT idShow FROM tvshowview WHERE " + GetField(m_field, strType) + parameter + ")";
       else if ((m_field == FieldLastPlayed || m_field == FieldDateAdded) && (m_operator == OPERATOR_LESS_THAN || m_operator == OPERATOR_BEFORE || m_operator == OPERATOR_NOT_IN_THE_LAST))
         query = GetField(m_field, strType) + " IS NULL OR " + GetField(m_field, strType) + parameter;
+      else if (m_field == FieldPlaycount)
+        query = "CASE WHEN COALESCE(" + GetField(FieldNumberOfEpisodes, strType) + " - " + GetField(FieldNumberOfWatchedEpisodes, strType) + ", 0) > 0 THEN 0 ELSE 1 END " + parameter;
     }
     else if (strType == "episodes")
     {
@@ -921,7 +938,7 @@ CStdString CSmartPlaylistRule::GetWhereClause(const CDatabase &db, const CStdStr
       query = table + ".idFile" + negate + " IN (SELECT DISTINCT idFile FROM streamdetails WHERE strSubtitleLanguage " + parameter + ")";
     else if (m_field == FieldVideoAspectRatio)
       query = table + ".idFile" + negate + " IN (SELECT DISTINCT idFile FROM streamdetails WHERE fVideoAspect " + parameter + ")";
-    if (m_field == FieldPlaycount && strType != "songs" && strType != "albums")
+    if (m_field == FieldPlaycount && strType != "songs" && strType != "albums" && strType != "tvshows")
     { // playcount IS stored as NULL OR number IN video db
       if ((m_operator == OPERATOR_EQUALS && it->Equals("0")) ||
           (m_operator == OPERATOR_DOES_NOT_EQUAL && !it->Equals("0")) ||

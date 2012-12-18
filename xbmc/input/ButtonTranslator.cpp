@@ -49,6 +49,12 @@ typedef struct
   int action;
 } ActionMapping;
 
+typedef struct
+{
+  int origin;
+  int target;
+} WindowMapping;
+
 static const ActionMapping actions[] =
 {
         {"left"              , ACTION_MOVE_LEFT },
@@ -211,6 +217,12 @@ static const ActionMapping actions[] =
         {"volampup"          , ACTION_VOLAMP_UP},
         {"volampdown"        , ACTION_VOLAMP_DOWN},
 
+        // PVR actions
+        {"channelup"             , ACTION_CHANNEL_UP},
+        {"channeldown"           , ACTION_CHANNEL_DOWN},
+        {"previouschannelgroup"  , ACTION_PREVIOUS_CHANNELGROUP},
+        {"nextchannelgroup"      , ACTION_NEXT_CHANNELGROUP},
+
         // Mouse actions
         {"leftclick"         , ACTION_MOUSE_LEFT_CLICK},
         {"rightclick"        , ACTION_MOUSE_RIGHT_CLICK},
@@ -322,6 +334,7 @@ static const ActionMapping windows[] =
         {"movieinformation"         , WINDOW_DIALOG_VIDEO_INFO},
         {"textviewer"               , WINDOW_DIALOG_TEXT_VIEWER},
         {"fullscreenvideo"          , WINDOW_FULLSCREEN_VIDEO},
+        {"fullscreenlivetv"         , WINDOW_FULLSCREEN_LIVETV}, // virtual window/keymap section for PVR specific bindings in fullscreen playback (which internally uses WINDOW_FULLSCREEN_VIDEO)
         {"visualisation"            , WINDOW_VISUALISATION},
         {"slideshow"                , WINDOW_SLIDESHOW},
         {"filestackingdialog"       , WINDOW_DIALOG_FILESTACKING},
@@ -350,6 +363,12 @@ static const ActionMapping mousecommands[] =
   { "wheeldown",   ACTION_MOUSE_WHEEL_DOWN },
   { "mousedrag",   ACTION_MOUSE_DRAG },
   { "mousemove",   ACTION_MOUSE_MOVE }
+};
+
+static const WindowMapping fallbackWindows[] =
+{
+  { WINDOW_FULLSCREEN_LIVETV,          WINDOW_FULLSCREEN_VIDEO },
+  { WINDOW_DIALOG_FULLSCREEN_INFO,     WINDOW_FULLSCREEN_VIDEO }
 };
 
 #ifdef WIN32
@@ -770,96 +789,84 @@ void CButtonTranslator::MapJoystickActions(int windowID, TiXmlNode *pJoystick)
 
 bool CButtonTranslator::TranslateJoystickString(int window, const char* szDevice, int id, short inputType, int& action, CStdString& strAction, bool &fullrange)
 {
-  bool found = false;
-
-  map<string, JoystickMap>::iterator it;
-  map<string, JoystickMap> *jmap;
-
   fullrange = false;
+
+  // resolve the correct JoystickMap
+  map<string, JoystickMap> *jmap;
   if (inputType == JACTIVE_AXIS)
     jmap = &m_joystickAxisMap;
   else if (inputType == JACTIVE_BUTTON)
     jmap = &m_joystickButtonMap;
   else if (inputType == JACTIVE_HAT)
-  	jmap = &m_joystickHatMap;
+    jmap = &m_joystickHatMap;
   else
   {
-    CLog::Log(LOGERROR, "Error reading joystick input type");
+    CLog::Log(LOGERROR, "Error reading joystick input type '%i'", (int) inputType);
     return false;
   }
 
-  it = jmap->find(szDevice);
+  map<string, JoystickMap>::iterator it = jmap->find(szDevice);
   if (it==jmap->end())
     return false;
 
   JoystickMap wmap = it->second;
-  JoystickMap::iterator it2;
-  map<int, string> windowbmap;
-  map<int, string> globalbmap;
-  map<int, string>::iterator it3;
 
-  it2 = wmap.find(window);
+  // try to get the action from the current window
+  action = GetActionCode(window, id, wmap, strAction, fullrange);
 
-  // first try local window map
-  if (it2!=wmap.end())
+  // if it's invalid, try to get it from a fallback window or the global map
+  if (action == 0)
   {
-    windowbmap = it2->second;
-    it3 = windowbmap.find(id);
-    if (it3 != windowbmap.end())
+    int fallbackWindow = GetFallbackWindow(window);
+    if (fallbackWindow > -1)
+      action = GetActionCode(fallbackWindow, id, wmap, strAction, fullrange);
+    // still no valid action? use global map
+    if (action == 0)
+      action = GetActionCode(-1, id, wmap, strAction, fullrange);
+  }
+
+  return (action > 0);
+}
+
+/*
+ * Translates a joystick input to an action code
+ */
+int CButtonTranslator::GetActionCode(int window, int id, const JoystickMap &wmap, CStdString &strAction, bool &fullrange) const
+{
+  int action = 0;
+  bool found = false;
+
+  JoystickMap::const_iterator it = wmap.find(window);
+  if (it != wmap.end())
+  {
+    const map<int, string> &windowbmap = it->second;
+    map<int, string>::const_iterator it2 = windowbmap.find(id);
+    if (it2 != windowbmap.end())
     {
-      strAction = (it3->second).c_str();
+      strAction = (it2->second).c_str();
       found = true;
     }
-    it3 = windowbmap.find(abs(id)|0xFFFF0000);
-    if (it3 != windowbmap.end())
+
+    it2 = windowbmap.find(abs(id)|0xFFFF0000);
+    if (it2 != windowbmap.end())
     {
-      strAction = (it3->second).c_str();
+      strAction = (it2->second).c_str();
       found = true;
       fullrange = true;
     }
+
     // Hats joystick
-    it3 = windowbmap.find(id|0xFFF00000);
-    if (it3 != windowbmap.end())
+    it2 = windowbmap.find(id|0xFFF00000);
+    if (it2 != windowbmap.end())
     {
-      strAction = (it3->second).c_str();
+      strAction = (it2->second).c_str();
       found = true;
     }
   }
 
-  // if not found, try global map
-  if (!found)
-  {
-    it2 = wmap.find(-1);
-    if (it2 != wmap.end())
-    {
-      globalbmap = it2->second;
-      it3 = globalbmap.find(id);
-      if (it3 != globalbmap.end())
-      {
-        strAction = (it3->second).c_str();
-        found = true;
-      }
-      it3 = globalbmap.find(abs(id)|0xFFFF0000);
-      if (it3 != globalbmap.end())
-      {
-        strAction = (it3->second).c_str();
-        found = true;
-        fullrange = true;
-      }
-      it3 = globalbmap.find(id|0xFFF00000);
-      if (it3 != globalbmap.end())
-      {
-        strAction = (it3->second).c_str();
-        found = true;
-      }
-    }
-  }
-
-  // translated found action
   if (found)
-    return TranslateActionString(strAction.c_str(), action);
-
-  return false;
+    TranslateActionString(strAction.c_str(), action);
+  return action;
 }
 #endif
 
@@ -879,6 +886,16 @@ void CButtonTranslator::GetWindows(std::vector<std::string> &windowList)
   windowList.reserve(size);
   for (unsigned int index = 0; index < size; index++)
     windowList.push_back(windows[index].name);
+}
+
+int CButtonTranslator::GetFallbackWindow(int windowID)
+{
+  for (unsigned int index = 0; index < sizeof(fallbackWindows) / sizeof(fallbackWindows[0]); ++index)
+  {
+    if (fallbackWindows[index].origin == windowID)
+      return fallbackWindows[index].target;
+  }
+  return -1;
 }
 
 CAction CButtonTranslator::GetAction(int window, const CKey &key, bool fallback)

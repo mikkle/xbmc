@@ -113,8 +113,9 @@ namespace PVR
     /*!
      * @brief Start the PVRManager, which loads all PVR data and starts some threads to update the PVR data.
      * @param bAsync True to (re)start the manager from another thread
+     * @param bOpenPVRWindow True to open the PVR window after starting, false otherwise
      */
-    void Start(bool bAsync = false);
+    void Start(bool bAsync = false, bool bOpenPVRWindow = false);
 
     /*!
      * @brief Stop the PVRManager and destroy all objects it created.
@@ -554,6 +555,7 @@ namespace PVR
     CCriticalSection                m_managerStateMutex;
     ManagerState                    m_managerState;
     CStopWatch                     *m_parentalTimer;
+    bool                            m_bOpenPVRWindow;
   };
 
   class CPVRRecordingsUpdateJob : public CJob
@@ -603,6 +605,19 @@ namespace PVR
     virtual ~CPVRChannelSettingsSaveJob() {}
     virtual const char *GetType() const { return "pvr-save-channelsettings"; }
 
+    bool DoWork();
+  };
+
+  class CPVRChannelSwitchJob : public CJob
+  {
+  public:
+    CPVRChannelSwitchJob(CFileItem* previous, CFileItem* next) : m_previous(previous), m_next(next) {}
+    virtual ~CPVRChannelSwitchJob() {}
+    virtual const char *GetType() const { return "pvr-channel-switch"; }
+
     virtual bool DoWork();
+  private:
+    CFileItem* m_previous;
+    CFileItem* m_next;
   };
 }

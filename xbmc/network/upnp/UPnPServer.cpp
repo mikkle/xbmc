@@ -4,6 +4,7 @@
 #include "GUIViewState.h"
 #include "Platinum.h"
 #include "video/VideoThumbLoader.h"
+#include "music/Artist.h"
 #include "music/MusicThumbLoader.h"
 #include "interfaces/AnnouncementManager.h"
 #include "filesystem/Directory.h"
@@ -189,11 +190,20 @@ NPT_String CUPnPServer::BuildSafeResourceUri(const NPT_HttpUrl &rooturi,
                                              const char* host,
                                              const char* file_path)
 {
+    CURL url(file_path);
     CStdString md5;
     XBMC::XBMC_MD5 md5state;
+
+    // determine the filename to provide context to md5'd urls
+    CStdString filename;
+    if (url.GetProtocol() == "image")
+      filename = URIUtils::GetFileName(url.GetHostName());
+    else
+      filename = URIUtils::GetFileName(file_path);
+
     md5state.append(file_path);
     md5state.getDigest(md5);
-    md5 += "/" + URIUtils::GetFileName(file_path);
+    md5 += "/" + filename;
     { NPT_AutoLock lock(m_FileMutex);
       NPT_CHECK(m_FileMap.Put(md5.c_str(), file_path));
     }
@@ -237,10 +247,7 @@ CUPnPServer::Build(CFileItemPtr                  item,
             goto failure;
         }
 
-    } else if (path.StartsWith("addons://"))
-        // don't serve addon listings for now
-        goto failure;
-      else {
+    } else {
         // db path handling
         NPT_String file_path, share_name;
         file_path = item->GetPath();
@@ -251,8 +258,30 @@ CUPnPServer::Build(CFileItemPtr                  item,
                 item->SetLabel("Music Library");
                 item->SetLabelPreformated(true);
             } else {
-                if (!item->HasMusicInfoTag())
-                    item->LoadMusicTag();
+                if (!item->HasMusicInfoTag()) {
+                    MUSICDATABASEDIRECTORY::CQueryParams params;
+                    MUSICDATABASEDIRECTORY::CDirectoryNode::GetDatabaseInfo((const char*)path, params);
+
+                    CMusicDatabase db;
+                    if (!db.Open() ) return NULL;
+
+                    if (params.GetSongId() >= 0 ) {
+                        CSong song;
+                        if (db.GetSongById(params.GetSongId(), song))
+                            item->GetMusicInfoTag()->SetSong(song);
+                    }
+                    else if (params.GetAlbumId() >= 0 ) {
+                        CAlbum album;
+                        if (db.GetAlbumInfo(params.GetAlbumId(), album, NULL))
+                            item->GetMusicInfoTag()->SetAlbum(album);
+                    }
+                    else if (params.GetArtistId() >= 0 ) {
+                        CArtist artist;
+                        if (db.GetArtistInfo(params.GetArtistId(), artist, false))
+                            item->GetMusicInfoTag()->SetArtist(artist);
+                    }
+                }
+
 
                 if (item->GetLabel().IsEmpty()) {
                     /* if no label try to grab it from node type */
@@ -351,10 +380,10 @@ CUPnPServer::Announce(AnnouncementFlag flag, const char *sender, const char *mes
         return;
 
     if (data.isNull()) {
-        if (!strcmp(message, "OnScanStarted")) {
+        if (!strcmp(message, "OnScanStarted") || !strcmp(message, "OnCleanStarted")) {
             m_scanning = true;
         }
-        else if (!strcmp(message, "OnScanFinished")) {
+        else if (!strcmp(message, "OnScanFinished") || !strcmp(message, "OnCleanFinished")) {
             OnScanCompleted(flag);
         }
     }
@@ -376,7 +405,9 @@ CUPnPServer::Announce(AnnouncementFlag flag, const char *sender, const char *mes
                 CVideoDatabase db;
                 if (!db.Open()) return;
                 int show_id = db.GetTvShowForEpisode(item_id);
+                int season_id = db.GetSeasonForEpisode(item_id);
                 UpdateContainer(StringUtils::Format("videodb://2/2/%d/", show_id));
+                UpdateContainer(StringUtils::Format("videodb://2/2/%d/%d/?tvshowid=%d", show_id, season_id, show_id));
                 UpdateContainer("videodb://5/");
             }
             else if(item_type == "tvshow") {
@@ -539,7 +570,15 @@ CUPnPServer::OnBrowseDirectChildren(PLT_ActionReference&          action,
     CLog::Log(LOGINFO, "UPnP: Received Browse DirectChildren request for object '%s', with sort criteria %s", object_id, sort_criteria);
 
     items.SetPath(CStdString(parent_id));
-    if (!items.Load()) {
+
+    // guard against loading while saving to the same cache file
+    // as CArchive currently performs no locking itself
+    bool load;
+    { NPT_AutoLock lock(m_CacheMutex);
+      load = items.Load();
+    }
+
+    if (!load) {
         // cache anything that takes more than a second to retrieve
         unsigned int time = XbmcThreads::SystemClockMillis();
 
@@ -561,19 +600,13 @@ CUPnPServer::OnBrowseDirectChildren(PLT_ActionReference&          action,
             items.Sort(SORT_METHOD_LABEL, SortOrderAscending);
         } else {
             CDirectory::GetDirectory((const char*)parent_id, items);
-            if(!SortItems(items, sort_criteria))
-              DefaultSortItems(items);
+            DefaultSortItems(items);
         }
 
         if (items.CacheToDiscAlways() || (items.CacheToDiscIfSlow() && (XbmcThreads::SystemClockMillis() - time) > 1000 )) {
+            NPT_AutoLock lock(m_CacheMutex);
             items.Save();
         }
-    }
-    else {
-      // the file list was cached, but this request may use a different
-      // sort_criteria
-      if (SortItems(items, sort_criteria))
-        items.Save();
     }
 
     // Don't pass parent_id if action is Search not BrowseDirectChildren, as
@@ -614,7 +647,7 @@ CUPnPServer::BuildResponse(PLT_ActionReference&          action,
     // we will reuse this ThumbLoader for all items
     NPT_Reference<CThumbLoader> thumb_loader;
 
-    if (URIUtils::IsVideoDb(items.GetPath())) {
+    if (URIUtils::IsVideoDb(items.GetPath()) || items.GetPath().Left(15) == "library://video") {
         thumb_loader = NPT_Reference<CThumbLoader>(new CVideoThumbLoader());
     }
     else if (URIUtils::IsMusicDb(items.GetPath())) {
@@ -622,6 +655,14 @@ CUPnPServer::BuildResponse(PLT_ActionReference&          action,
     }
     if (!thumb_loader.IsNull()) {
         thumb_loader->Initialize();
+    }
+
+    // this isn't pretty but needed to properly hide the addons node from clients
+    if (items.GetPath().Left(7) == "library") {
+        for (int i=0; i<items.Size(); i++) {
+            if (items[i]->GetPath().Left(6) == "addons")
+                items.Remove(i);
+        }
     }
 
     // won't return more than UPNP_MAX_RETURNED_ITEMS items at a time to keep things smooth

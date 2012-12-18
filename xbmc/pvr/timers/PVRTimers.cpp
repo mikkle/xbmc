@@ -251,7 +251,7 @@ bool CPVRTimers::UpdateEntries(const CPVRTimers &timers)
     SetChanged();
     lock.Leave();
 
-    NotifyObservers(bAddedOrDeleted ? ObservableMessageTimersReset : ObservableMessageTimers, false);
+    NotifyObservers(bAddedOrDeleted ? ObservableMessageTimersReset : ObservableMessageTimers);
 
     if (g_guiSettings.GetBool("pvrrecord.timernotifications"))
     {
@@ -440,23 +440,22 @@ bool CPVRTimers::DeleteTimersOnChannel(const CPVRChannel &channel, bool bDeleteR
   {
     for (vector<CPVRTimerInfoTagPtr>::iterator timerIt = it->second->begin(); timerIt != it->second->end(); )
     {
-      CPVRTimerInfoTagPtr timer = (*timerIt);
+      bool bDeleteActiveItem = !bCurrentlyActiveOnly ||
+          (CDateTime::GetCurrentDateTime() > (*timerIt)->StartAsLocalTime() &&
+           CDateTime::GetCurrentDateTime() < (*timerIt)->EndAsLocalTime());
+      bool bDeleteRepeatingItem = bDeleteRepeating || !(*timerIt)->m_bIsRepeating;
+      bool bChannelsMatch = (*timerIt)->ChannelNumber() == channel.ChannelNumber() &&
+          (*timerIt)->m_bIsRadio == channel.IsRadio();
 
-      if (bCurrentlyActiveOnly &&
-          (CDateTime::GetCurrentDateTime() < timer->StartAsLocalTime() ||
-           CDateTime::GetCurrentDateTime() > timer->EndAsLocalTime()))
-        continue;
-
-      if (!bDeleteRepeating && timer->m_bIsRepeating)
-        continue;
-
-      if (timer->ChannelNumber() == channel.ChannelNumber() && timer->m_bIsRadio == channel.IsRadio())
+      if (bDeleteActiveItem && bDeleteRepeatingItem && bChannelsMatch)
       {
-        bReturn = timer->DeleteFromClient(true) || bReturn;
+        bReturn = (*timerIt)->DeleteFromClient(true) || bReturn;
         timerIt = it->second->erase(timerIt);
       }
       else
-        timerIt++;
+      {
+        ++timerIt;
+      }
     }
   }
 
@@ -517,7 +516,11 @@ bool CPVRTimers::InstantTimer(const CPVRChannel &channel)
 bool CPVRTimers::AddTimer(const CPVRTimerInfoTag &item)
 {
   if (!item.m_channel)
+  {
+    CLog::Log(LOGERROR, "PVRTimers - %s - no channel given", __FUNCTION__);
+    CGUIDialogOK::ShowAndGetInput(19033,0,19109,0); // Couldn't save timer
     return false;
+  }
 
   if (!g_PVRClients->SupportsTimers(item.m_iClientId))
   {
@@ -686,7 +689,7 @@ CDateTime CPVRTimers::GetNextEventTime(void) const
       const CDateTimeSpan oneDay(1,0,0,0);
       dailywakeuptime += oneDay;
     }
-    if (dailywakeuptime < wakeuptime)
+    if (!wakeuptime.IsValid() || dailywakeuptime < wakeuptime)
       wakeuptime = dailywakeuptime;
   }
 

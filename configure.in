@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([xbmc], [11.9.7], [http://trac.xbmc.org])
+AC_INIT([xbmc], [12.0rc1], [http://trac.xbmc.org])
 AC_CONFIG_HEADERS([xbmc/config.h])
 AH_TOP([#pragma once])
 m4_include([m4/ax_python_devel.m4])
@@ -483,7 +483,7 @@ AC_ARG_ENABLE([libmp3lame],
   [use_libmp3lame=$enableval],
   [use_libmp3lame=auto])
 
-AC_ARG_ENABLE([vorbisenc],
+AC_ARG_ENABLE([libvorbisenc],
   [AS_HELP_STRING([--enable-libvorbisenc],
   [enable vorbis encoder support (default is auto)])],
   [use_libvorbisenc=$enableval],
@@ -569,13 +569,11 @@ case $host in
   i386-*-freebsd*)
      ARCH="x86-freebsd"
      MAKE="gmake"
-     use_external_ffmpeg="yes"
      AC_SUBST(ARCH_DEFINES, "-DTARGET_POSIX -DTARGET_FREEBSD -D_LINUX")
      ;;
   amd64-*-freebsd*)
      ARCH="x86_64-freebsd"
      MAKE="gmake"
-     use_external_ffmpeg="yes"
      AC_SUBST(ARCH_DEFINES, "-DTARGET_POSIX -DTARGET_FREEBSD -D_LINUX")
      ;;
   arm-apple-darwin*)
@@ -732,6 +730,7 @@ if echo "$ARCH" | grep -q "freebsd" ; then
   CXXFLAGS="$CXXFLAGS -I$LOCALBASE/include"
   CPPFLAGS="$CPPFLAGS -I$LOCALBASE/include"
   LDFLAGS="$LDFLAGS -L$LOCALBASE/lib"
+  FFMPEG_EXTRACFLAGS="-I$LOCALBASE/include"
 fi
 if test "$host_vendor" = "apple" ; then
   # standard xbmc paths
@@ -843,7 +842,7 @@ if test "x$have_builtin_sync_val_compare_and_swap" = "xyes"; then
 fi
 
 # Add top source directory for all builds so we can use config.h
-INCLUDES="$INCLUDES -I\$(abs_top_srcdir)"
+INCLUDES="-I\$(abs_top_srcdir) $INCLUDES" 
 
 # Check inotify availability
 AC_CHECK_HEADER([sys/inotify.h], AC_DEFINE([HAVE_INOTIFY],[1],[Define if we have inotify]),)
@@ -1141,15 +1140,18 @@ if test "x$use_pulse" != "xno"; then
     fi
     USE_PULSE=0
   else
-    AC_CHECK_LIB([pulse], [main],,
-      [if test "x$use_pulse" = "xyes"; then
-        AC_MSG_ERROR($pulse_not_found)
-      else
-        use_pulse=no
-        USE_PULSE=0
-        AC_MSG_RESULT($pulse_not_found)
-      fi])
+    AC_CHECK_LIB([pulse],[main],,pulse_found="no")
+    AC_CHECK_LIB([pulse-simple],[main],,pulse_found="no")
+
+    if test "x$pulse_found" != "xno"; then
       USE_PULSE=1
+    elif test "x$use_pulse" = "xyes"; then
+      AC_MSG_ERROR($pulse_not_found)
+    else
+      use_pulse=no
+      USE_PULSE=0
+      AC_MSG_RESULT($pulse_not_found)
+    fi
   fi
 else
   AC_MSG_RESULT($pulse_disabled)
@@ -1382,7 +1384,7 @@ fi
 # libshairport for AirTunes
 USE_AIRTUNES=0
 if test "x$use_airtunes" != "xno"; then
-  AC_CHECK_HEADERS([shairport/shairport.h shairport/ao.h],,
+  AC_CHECK_HEADERS([shairport/shairport.h],,
    [if test "x$use_airtunes" = "xyes"; then
       AC_MSG_ERROR($libshairport_not_found)
     elif test "x$use_airtunes" != "xno"; then
@@ -2373,7 +2375,6 @@ OUTPUT_FILES="Makefile \
     xbmc/visualizations/Goom/Makefile \
     xbmc/visualizations/OpenGLSpectrum/Makefile \
     xbmc/visualizations/WaveForm/Makefile \
-    xbmc/visualizations/iTunes/Makefile \
     lib/addons/library.xbmc.addon/Makefile \
     lib/addons/library.xbmc.gui/Makefile \
     lib/addons/library.xbmc.pvr/Makefile \
@@ -2712,10 +2713,15 @@ XB_CONFIG_MODULE([xbmc/visualizations/Goom/goom2k4-0],[
 ], [$DISABLE_GOOM])
 
 XB_CONFIG_MODULE([xbmc/screensavers/rsxs-0.9/], [
+  if test "$host_vendor" = "apple"; then
+    TEMPCFLAGS="${CFLAGS} -fgnu89-inline";
+  else
+    TEMPCFLAGS="$CFLAGS";
+  fi
   ./configure \
     CC="$CC" \
     CXX="$CXX" \
-    CFLAGS="$CFLAGS" \ 
+    CFLAGS="$TEMPCFLAGS" \ 
     CXXFLAGS="$CXXFLAGS" \
     `if test "$host_vendor" = "apple"; then echo --x-includes=/usr/X11/include --x-libraries=/usr/X11/lib; fi` \
     --prefix="${prefix}" --includedir="${includedir}" --libdir="${libdir}" --datadir="${datadir}" \
@@ -2761,11 +2767,15 @@ XB_CONFIG_MODULE([lib/gtest], [
 ], [$SKIP_CONFIG_GTEST])
 
 XB_CONFIG_MODULE([pvr-addons], [
+   if test "$USE_EXTERNAL_FFMPEG" = 1; then
+      PVR_EXT_FFMPEG="--enable-external-ffmpeg"
+   fi
   ./configure \
     --prefix="${prefix}" \
     --host=$host_alias \
     --build=$build_alias \
     --target=$target_alias \
+    $PVR_EXT_FFMPEG \
     CC="$CC" \
     CXX="$CXX" \
     CFLAGS="$CFLAGS" \

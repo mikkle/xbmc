@@ -24,7 +24,7 @@
 
 #include "system.h"
 
-#include "Interfaces/AE.h"
+#include "cores/AudioEngine/Interfaces/AE.h"
 #include "ICoreAudioAEHAL.h"
 #include "ICoreAudioSource.h"
 #include "CoreAudioAEStream.h"
@@ -124,6 +124,7 @@ public:
 
 private:
   CCriticalSection  m_callbackLock;
+  CCriticalSection  m_engineLock;
   CCriticalSection  m_streamLock;
   CCriticalSection  m_soundLock;
   CCriticalSection  m_soundSampleLock;
@@ -148,6 +149,9 @@ private:
   bool              m_callbackRunning;
 
   AEAudioFormat     m_format;
+  enum AEDataFormat m_lastStreamFormat;
+  unsigned int      m_lastChLayoutCount;
+  unsigned int      m_lastSampleRate;
   unsigned int      m_chLayoutCount;
   bool              m_rawPassthrough;
 

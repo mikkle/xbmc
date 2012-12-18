@@ -226,13 +226,7 @@ bool CBaseTexture::LoadFromFileInternal(const CStdString& texturePath, unsigned 
 
     if(omx_image.ReadFile(texturePath))
     {
-      int width = omx_image.GetWidth();
-      int height = omx_image.GetHeight();
-
-      // We restict textures to the maximum GUI size. This is a workaround for the PI memory limitation
-      g_Windowing.ClampToGUIDisplayLimits(width, height);
-
-      if(omx_image.Decode(width, height))
+      if(omx_image.Decode(omx_image.GetWidth(), omx_image.GetHeight()))
       {
         Allocate(omx_image.GetDecodedWidth(), omx_image.GetDecodedHeight(), XB_FMT_A8R8G8B8);
 
@@ -256,8 +250,6 @@ bool CBaseTexture::LoadFromFileInternal(const CStdString& texturePath, unsigned 
           unsigned int imagePitch = GetPitch(m_imageWidth);
           unsigned int imageRows = GetRows(m_imageHeight);
           unsigned int texturePitch = GetPitch(m_textureWidth);
-          unsigned int textureRows = GetRows(m_textureHeight);
-          unsigned int blockSize = GetBlockSize();
 
           unsigned char *src = omx_image.GetDecodedData();
           unsigned char *dst = m_pixels;
@@ -288,6 +280,8 @@ bool CBaseTexture::LoadFromFileInternal(const CStdString& texturePath, unsigned 
         omx_image.Close();
       }
     }
+    // this limits the sizes of jpegs we failed to decode
+    omx_image.ClampLimits(maxWidth, maxHeight);
   }
 #endif
   if (URIUtils::GetExtension(texturePath).Equals(".dds"))
@@ -302,7 +296,9 @@ bool CBaseTexture::LoadFromFileInternal(const CStdString& texturePath, unsigned 
   }
 
   //ImageLib is sooo sloow for jpegs. Try our own decoder first. If it fails, fall back to ImageLib.
-  if (URIUtils::GetExtension(texturePath).Equals(".jpg") || URIUtils::GetExtension(texturePath).Equals(".tbn"))
+  CStdString Ext = URIUtils::GetExtension(texturePath);
+  Ext.ToLower(); // Ignore case of the extension
+  if (Ext.Equals(".jpg") || Ext.Equals(".jpeg") || Ext.Equals(".tbn"))
   {
     CJpegIO jpegfile;
     if (jpegfile.Open(texturePath, maxWidth, maxHeight))

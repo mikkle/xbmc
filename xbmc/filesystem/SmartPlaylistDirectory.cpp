@@ -31,6 +31,10 @@
 #include "settings/GUISettings.h"
 #include "utils/URIUtils.h"
 
+#define PROPERTY_PATH_DB            "path.db"
+#define PROPERTY_SORT_ORDER         "sort.order"
+#define PROPERTY_SORT_ASCENDING     "sort.ascending"
+
 namespace XFILE
 {
   CSmartPlaylistDirectory::CSmartPlaylistDirectory()
@@ -107,19 +111,21 @@ namespace XFILE
           if (!playlist.SaveAsJson(xsp, !filter))
             return false;
         }
-        videoUrl.AddOption(option, xsp);
+
+        if (!xsp.empty())
+          videoUrl.AddOption(option, xsp);
+        else
+          videoUrl.RemoveOption(option);
         
         CDatabase::Filter dbfilter;
-        success = db.GetSortedVideos(mediaType, videoUrl.ToString(), sorting, items, dbfilter, true);
+        success = db.GetSortedVideos(mediaType, videoUrl.ToString(), sorting, items, dbfilter);
+        db.Close();
 
         // if we retrieve a list of episodes and we didn't receive
         // a pre-defined base path, we need to fix it
         if (strBaseDir.empty() && mediaType == MediaTypeEpisode)
-        {
           videoUrl.AppendPath("-1/-1/");
-          items.SetPath(videoUrl.ToString());
-        }
-        db.Close();
+        items.SetProperty(PROPERTY_PATH_DB, videoUrl.ToString());
       }
     }
     else if (playlist.GetType().Equals("albums"))
@@ -138,12 +144,17 @@ namespace XFILE
           if (!playlist.SaveAsJson(xsp, !filter))
             return false;
         }
-        musicUrl.AddOption(option, xsp);
+
+        if (!xsp.empty())
+          musicUrl.AddOption(option, xsp);
+        else
+          musicUrl.RemoveOption(option);
 
         CDatabase::Filter dbfilter;
         success = db.GetAlbumsByWhere(musicUrl.ToString(), dbfilter, items, sorting);
-        items.SetContent("albums");
         db.Close();
+        items.SetContent("albums");
+        items.SetProperty(PROPERTY_PATH_DB, musicUrl.ToString());
       }
     }
     else if (playlist.GetType().Equals("artists"))
@@ -162,12 +173,17 @@ namespace XFILE
           if (!playlist.SaveAsJson(xsp, !filter))
             return false;
         }
-        musicUrl.AddOption(option, xsp);
 
-        CDatabase::Filter filter;
-        success = db.GetArtistsByWhere(musicUrl.ToString(), filter, items, sorting);
-        items.SetContent("albums");
+        if (!xsp.empty())
+          musicUrl.AddOption(option, xsp);
+        else
+          musicUrl.RemoveOption(option);
+
+        CDatabase::Filter dbfilter;
+        success = db.GetArtistsNav(musicUrl.ToString(), items, !g_guiSettings.GetBool("musiclibrary.showcompilationartists"), -1, -1, -1, dbfilter, sorting);
         db.Close();
+        items.SetContent("artists");
+        items.SetProperty(PROPERTY_PATH_DB, musicUrl.ToString());
       }
     }
 
@@ -191,12 +207,17 @@ namespace XFILE
           if (!songPlaylist.SaveAsJson(xsp, !filter))
             return false;
         }
-        musicUrl.AddOption(option, xsp);
+
+        if (!xsp.empty())
+          musicUrl.AddOption(option, xsp);
+        else
+          musicUrl.RemoveOption(option);
 
         CDatabase::Filter dbfilter;
         success = db.GetSongsByWhere(musicUrl.ToString(), dbfilter, items, sorting);
-        items.SetContent("songs");
         db.Close();
+        items.SetContent("songs");
+        items.SetProperty(PROPERTY_PATH_DB, musicUrl.ToString());
       }
     }
     if (playlist.GetType().Equals("musicvideos") || playlist.GetType().Equals("mixed"))
@@ -219,7 +240,11 @@ namespace XFILE
           if (!mvidPlaylist.SaveAsJson(xsp, !filter))
             return false;
         }
-        videoUrl.AddOption(option, xsp);
+
+        if (!xsp.empty())
+          videoUrl.AddOption(option, xsp);
+        else
+          videoUrl.RemoveOption(option);
         
         CFileItemList items2;
         success2 = db.GetSortedVideos(MediaTypeMusicVideo, videoUrl.ToString(), sorting, items2);
@@ -233,9 +258,12 @@ namespace XFILE
           else
             items.SetContent("musicvideos");
         }
+        items.SetProperty(PROPERTY_PATH_DB, videoUrl.ToString());
       }
     }
     items.SetLabel(playlist.GetName());
+    items.SetProperty(PROPERTY_SORT_ORDER, (int)playlist.GetOrder());
+    items.SetProperty(PROPERTY_SORT_ASCENDING, playlist.GetOrderDirection() == SortOrderAscending);
 
     // go through and set the playlist order
     for (int i = 0; i < items.Size(); i++)
