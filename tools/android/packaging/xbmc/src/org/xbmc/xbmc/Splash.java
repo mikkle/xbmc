@@ -263,10 +263,10 @@ public class Splash extends Activity {
 			mState = State.InError;
 		} else {
 			ret = CheckCpuFeature("neon");
-			if (!ret) {
-				mErrorMsg = "This XBMC package is not compatible with your device.\nPlease check the <a href=\"http://wiki.xbmc.org/index.php?title=XBMC_for_Android_specific_FAQ\">XBMC Android wiki</a> for more information.";
-				mState = State.InError;
-			}
+			//if (!ret) {
+			//	mErrorMsg = "This XBMC package is not compatible with your device.\nPlease check the <a href=\"http://wiki.xbmc.org/index.php?title=XBMC_for_Android_specific_FAQ\">XBMC Android wiki</a> for more information.";
+			//	mState = State.InError;
+			//}
 		}
 		if (mState != State.InError) {
 			sPackagePath = getPackageResourcePath();
