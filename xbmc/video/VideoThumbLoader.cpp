@@ -227,7 +227,6 @@ bool CVideoThumbLoader::LoadItem(CFileItem* pItem)
   map<string, string> artwork = pItem->GetArt();
   if (artwork.empty())
   {
-    CLog::Log(LOGDEBUG,"MIKKLE - %s - Art is empty here: 1", __FUNCTION__);
     vector<string> artTypes = GetArtTypes(pItem->HasVideoInfoTag() ? pItem->GetVideoInfoTag()->m_type : "");
     if (find(artTypes.begin(), artTypes.end(), "thumb") == artTypes.end())
       artTypes.push_back("thumb"); // always look for "thumb" art for files
@@ -237,7 +236,6 @@ bool CVideoThumbLoader::LoadItem(CFileItem* pItem)
       std::string art = GetCachedImage(*pItem, type);
       if (art.empty())
       {
-        CLog::Log(LOGDEBUG,"MIKKLE - %s - Art is empty here: 2", __FUNCTION__);
         art = GetLocalArt(*pItem, type, type=="fanart");
         if (!art.empty()) // cache it
           SetCachedImage(*pItem, type, art);
