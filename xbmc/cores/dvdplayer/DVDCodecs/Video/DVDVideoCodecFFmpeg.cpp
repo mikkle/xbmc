@@ -247,8 +247,9 @@ bool CDVDVideoCodecFFmpeg::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options
   m_pCodecContext->codec_tag = hints.codec_tag;
   /* Only allow slice threading, since frame threading is more
    * sensitive to changes in frame sizes, and it causes crashes
-   * during HW accell */
-  m_pCodecContext->thread_type = FF_THREAD_SLICE;
+   * during HW accell - so we fix it when hw accel is used*/
+  if(!m_bSoftware)
+   m_pCodecContext->thread_type = FF_THREAD_SLICE;
 
 #if defined(TARGET_DARWIN_IOS)
   // ffmpeg with enabled neon will crash and burn if this is enabled
