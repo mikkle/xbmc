@@ -34,7 +34,7 @@
 #include "utils/Weather.h"
 #include "music/MusicDatabase.h"
 #include "video/VideoDatabase.h"
-#include "ViewDatabase.h"
+#include "view/ViewDatabase.h"
 #ifdef HAS_LCD
 #include "utils/LCDFactory.h"
 #endif
@@ -946,13 +946,6 @@ void CGUIWindowSettingsCategory::UpdateSettings()
         m_strOldTrackFormatRight = g_guiSettings.GetString("musicfiles.trackformatright");
       }
     }
-#ifdef HAS_TIME_SERVER
-    else if (strSetting.Equals("locale.timeserveraddress"))
-    {
-      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
-      if (pControl) pControl->SetEnabled(g_guiSettings.GetBool("locale.timeserver"));
-    }
-#endif
     else if (strSetting.Equals("audiocds.recordingpath") || strSetting.Equals("debug.screenshotpath"))
     {
       CGUIButtonControl *pControl = (CGUIButtonControl *)GetControl(pSettingControl->GetID());
@@ -1657,14 +1650,6 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
     g_guiSettings.SetString("locale.country", strRegion);
     g_weatherManager.Refresh(); // need to reset our weather, as temperatures need re-translating.
   }
-#ifdef HAS_TIME_SERVER
-  else if (strSetting.Equals("locale.timeserver") || strSetting.Equals("locale.timeserveraddress"))
-  {
-    g_application.StopTimeServer();
-    if (g_guiSettings.GetBool("locale.timeserver"))
-      g_application.StartTimeServer();
-  }
-#endif
   else if (strSetting.Equals("smb.winsserver") || strSetting.Equals("smb.workgroup") )
   {
     if (g_guiSettings.GetString("smb.winsserver") == "0.0.0.0")
@@ -1695,6 +1680,14 @@ void CGUIWindowSettingsCategory::OnSettingChanged(BaseSettingControlPtr pSetting
       g_application.StartUPnPRenderer();
     else
       g_application.StopUPnPRenderer();
+#endif
+  }
+  else if (strSetting.Equals("services.upnpcontroller"))
+  {
+#ifdef HAS_UPNP
+    g_application.StopUPnPClient(); /* always stop and restart */
+    if (g_guiSettings.GetBool("services.upnpcontroller"))
+      g_application.StartUPnPClient();
 #endif
   }
   else if (strSetting.Equals("services.esenabled"))
