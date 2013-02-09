@@ -1570,9 +1570,6 @@
     <ClCompile Include="..\..\xbmc\utils\LabelFormatter.cpp">
       <Filter>utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\xbmc\utils\LCD.cpp">
-      <Filter>utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\xbmc\utils\log.cpp">
       <Filter>utils</Filter>
     </ClCompile>
@@ -2971,6 +2968,12 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\view\ViewDatabase.cpp">
       <Filter>view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\guilib\imagefactory.cpp">
+      <Filter>guilib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\guilib\cximage.cpp">
+      <Filter>guilib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4488,9 +4491,6 @@
     <ClInclude Include="..\..\xbmc\utils\LabelFormatter.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\xbmc\utils\LCD.h">
-      <Filter>utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\xbmc\utils\log.h">
       <Filter>utils</Filter>
     </ClInclude>
@@ -5786,6 +5786,16 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\interfaces\python\PyContext.h">
       <Filter>interfaces\python</Filter>
+    </ClInclude>
+
+    <ClInclude Include="..\..\xbmc\guilib\iimage.h">
+      <Filter>guilib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\guilib\imagefactory.h">
+      <Filter>guilib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\guilib\cximage.h">
+      <Filter>guilib</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\music\karaoke\karaokevideobackground.h">
       <Filter>music\karaoke</Filter>
