@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2010-2012 Team XBMC
+ *      Copyright (C) 2010-2013 Team XBMC
  *      http://www.xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -464,7 +464,7 @@ double CAESinkDirectSound::GetCacheTotal()
   return (double)m_dwBufferLen / (double)m_AvgBytesPerSec;
 }
 
-void CAESinkDirectSound::EnumerateDevicesEx(AEDeviceInfoList &deviceInfoList)
+void CAESinkDirectSound::EnumerateDevicesEx(AEDeviceInfoList &deviceInfoList, bool force)
 {
   CAEDeviceInfo        deviceInfo;
 
