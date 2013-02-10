@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2011-2012 Team XBMC
+ *      Copyright (C) 2011-2013 Team XBMC
  *      http://xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -396,8 +396,7 @@ void CCoreAudioAEHALOSX::EnumerateOutputDevices(AEDeviceList &devices, bool pass
   CoreAudioDeviceList deviceList;
   CCoreAudioHardware::GetOutputDevices(&deviceList);
 
-  std::string defaultDeviceName;
-  CCoreAudioHardware::GetOutputDeviceName(defaultDeviceName);
+  devices.push_back(AEDevice("Default", "CoreAudio:default"));
 
   std::string deviceName;
   for (int i = 0; !deviceList.empty(); i++)

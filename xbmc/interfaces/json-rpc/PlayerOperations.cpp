@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2005-2012 Team XBMC
+ *      Copyright (C) 2005-2013 Team XBMC
  *      http://www.xbmc.org
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -144,7 +144,6 @@ JSONRPC_STATUS CPlayerOperations::GetItem(const CStdString &method, ITransportLa
       if (player == Video)
       {
         bool additionalInfo = false;
-        bool streamdetails = false;
         for (CVariant::const_iterator_array itr = parameterObject["properties"].begin_array(); itr != parameterObject["properties"].end_array(); itr++)
         {
           CStdString fieldValue = itr->asString();
@@ -262,7 +261,7 @@ JSONRPC_STATUS CPlayerOperations::Stop(const CStdString &method, ITransportLayer
   {
     case Video:
     case Audio:
-      CApplicationMessenger::Get().MediaStop(true, parameterObject["playerid"].asInteger());
+      CApplicationMessenger::Get().MediaStop(true, (int)parameterObject["playerid"].asInteger());
       return ACK;
 
     case Picture:
