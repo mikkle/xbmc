@@ -146,15 +146,6 @@ CStdString CUtil::GetTitleFromPath(const CStdString& strFileNameAndPath, bool bI
       return items.m_strTitle;
   }
 
-  // LastFM
-  if (url.GetProtocol() == "lastfm")
-  {
-    if (strFilename.IsEmpty())
-      strFilename = g_localizeStrings.Get(15200);
-    else
-      strFilename = g_localizeStrings.Get(15200) + " - " + strFilename;
-  }
-
   // Shoutcast
   else if (url.GetProtocol() == "shout")
   {
@@ -1179,8 +1170,6 @@ int CUtil::GetMatchingSource(const CStdString& strPath1, VECSOURCES& VECSOURCES,
 
   if (checkURL.GetProtocol() == "shout")
     strPath = checkURL.GetHostName();
-  if (checkURL.GetProtocol() == "lastfm")
-    return 1;
   if (checkURL.GetProtocol() == "tuxbox")
     return 1;
   if (checkURL.GetProtocol() == "plugin")
@@ -1947,6 +1936,7 @@ void CUtil::ScanForExternalSubtitles(const CStdString& strMovie, std::vector<CSt
     for (int j=0; common_sub_dirs[j]; j++)
     {
       CStdString strPath2 = URIUtils::AddFileToFolder(strLookInPaths[i],common_sub_dirs[j]);
+      URIUtils::AddSlashAtEnd(strPath2);
       if (CDirectory::Exists(strPath2))
         strLookInPaths.push_back(strPath2);
     }

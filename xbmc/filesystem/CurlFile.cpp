@@ -288,9 +288,22 @@ bool CCurlFile::CReadState::Seek(int64_t pos)
   return false;
 }
 
+void CCurlFile::CReadState::SetResume(void)
+{
+  /*
+   * Use RANGE method for resuming. We used to use RESUME_FROM_LARGE for this but some http servers
+   * require us to always send the range request header. If we don't the server may provide different
+   * content causing seeking to fail. Note that internally Curl will automatically handle this for FTP
+   * so we don't need to worry about that here.
+   */
+  char str[21];
+  sprintf(str, "%"PRId64"-", m_filePos);
+  g_curlInterface.easy_setopt(m_easyHandle, CURLOPT_RANGE, str);
+}
+
 long CCurlFile::CReadState::Connect(unsigned int size)
 {
-  g_curlInterface.easy_setopt(m_easyHandle, CURLOPT_RESUME_FROM_LARGE, m_filePos);
+  SetResume();
   g_curlInterface.multi_add_handle(m_multiHandle, m_easyHandle);
 
   m_bufferSize = size;
@@ -340,8 +353,7 @@ void CCurlFile::CReadState::Disconnect()
 
 CCurlFile::~CCurlFile()
 {
-  if (m_opened)
-    Close();
+  Close();
   delete m_state;
   g_curlInterface.Unload();
 }
@@ -467,7 +479,10 @@ void CCurlFile::SetCommonOptions(CReadState* state)
   g_curlInterface.easy_setopt(h, CURLOPT_FAILONERROR, 1);
 
   // enable support for icecast / shoutcast streams
-  m_curlAliasList = g_curlInterface.slist_append(m_curlAliasList, "ICY 200 OK");
+  if ( NULL == m_curlAliasList )
+    // m_curlAliasList is used only by this one place, but SetCommonOptions can
+    // be called multiple times, only append to list if it's empty.
+    m_curlAliasList = g_curlInterface.slist_append(m_curlAliasList, "ICY 200 OK");
   g_curlInterface.easy_setopt(h, CURLOPT_HTTP200ALIASES, m_curlAliasList);
 
   // never verify peer, we don't have any certificates to do this
@@ -573,6 +588,13 @@ void CCurlFile::SetCommonOptions(CReadState* state)
 
   // Set the lowspeed time very low as it seems Curl takes much longer to detect a lowspeed condition
   g_curlInterface.easy_setopt(h, CURLOPT_LOW_SPEED_TIME, m_lowspeedtime);
+
+  if (m_skipshout)
+    // For shoutcast file, content-length should not be set, and in libcurl there is a bug, if the
+    // cast file was 302 redirected then getinfo of CURLINFO_CONTENT_LENGTH_DOWNLOAD will return
+    // the 302 response's body length, which cause the next read request failed, so we ignore
+    // content-length for shoutcast file to workaround this.
+    g_curlInterface.easy_setopt(h, CURLOPT_IGNORE_CONTENT_LENGTH, 1);
 }
 
 void CCurlFile::SetRequestHeaders(CReadState* state)
@@ -727,30 +749,17 @@ void CCurlFile::ParseAndCorrectUrl(CURL &url2)
     m_password = url2.GetPassWord();
 
     // handle any protocol options
-    CStdString options = url2.GetProtocolOptions();
-    options.TrimRight('/'); // hack for trailing slashes being added from source
-    if (options.length() > 0)
+    std::map<CStdString, CStdString> options;
+    url2.GetProtocolOptions(options);
+    if (options.size() > 0)
     {
       // clear protocol options
       url2.SetProtocolOptions("");
       // set xbmc headers
-      CStdStringArray array;
-      CUtil::Tokenize(options, array, "&");
-      for(CStdStringArray::iterator it = array.begin(); it != array.end(); it++)
+      for(std::map<CStdString, CStdString>::const_iterator it = options.begin(); it != options.end(); ++it)
       {
-        // parse name, value
-        CStdString name, value;
-        int pos = it->Find('=');
-        if(pos >= 0)
-        {
-          name = it->Left(pos);
-          value = it->Mid(pos+1, it->size());
-        }
-        else
-        {
-          name = (*it);
-          value = "";
-        }
+        const CStdString &name = it->first;
+        CStdString value = it->second;
 
         // url decode value
         CURL::Decode(value);
@@ -920,7 +929,7 @@ bool CCurlFile::Open(const CURL& url)
   }
 
   m_multisession = false;
-  if(m_url.Left(5).Equals("http:") || m_url.Left(6).Equals("https:"))
+  if(url2.GetProtocol().Equals("http") || url2.GetProtocol().Equals("https"))
   {
     m_multisession = true;
     if(m_state->m_httpheader.GetValue("Server").Find("Portable SDK for UPnP devices") >= 0)
@@ -1084,8 +1093,15 @@ bool CCurlFile::Exists(const CURL& url)
   g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_WRITEDATA, NULL); /* will cause write failure*/
 
   if(url2.GetProtocol() == "ftp")
-    g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_NOCWD);
-  
+  {
+    g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FILETIME, 1);
+    // nocwd is less standard, will return empty list for non-existed remote dir on some ftp server, avoid it.
+    if (url2.GetFileName().Right(1).Equals("/"))
+      g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_SINGLECWD);
+    else
+      g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_NOCWD);
+  }
+
   CURLcode result = g_curlInterface.easy_perform(m_state->m_easyHandle);
   g_curlInterface.easy_release(&m_state->m_easyHandle, NULL);
 
@@ -1208,8 +1224,11 @@ int CCurlFile::Stat(const CURL& url, struct __stat64* buffer)
 
   if(url2.GetProtocol() == "ftp")
   {
-    g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FILETIME, 1);
-    g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_NOCWD);
+    // nocwd is less standard, will return empty list for non-existed remote dir on some ftp server, avoid it.
+    if (url2.GetFileName().Right(1).Equals("/"))
+      g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_SINGLECWD);
+    else
+      g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FTP_FILEMETHOD, CURLFTPMETHOD_NOCWD);
   }
 
   CURLcode result = g_curlInterface.easy_perform(m_state->m_easyHandle);
@@ -1417,7 +1436,7 @@ bool CCurlFile::CReadState::FillBuffer(unsigned int want)
         CLog::Log(LOGWARNING, "%s: Reconnect, (re)try %i", __FUNCTION__, retry);
 
         // Connect + seek to current position (again)
-        g_curlInterface.easy_setopt(m_easyHandle, CURLOPT_RESUME_FROM_LARGE, m_filePos);
+        SetResume();
         g_curlInterface.multi_add_handle(m_multiHandle, m_easyHandle);
 
         // Return to the beginning of the loop:
