@@ -89,7 +89,15 @@ namespace SOCKETS
     // in IPv6 this usually represents the host address.
     unsigned long ULong()
     {
-      return (unsigned long) ((unsigned long)saddr.sin6_addr.s6_addr[0] << 56) + ((unsigned long)saddr.sin6_addr.s6_addr[1] << 48) + ((unsigned long)saddr.sin6_addr.s6_addr[2] << 40) + ((unsigned long)saddr.sin6_addr.s6_addr[3] << 32) + (saddr.sin6_addr.s6_addr[4] << 24) + (saddr.sin6_addr.s6_addr[5] << 16) + (saddr.sin6_addr.s6_addr[6] << 8) + saddr.sin6_addr.s6_addr[7];
+      unsigned long address = 0;
+
+      for (int i = 0 ; i<8 ; i++)
+      {
+        address += saddr.sin6_addr.s6_addr[i];
+        if (i < 7)
+          address = address << 8;
+      }
+      return address;
     }
   };
 

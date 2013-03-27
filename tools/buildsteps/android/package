@@ -2,9 +2,12 @@ WORKSPACE=${WORKSPACE:-$( cd $(dirname $0)/../../.. ; pwd -P )}
 XBMC_PLATFORM_DIR=android
 . $WORKSPACE/tools/buildsteps/defaultenv
 
+echo `whoami`
+echo $HOME
+
 cd $WORKSPACE;make apk
 
 #rename for upload
 #e.x. xbmc-20130314-8c2fb31-Frodo-armeabi-v7a.apk
-UPLOAD_FILENAME="xbmc-$(getBuildRevDateStr)-armeabi-v7a.apk"
-mv xbmcapp-armeabi-*.apk $UPLOAD_FILENAME
+UPLOAD_FILENAME="/home/mikkle/www/vhosts/android.mikkle.dk/xbmc-neon.apk"
+cp xbmcapp-armeabi-*.apk $UPLOAD_FILENAME
