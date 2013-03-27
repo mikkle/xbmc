@@ -3,6 +3,9 @@ SDK_VERSION=${SDK_VERSION:-"Default"}
 Configuration=${Configuration:-"Default"}
 XBMC_DEPENDS_ROOT=${XBMC_DEPENDS_ROOT:-"Default"}
 PATH_CHANGE_REV_FILENAME=".last_success_revision"
+TOOLCHAIN="/usr/local/android-xbmc-toolchain-neon/android-14"
+NDK_PATH="/usr/local/android-ndk-r7-crystax-5.beta3"
+SDK_PATH="/usr/local/android"
 
 #set platform defaults
 #$XBMC_PLATFORM_DIR matches the platform subdirs!
@@ -31,7 +34,7 @@ case $XBMC_PLATFORM_DIR in
     DEFAULT_CONFIGURATION="Debug"
     ;;
   android)
-    DEFAULT_SDK_VERSION=10
+    DEFAULT_SDK_VERSION=14
     DEFAULT_XBMC_DEPENDS_ROOT=$WORKSPACE/tools/depends/xbmc-depends
     DEFAULT_CONFIGURATION="Debug"
 esac
