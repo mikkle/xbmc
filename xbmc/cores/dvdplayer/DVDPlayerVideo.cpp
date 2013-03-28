@@ -1174,6 +1174,9 @@ int CDVDPlayerVideo::OutputPicture(const DVDVideoPicture* src, double pts)
         formatstr = "OMXEGL";
         buffering = false;
         break;
+      case RENDER_FMT_EGLIMG:
+        formatstr = "EGLIMG";
+        break;
       case RENDER_FMT_CVBREF:
         formatstr = "BGRA";
         buffering = false;

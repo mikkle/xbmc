@@ -9,5 +9,5 @@ cd $WORKSPACE;make apk
 
 #rename for upload
 #e.x. xbmc-20130314-8c2fb31-Frodo-armeabi-v7a.apk
-UPLOAD_FILENAME="/home/mikkle/www/vhosts/android.mikkle.dk/xbmc-neon.apk"
+UPLOAD_FILENAME="/home/mikkle/www/vhosts/android.mikkle.dk/xbmc-neon-stagefright.apk"
 cp xbmcapp-armeabi-*.apk $UPLOAD_FILENAME
