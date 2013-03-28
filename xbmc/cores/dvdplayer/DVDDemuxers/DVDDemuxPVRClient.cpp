@@ -128,6 +128,17 @@ bool CDVDDemuxPVRClient::Open(CDVDInputStream* pInput)
     return false;
 
   RequestStreams();
+
+  while(GetNrOfStreams() == 0)
+  {
+    DemuxPacket* pkg = Read();
+    if(!pkg)
+      return false;
+    CDVDDemuxUtils::FreeDemuxPacket(pkg);
+
+    RequestStreams();
+  }
+
   return true;
 }
 

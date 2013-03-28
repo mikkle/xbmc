@@ -591,6 +591,23 @@ void CGUIWindowSettingsCategory::UpdateSettings()
         pControl->SetEnabled(true);
       }
     }
+    else if (strSetting.Equals("videoplayer.usevdpaumixer"))
+    {
+      bool hasInterop = true;
+#ifndef GL_NV_vdpau_interop
+      hasInterop = false;
+#endif
+      CGUIControl *pControl = (CGUIControl *)GetControl(pSettingControl->GetID());
+      if (pControl && hasInterop && glewIsSupported("GL_NV_vdpau_interop"))
+      {
+        pControl->SetEnabled(true);
+      }
+      else
+      {
+        pControl->SetEnabled(false);
+        g_guiSettings.SetBool("videoplayer.usevdpaumixer",true);
+      }
+    }
     else
 #endif
     if (strSetting.Equals("videoscreen.resolution"))
