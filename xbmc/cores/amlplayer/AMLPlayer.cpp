@@ -914,24 +914,9 @@ void CAMLPlayer::GetSubtitleStreamInfo(int index, SPlayerSubtitleStreamInfo &inf
   if (index > (int)m_subtitle_streams.size() -1 || index < 0)
     return;
 
-  if (m_subtitle_streams[m_subtitle_index]->source == STREAM_SOURCE_NONE)
-  {
-    if ( m_subtitle_streams[index]->language.size())
-    {
-      CStdString name;
-      g_LangCodeExpander.Lookup(name, m_subtitle_streams[index]->language);
-      info.name = name;
-    }
-    else
-      info.name = g_localizeStrings.Get(13205); // Unknown
-  }
-  else
-  {
-    if(m_subtitle_streams[m_subtitle_index]->name.length() > 0)
-      info.name = m_subtitle_streams[m_subtitle_index]->name;
-    else
-      info.name = g_localizeStrings.Get(13205); // Unknown
-  }
+  info.language = m_subtitle_streams[index]->language;
+  info.name = m_subtitle_streams[m_subtitle_index]->name;
+
   if (m_log_level > 5)
     CLog::Log(LOGDEBUG, "CAMLPlayer::GetSubtitleName, iStream(%d)", index);
 }
@@ -968,7 +953,7 @@ bool CAMLPlayer::GetSubtitleVisible()
 void CAMLPlayer::SetSubtitleVisible(bool bVisible)
 {
   m_subtitle_show = (bVisible && m_subtitle_count);
-  g_settings.m_currentVideoSettings.m_SubtitleOn = bVisible;
+  CMediaSettings::Get().GetCurrentVideoSettings().m_SubtitleOn = bVisible;
 
   if (m_subtitle_show  && m_subtitle_count)
   {
@@ -1105,20 +1090,36 @@ void CAMLPlayer::GetAudioStreamInfo(int index, SPlayerAudioStreamInfo &info)
 
   info.bitrate = m_audio_streams[index]->bit_rate;
 
-  if ( m_audio_streams[index]->language.size())
-    info.language = m_audio_streams[index]->language;
+  info.language = m_audio_streams[index]->language;
 
   info.channels = m_audio_streams[index]->channel;
 
   info.audioCodecName = AudioCodecName(m_audio_streams[index]->format);
 
-  info.name.Format("Undefined");
-    
-  if ( m_audio_streams[index]->language.size())
+  if (info.audioCodecName.size())
+    info.name = info.audioCodecName + " ";
+
+  switch(info.channels)
   {
-    CStdString name;
-    g_LangCodeExpander.Lookup( name, m_audio_streams[index]->language);
-    info.name = name;
+  case 1:
+    info.name += "Mono";
+    break;
+  case 2: 
+    info.name += "Stereo";
+    break;
+  case 6: 
+    info.name += "5.1";
+    break;
+  case 7:
+    info.name += "6.1";
+    break;
+  case 8:
+    info.name += "7.1";
+    break;
+  default:
+    char temp[32];
+    sprintf(temp, "%d-chs", info.channels);
+    info.name += temp;
   }
 }
 
@@ -1436,11 +1437,11 @@ void CAMLPlayer::Process()
       // check for video in media content
       if (GetVideoStreamCount() > 0)
       {
-        SetAVDelay(g_settings.m_currentVideoSettings.m_AudioDelay);
+        SetAVDelay(CMediaSettings::Get().GetCurrentVideoSettings().m_AudioDelay);
 
         // turn on/off subs
-        SetSubtitleVisible(g_settings.m_currentVideoSettings.m_SubtitleOn);
-        SetSubTitleDelay(g_settings.m_currentVideoSettings.m_SubtitleDelay);
+        SetSubtitleVisible(CMediaSettings::Get().GetCurrentVideoSettings().m_SubtitleOn);
+        SetSubTitleDelay(CMediaSettings::Get().GetCurrentVideoSettings().m_SubtitleDelay);
 
         // setup renderer for bypass. This tell renderer to get out of the way as
         // hw decoder will be doing the actual video rendering in a video plane
@@ -1929,7 +1930,16 @@ bool CAMLPlayer::WaitForFormatValid(int timeout_ms)
             info->format          = media_info.audio_info[i]->aformat;
 #if !defined(TARGET_ANDROID)
             if (media_info.audio_info[i]->audio_language[0] != 0)
+            {
               info->language = std::string(media_info.audio_info[i]->audio_language, 3);
+
+              if (info->language.length() == 2)
+              {
+                CStdString lang;
+                g_LangCodeExpander.ConvertToThreeCharCode(lang, info->language);
+                info->language = lang;
+              }
+            }
 #endif
             m_audio_streams.push_back(info);
           }
@@ -1953,7 +1963,16 @@ bool CAMLPlayer::WaitForFormatValid(int timeout_ms)
             info->id   = media_info.sub_info[i]->id;
             info->type = STREAM_SUBTITLE;
             if (media_info.sub_info[i]->sub_language && media_info.sub_info[i]->sub_language[0] != 0)
+            {
               info->language = std::string(media_info.sub_info[i]->sub_language, 3);
+
+              if (info->language.length() == 2)
+              {
+                CStdString lang;
+                g_LangCodeExpander.ConvertToThreeCharCode(lang, info->language);
+                info->language = lang;
+              }
+            }
             m_subtitle_streams.push_back(info);
           }
           m_subtitle_index = media_info.stream_info.cur_sub_index;
@@ -2198,20 +2217,20 @@ void CAMLPlayer::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
   // do not do anything stupid here.
 
   // video zoom adjustment.
-  float zoom = g_settings.m_currentVideoSettings.m_CustomZoomAmount;
+  float zoom = CMediaSettings::Get().GetCurrentVideoSettings().m_CustomZoomAmount;
   if ((int)(zoom * 1000) != (int)(m_zoom * 1000))
   {
     m_zoom = zoom;
   }
   // video contrast adjustment.
-  int contrast = g_settings.m_currentVideoSettings.m_Contrast;
+  int contrast = CMediaSettings::Get().GetCurrentVideoSettings().m_Contrast;
   if (contrast != m_contrast)
   {
     SetVideoContrast(contrast);
     m_contrast = contrast;
   }
   // video brightness adjustment.
-  int brightness = g_settings.m_currentVideoSettings.m_Brightness;
+  int brightness = CMediaSettings::Get().GetCurrentVideoSettings().m_Brightness;
   if (brightness != m_brightness)
   {
     SetVideoBrightness(brightness);
@@ -2219,10 +2238,10 @@ void CAMLPlayer::SetVideoRect(const CRect &SrcRect, const CRect &DestRect)
   }
 
   // check if destination rect or video view mode has changed
-  if ((m_dst_rect != DestRect) || (m_view_mode != g_settings.m_currentVideoSettings.m_ViewMode))
+  if ((m_dst_rect != DestRect) || (m_view_mode != CMediaSettings::Get().GetCurrentVideoSettings().m_ViewMode))
   {
     m_dst_rect  = DestRect;
-    m_view_mode = g_settings.m_currentVideoSettings.m_ViewMode;
+    m_view_mode = CMediaSettings::Get().GetCurrentVideoSettings().m_ViewMode;
   }
   else
   {
