@@ -23,6 +23,7 @@
 #pragma once
 
 #include "threads/CriticalSection.h"
+#include "BaseRenderer.h"
 
 #include <vector>
 
@@ -92,12 +93,14 @@ namespace OVERLAY {
      CRenderer();
     ~CRenderer();
 
-    void AddOverlay(CDVDOverlay* o, double pts);
-    void AddOverlay(COverlay*    o, double pts);
+    void AddOverlay(CDVDOverlay* o, double pts, int index);
+    void AddOverlay(COverlay*    o, double pts, int index);
     void AddCleanup(COverlay*    o);
-    void Flip();
+    void Flip(int source);
     void Render();
     void Flush();
+    void SetNumBuffers(int numBuffers) { m_iNumBuffers = numBuffers; }
+    void ReleaseBuffer(int idx);
 
   protected:
 
@@ -125,7 +128,8 @@ namespace OVERLAY {
     void      Release(SElementV& list);
 
     CCriticalSection m_section;
-    SElementV        m_buffers[2];
+    SElementV        m_buffers[NUM_BUFFERS];
+    int              m_iNumBuffers;
     int              m_decode;
     int              m_render;
 
