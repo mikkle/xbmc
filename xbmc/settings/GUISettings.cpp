@@ -565,7 +565,7 @@ void CGUISettings::Initialize()
   AddInt(NULL, "input.appleremotesequencetime", 13603, 500, 50, 50, 1000, SPIN_CONTROL_INT_PLUS, MASK_MS, TEXT_OFF);
   AddSeparator(in, "input.sep1");
 #endif
-  AddBool(in, "input.remoteaskeyboard", 21449, false);
+  AddBool(in, "input.remoteaskeyboard", 21449, true);
 #if defined(TARGET_DARWIN_IOS)
   AddBool(NULL, "input.enablemouse", 21369, true);
 #else
@@ -872,9 +872,9 @@ void CGUISettings::Initialize()
 
 #ifdef HAS_WEB_SERVER
   CSettingsCategory* srvWeb = AddCategory(SETTINGS_SERVICE, "webserver", 33101);
-  AddBool(srvWeb,  "services.webserver",        263, false);
+  AddBool(srvWeb,  "services.webserver",        263, true);
   AddString(srvWeb,"services.webserverport",    730, CUtil::CanBindPrivileged()?"80":"8080", EDIT_CONTROL_NUMBER_INPUT, false, 730);
-  AddString(srvWeb,"services.webserverusername",1048, "xbmc", EDIT_CONTROL_INPUT);
+  AddString(srvWeb,"services.webserverusername",1048, "", EDIT_CONTROL_INPUT);
   AddString(srvWeb,"services.webserverpassword",733, "", EDIT_CONTROL_HIDDEN_INPUT, true, 733);
   AddDefaultAddon(srvWeb, "services.webskin",199, DEFAULT_WEB_INTERFACE, ADDON_WEB_INTERFACE);
 #endif
@@ -922,7 +922,7 @@ void CGUISettings::Initialize()
   AddInt(laf, "lookandfeel.startupwindow",512,1, WINDOW_HOME, 1, WINDOW_PYTHON_END, SPIN_CONTROL_TEXT);
   AddString(laf, "lookandfeel.soundskin",15108,"SKINDEFAULT", SPIN_CONTROL_TEXT);
   AddSeparator(laf, "lookandfeel.sep2");
-  AddBool(laf, "lookandfeel.enablerssfeeds",13305,  true);
+  AddBool(laf, "lookandfeel.enablerssfeeds",13305,  false);
   AddString(laf, "lookandfeel.rssedit", 21450, "", BUTTON_CONTROL_STANDARD);
 
   CSettingsCategory* loc = AddCategory(SETTINGS_APPEARANCE, "locale", 14090);
