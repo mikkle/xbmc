@@ -38,11 +38,14 @@
 
 class CRenderCapture;
 
+class CVDPAU;
 class CBaseTexture;
 namespace Shaders { class BaseYUV2RGBShader; }
 namespace Shaders { class BaseVideoFilterShader; }
 namespace VAAPI   { struct CHolder; }
-namespace VDPAU   { class CVdpauRenderPicture; }
+
+#define NUM_BUFFERS 3
+
 
 #undef ALIGN
 #define ALIGN(value, alignment) (((value)+((alignment)-1))&~((alignment)-1))
@@ -135,19 +138,15 @@ public:
   virtual void         UnInit();
   virtual void         Reset(); /* resets renderer after seek for example */
   virtual void         Flush();
-  virtual void         ReleaseBuffer(int idx);
-  virtual void         SetBufferSize(int numBuffers) { m_NumYV12Buffers = numBuffers; }
-  virtual unsigned int GetMaxBufferSize() { return NUM_BUFFERS; }
-  virtual unsigned int GetProcessorSize() { return m_NumYV12Buffers; }
 
 #ifdef HAVE_LIBVDPAU
-  virtual void         AddProcessor(VDPAU::CVdpauRenderPicture* vdpau, int index);
+  virtual void         AddProcessor(CVDPAU* vdpau);
 #endif
 #ifdef HAVE_LIBVA
-  virtual void         AddProcessor(VAAPI::CHolder& holder, int index);
+  virtual void         AddProcessor(VAAPI::CHolder& holder);
 #endif
 #ifdef TARGET_DARWIN
-  virtual void         AddProcessor(struct __CVBuffer *cvBufferRef, int index);
+  virtual void         AddProcessor(struct __CVBuffer *cvBufferRef);
 #endif
 
   virtual void RenderUpdate(bool clear, DWORD flags = 0, DWORD alpha = 255);
@@ -169,6 +168,7 @@ protected:
   void         DrawBlackBars();
 
   bool ValidateRenderer();
+  virtual void ManageTextures();
   int  NextYV12Texture();
   virtual bool ValidateRenderTarget();
   virtual void LoadShaders(int field=FIELD_FULL);
@@ -192,10 +192,6 @@ protected:
   void DeleteVDPAUTexture(int index);
   bool CreateVDPAUTexture(int index);
 
-  void UploadVDPAUTexture420(int index);
-  void DeleteVDPAUTexture420(int index);
-  bool CreateVDPAUTexture420(int index);
-
   void UploadVAAPITexture(int index);
   void DeleteVAAPITexture(int index);
   bool CreateVAAPITexture(int index);
@@ -216,12 +212,12 @@ protected:
   void CalculateTextureSourceRects(int source, int num_planes);
 
   // renderers
-  void RenderToFBO(int renderBuffer, int field, bool weave = false);
+  void RenderMultiPass(int renderBuffer, int field);  // multi pass glsl renderer
+  void RenderToFBO(int renderBuffer, int field);
   void RenderFromFBO();
   void RenderSinglePass(int renderBuffer, int field); // single pass glsl renderer
   void RenderSoftware(int renderBuffer, int field);   // single pass s/w yuv2rgb renderer
   void RenderVDPAU(int renderBuffer, int field);      // render using vdpau hardware
-  void RenderProgressiveWeave(int renderBuffer, int field); // render using vdpau hardware
   void RenderVAAPI(int renderBuffer, int field);      // render using vdpau hardware
 
   struct
@@ -282,7 +278,7 @@ protected:
     GLuint    pbo[MAX_PLANES];
 
 #ifdef HAVE_LIBVDPAU
-    VDPAU::CVdpauRenderPicture *vdpau;
+    CVDPAU*   vdpau;
 #endif
 #ifdef HAVE_LIBVA
     VAAPI::CHolder& vaapi;
@@ -328,7 +324,6 @@ protected:
   bool  m_nonLinStretch;
   bool  m_nonLinStretchGui;
   float m_pixelRatio;
-  bool  m_skipRender;
 };
 
 

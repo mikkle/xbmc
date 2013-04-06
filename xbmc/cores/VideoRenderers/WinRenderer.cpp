@@ -103,19 +103,21 @@ static enum PixelFormat PixelFormatFromFormat(ERenderFormat format)
 
 void CWinRenderer::ManageTextures()
 {
-  if( m_NumYV12Buffers < m_neededBuffers )
+  int neededbuffers = 2;
+
+  if( m_NumYV12Buffers < neededbuffers )
   {
-    for(int i = m_NumYV12Buffers; i<m_neededBuffers;i++)
+    for(int i = m_NumYV12Buffers; i<neededbuffers;i++)
       CreateYV12Texture(i);
 
-    m_NumYV12Buffers = m_neededBuffers;
+    m_NumYV12Buffers = neededbuffers;
   }
-  else if( m_NumYV12Buffers > m_neededBuffers )
+  else if( m_NumYV12Buffers > neededbuffers )
   {
-    m_NumYV12Buffers = m_neededBuffers;
+    m_NumYV12Buffers = neededbuffers;
     m_iYV12RenderBuffer = m_iYV12RenderBuffer % m_NumYV12Buffers;
 
-    for(int i = m_NumYV12Buffers-1; i>=m_neededBuffers;i--)
+    for(int i = m_NumYV12Buffers-1; i>=neededbuffers;i--)
       DeleteYV12Texture(i);
   }
 }
@@ -251,12 +253,12 @@ int CWinRenderer::NextYV12Texture()
     return -1;
 }
 
-bool CWinRenderer::AddVideoPicture(DVDVideoPicture* picture, int index)
+bool CWinRenderer::AddVideoPicture(DVDVideoPicture* picture)
 {
   if (m_renderMethod == RENDER_DXVA)
   {
-    int source = index;
-    if(source < 0 || NextYV12Texture() < 0)
+    int source = NextYV12Texture();
+    if(source < 0)
       return false;
 
     DXVABuffer *buf = (DXVABuffer*)m_VideoBuffers[source];
@@ -272,7 +274,7 @@ int CWinRenderer::GetImage(YV12Image *image, int source, bool readonly)
   if( source == AUTOSOURCE )
     source = NextYV12Texture();
 
-  if( source < 0 || NextYV12Texture() < 0)
+  if( source < 0 )
     return -1;
 
   YUVBuffer *buf = (YUVBuffer*)m_VideoBuffers[source];

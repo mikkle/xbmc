@@ -42,6 +42,8 @@ class COpenMaxVideo;
 class CStageFrightVideo;
 typedef std::vector<int>     Features;
 
+#define NUM_BUFFERS 3
+
 
 #undef ALIGN
 #define ALIGN(value, alignment) (((value)+((alignment)-1))&~((alignment)-1))
@@ -138,9 +140,6 @@ public:
   virtual void         UnInit();
   virtual void         Reset(); /* resets renderer after seek for example */
   virtual void         ReorderDrawPoints();
-  virtual void         SetBufferSize(int numBuffers) { m_NumYV12Buffers = numBuffers; }
-  virtual unsigned int GetMaxBufferSize() { return NUM_BUFFERS; }
-  virtual unsigned int GetProcessorSize() { return m_NumYV12Buffers; }
 
   virtual void RenderUpdate(bool clear, DWORD flags = 0, DWORD alpha = 255);
 
@@ -156,10 +155,10 @@ public:
   virtual std::vector<ERenderFormat> SupportedFormats() { return m_formats; }
 
 #ifdef HAVE_LIBOPENMAX
-  virtual void         AddProcessor(COpenMax* openMax, DVDVideoPicture *picture, int index);
+  virtual void         AddProcessor(COpenMax* openMax, DVDVideoPicture *picture);
 #endif
 #ifdef HAVE_VIDEOTOOLBOXDECODER
-  virtual void         AddProcessor(struct __CVBuffer *cvBufferRef, int index);
+  virtual void         AddProcessor(struct __CVBuffer *cvBufferRef);
 #endif
 #ifdef HAVE_LIBSTAGEFRIGHT
   virtual void         AddProcessor(CStageFrightVideo* stf, EGLImageKHR eglimg);
@@ -168,6 +167,7 @@ public:
 protected:
   virtual void Render(DWORD flags, int index);
 
+  virtual void ManageTextures();
   int  NextYV12Texture();
   virtual bool ValidateRenderTarget();
   virtual void LoadShaders(int field=FIELD_FULL);

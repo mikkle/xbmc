@@ -5745,7 +5745,6 @@ bool CVideoDatabase::GetSeasonsNav(const CStdString& strBaseDir, CFileItemList& 
       }
       m_pDS->close();
     }
-    items.SetPath(videoUrl.ToString());
 
     // now add any linked movies
     if (getLinkedMovies)
@@ -5920,7 +5919,6 @@ bool CVideoDatabase::GetMoviesByWhere(const CStdString& strBaseDir, const Filter
         items.Add(pItem);
       }
     }
-    items.SetPath(videoUrl.ToString());
 
     // cleanup
     m_pDS->close();
@@ -6356,7 +6354,6 @@ bool CVideoDatabase::GetEpisodesByWhere(const CStdString& strBaseDir, const Filt
         items.Add(pItem);
       }
     }
-    items.SetPath(videoUrl.ToString());
 
     // cleanup
     m_pDS->close();
@@ -7208,7 +7205,6 @@ bool CVideoDatabase::GetMusicVideosByWhere(const CStdString &baseDir, const Filt
         items.Add(item);
       }
     }
-    items.SetPath(videoUrl.ToString());
 
     // cleanup
     m_pDS->close();

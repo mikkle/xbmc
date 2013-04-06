@@ -706,7 +706,6 @@ void CGUISettings::Initialize()
 
 #ifdef HAVE_LIBVDPAU
   AddBool(vp, "videoplayer.usevdpau", 13425, true);
-  AddBool(vp, "videoplayer.usevdpaumixer", 13436, true);
 #endif
 #ifdef HAVE_LIBVA
   AddBool(vp, "videoplayer.usevaapi", 13426, true);
@@ -788,6 +787,7 @@ void CGUISettings::Initialize()
   AddSeparator(vp, "videoplayer.sep1.5");
 #ifdef HAVE_LIBVDPAU
   AddBool(NULL, "videoplayer.vdpauUpscalingLevel", 13121, false);
+  AddBool(NULL, "videoplayer.vdpaustudiolevel", 0, false); //depreciated
 #endif
 #endif
   AddSeparator(vp, "videoplayer.sep5");

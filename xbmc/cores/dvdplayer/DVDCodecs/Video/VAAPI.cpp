@@ -357,7 +357,6 @@ bool CDecoder::Open(AVCodecContext *avctx, enum PixelFormat fmt, unsigned int su
   CHECK(vaCreateConfig(m_display->get(), profile, entrypoint, &attrib, 1, &m_hwaccel->config_id))
   m_config = m_hwaccel->config_id;
 
-  m_renderbuffers_count = surfaces;
   if (!EnsureContext(avctx))
     return false;
 
@@ -389,7 +388,7 @@ bool CDecoder::EnsureContext(AVCodecContext *avctx)
     else
       m_refs = 2;
   }
-  return EnsureSurfaces(avctx, m_refs + m_renderbuffers_count + 1);
+  return EnsureSurfaces(avctx, m_refs + 3);
 }
 
 bool CDecoder::EnsureSurfaces(AVCodecContext *avctx, unsigned n_surfaces_count)

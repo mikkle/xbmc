@@ -162,6 +162,13 @@ CLinuxRendererGLES::~CLinuxRendererGLES()
   delete m_dllSwScale;
 }
 
+void CLinuxRendererGLES::ManageTextures()
+{
+  m_NumYV12Buffers = 2;
+  //m_iYV12RenderBuffer = 0;
+  return;
+}
+
 bool CLinuxRendererGLES::ValidateRenderTarget()
 {
   if (!m_bValidated)
@@ -422,6 +429,7 @@ void CLinuxRendererGLES::Update(bool bPauseDrawing)
 {
   if (!m_bConfigured) return;
   ManageDisplay();
+  ManageTextures();
 }
 
 void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
@@ -435,6 +443,7 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
   if (m_renderMethod & RENDER_BYPASS)
   {
     ManageDisplay();
+    ManageTextures();
     // if running bypass, then the player might need the src/dst rects
     // for sizing video playback on a layer other than the gles layer.
     if (m_RenderUpdateCallBackFn)
@@ -474,6 +483,7 @@ void CLinuxRendererGLES::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
     return;
 
   ManageDisplay();
+  ManageTextures();
 
   g_graphicsContext.BeginPaint();
 
@@ -2186,16 +2196,16 @@ EINTERLACEMETHOD CLinuxRendererGLES::AutoInterlaceMethod()
 }
 
 #ifdef HAVE_LIBOPENMAX
-void CLinuxRendererGLES::AddProcessor(COpenMax* openMax, DVDVideoPicture *picture, int index)
+void CLinuxRendererGLES::AddProcessor(COpenMax* openMax, DVDVideoPicture *picture)
 {
-  YUVBUFFER &buf = m_buffers[index];
+  YUVBUFFER &buf = m_buffers[NextYV12Texture()];
   buf.openMaxBuffer = picture->openMaxBuffer;
 }
 #endif
 #ifdef HAVE_VIDEOTOOLBOXDECODER
-void CLinuxRendererGLES::AddProcessor(struct __CVBuffer *cvBufferRef, int index)
+void CLinuxRendererGLES::AddProcessor(struct __CVBuffer *cvBufferRef)
 {
-  YUVBUFFER &buf = m_buffers[index];
+  YUVBUFFER &buf = m_buffers[NextYV12Texture()];
   if (buf.cvBufferRef)
     CVBufferRelease(buf.cvBufferRef);
   buf.cvBufferRef = cvBufferRef;
