@@ -809,7 +809,7 @@ void OMXPlayerVideo::ResolutionUpdateCallBack(uint32_t width, uint32_t height)
 
   if(!g_renderManager.Configure(width, height,
         iDisplayWidth, iDisplayHeight, m_fFrameRate, flags, format, 0,
-        m_hints.orientation))
+        m_hints.orientation, true))
   {
     CLog::Log(LOGERROR, "%s - failed to configure renderer", __FUNCTION__);
     return;
