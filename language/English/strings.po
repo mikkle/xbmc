@@ -3922,6 +3922,58 @@ msgstr ""
 
 #empty strings from id 10102 to 10209
 
+msgctxt "#10126"
+msgid "File browser"
+msgstr ""
+
+msgctxt "#10128"
+msgid "Network setup"
+msgstr ""
+
+msgctxt "#10129"
+msgid "Media source"
+msgstr ""
+
+msgctxt "#10130"
+msgid "Profile settings"
+msgstr ""
+
+msgctxt "#10131"
+msgid "Lock settings"
+msgstr ""
+
+msgctxt "#10132"
+msgid "Content settings"
+msgstr ""
+
+msgctxt "#10134"
+msgid "Favourites"
+msgstr ""
+
+msgctxt "#10135"
+msgid "Songs/Info"
+msgstr ""
+
+msgctxt "#10136"
+msgid "Smart playlist editor"
+msgstr ""
+
+msgctxt "#10137"
+msgid "Smart playlist rule editor"
+msgstr ""
+
+msgctxt "#10139"
+msgid "Pictures/Info"
+msgstr ""
+
+msgctxt "#10140"
+msgid "Add-on settings"
+msgstr ""
+
+msgctxt "#10146"
+msgid "Add-ons/Info"
+msgstr ""
+
 msgctxt "#10210"
 msgid "Looking for subtitles..."
 msgstr ""
@@ -5348,7 +5400,12 @@ msgctxt "#13434"
 msgid "Play only this"
 msgstr ""
 
-#empty strings from id 13435 to 13499
+#: xbmc/settings/GUISettings.cpp
+msgctxt "#13435"
+msgid "Enable HQ Scalers for scalings above %"
+msgstr ""
+
+#empty strings from id 13436 to 13499
 
 #: xbmc/settings/GUISettings.cpp
 msgctxt "#13500"
@@ -9411,7 +9468,27 @@ msgctxt "#20464"
 msgid "Select %s"
 msgstr ""
 
-#empty strings from id 20465 to 21329
+msgctxt "#20465"
+msgid "Manage movie set"
+msgstr ""
+
+msgctxt "#20466"
+msgid "Select movie set"
+msgstr ""
+
+msgctxt "#20467"
+msgid "No set (Remove from %s)"
+msgstr ""
+
+msgctxt "#20468"
+msgid "Add movie to a new set"
+msgstr ""
+
+msgctxt "#20469"
+msgid "Keep current set (%s)"
+msgstr ""
+
+#empty strings from id 20470 to 21329
 #up to 21329 is reserved for the video db !! !
 
 #: xbmc/settings/GUISettings.cpp

@@ -33,6 +33,7 @@
 
 #include <sys/time.h>
 #include <inttypes.h>
+#include "settings/DisplaySettings.h"
 #include "settings/GUISettings.h"
 #include "settings/Settings.h"
 #include "settings/AdvancedSettings.h"
@@ -59,7 +60,6 @@ COMXImage::COMXImage()
   m_width         = 0;
   m_height        = 0;
 
-  m_is_open       = false;
   m_decoded_buffer = NULL;
   m_encoded_buffer = NULL;
 
@@ -320,12 +320,12 @@ OMX_IMAGE_CODINGTYPE COMXImage::GetCodingType()
       else if(marker == M_APP1)
       {
         int readBits = 2;
-        bool bMotorolla = false;
-        bool bError = false;
 
         // Exif header
         if(CBitstreamConverter::read_bits(&br, 32) == 0x45786966)
         {
+          bool bMotorolla = false;
+          bool bError = false;
           CBitstreamConverter::skip_bits(&br, 8 * 2);
           readBits += 2;
         
@@ -485,7 +485,7 @@ OMX_IMAGE_CODINGTYPE COMXImage::GetCodingType()
 
 bool COMXImage::ClampLimits(unsigned int &width, unsigned int &height)
 {
-  RESOLUTION_INFO& res_info =  g_settings.m_ResInfo[g_graphicsContext.GetVideoResolution()];
+  RESOLUTION_INFO& res_info =  CDisplaySettings::Get().GetResolutionInfo(g_graphicsContext.GetVideoResolution());
   const bool transposed = m_orientation & 4;
   const int gui_width  = transposed ? res_info.iHeight:res_info.iWidth;
   const int gui_height = transposed ? res_info.iWidth:res_info.iHeight;
@@ -733,8 +733,8 @@ bool COMXImage::Decode(unsigned width, unsigned height)
     width = height * 16/9;
     if(!width || !height)
     {
-      width = g_settings.m_ResInfo[g_guiSettings.m_LookAndFeelResolution].iWidth;
-      height = g_settings.m_ResInfo[g_guiSettings.m_LookAndFeelResolution].iHeight;
+      width = CDisplaySettings::Get().GetCurrentResolutionInfo().iWidth;
+      height = CDisplaySettings::Get().GetCurrentResolutionInfo().iHeight;
     }
   }
 

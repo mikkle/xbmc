@@ -32,6 +32,7 @@
 #include "Application.h"
 #include "settings/Settings.h"
 #include "settings/AdvancedSettings.h"
+#include "settings/DisplaySettings.h"
 #include "settings/GUISettings.h"
 #include "settings/MediaSettings.h"
 #include "VideoShaders/YUV2RGBShader.h"
@@ -174,6 +175,19 @@ CLinuxRendererGL::CLinuxRendererGL()
   m_rgbBufferSize = 0;
   m_context = NULL;
   m_rgbPbo = 0;
+  m_fbo.width = 0.0;
+  m_fbo.height = 0.0;
+  m_NumYV12Buffers = 0;
+  m_iLastRenderBuffer = 0;
+  m_bConfigured = false;
+  m_bValidated = false;
+  m_bImageReady = false;
+  m_clearColour = 0.0f;
+  m_pboSupported = false;
+  m_pboUsed = false;
+  m_nonLinStretch = false;
+  m_nonLinStretchGui = false;
+  m_pixelRatio = 0.0f;
 
   m_dllSwScale = new DllSwScale;
 }
@@ -612,6 +626,7 @@ void CLinuxRendererGL::Update(bool bPauseDrawing)
   if (!m_bConfigured) return;
   ManageDisplay();
   ManageTextures();
+  m_scalingMethodGui = (ESCALINGMETHOD)-1;
 }
 
 void CLinuxRendererGL::RenderUpdate(bool clear, DWORD flags, DWORD alpha)
@@ -779,7 +794,7 @@ unsigned int CLinuxRendererGL::PreInit()
   m_bConfigured = false;
   m_bValidated = false;
   UnInit();
-  m_resolution = g_guiSettings.m_LookAndFeelResolution;
+  m_resolution = CDisplaySettings::Get().GetCurrentResolution();
   if ( m_resolution == RES_WINDOW )
     m_resolution = RES_DESKTOP;
 
@@ -1005,14 +1020,14 @@ void CLinuxRendererGL::LoadShaders(int field)
           UpdateVideoFilter();
           break;
         }
-        else
+        else if (m_pYUVShader)
         {
           m_pYUVShader->Free();
           delete m_pYUVShader;
           m_pYUVShader = NULL;
-          CLog::Log(LOGERROR, "GL: Error enabling YUV2RGB GLSL shader");
-          // drop through and try ARB
         }
+        CLog::Log(LOGERROR, "GL: Error enabling YUV2RGB GLSL shader");
+        // drop through and try ARB
       }
       case RENDER_METHOD_ARB:
       // Try ARB shaders if supported and user requested it or GLSL shaders failed.
@@ -1031,14 +1046,14 @@ void CLinuxRendererGL::LoadShaders(int field)
           UpdateVideoFilter();
           break;
         }
-        else
+        else if (m_pYUVShader)
         {
           m_pYUVShader->Free();
           delete m_pYUVShader;
           m_pYUVShader = NULL;
-          CLog::Log(LOGERROR, "GL: Error enabling YUV2RGB ARB shader");
-          // drop through and use SW
         }
+        CLog::Log(LOGERROR, "GL: Error enabling YUV2RGB ARB shader");
+        // drop through and use SW
       }
       case RENDER_METHOD_SOFTWARE:
       default:
@@ -3343,6 +3358,13 @@ bool CLinuxRendererGL::Supports(ESCALINGMETHOD method)
   || method == VS_SCALINGMETHOD_SPLINE36
   || method == VS_SCALINGMETHOD_LANCZOS3)
   {
+    // if scaling is below level, avoid hq scaling
+    float scaleX = fabs(((float)m_sourceWidth - m_destRect.Width())/m_sourceWidth)*100;
+    float scaleY = fabs(((float)m_sourceHeight - m_destRect.Height())/m_sourceHeight)*100;
+    int minScale = g_guiSettings.GetInt("videoplayer.hqscalers");
+    if (scaleX < minScale && scaleY < minScale)
+      return false;
+
     if ((glewIsSupported("GL_EXT_framebuffer_object") && (m_renderMethod & RENDER_GLSL)) ||
         (m_renderMethod & RENDER_VDPAU) || (m_renderMethod & RENDER_VAAPI))
     {

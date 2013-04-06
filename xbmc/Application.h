@@ -44,6 +44,7 @@ namespace MEDIA_DETECT
 {
   class CAutorun;
 }
+class CPlayerController;
 
 #include "cores/IPlayerCallback.h"
 #include "cores/playercorefactory/PlayerCoreFactory.h"
@@ -368,6 +369,8 @@ public:
 
   CSplash* GetSplash() { return m_splash; }
   void SetRenderGUI(bool renderGUI);
+
+  bool SetLanguage(const CStdString &strLanguage);
 protected:
   virtual bool OnSettingsSaving() const;
 
@@ -466,6 +469,7 @@ protected:
   void CreateUserDirs();
 
   CSeekHandler *m_seekHandler;
+  CPlayerController *m_playerController;
   CInertialScrollingHandler *m_pInertialScrollingHandler;
   CNetwork    *m_network;
 #ifdef HAS_PERFORMANCE_SAMPLE
