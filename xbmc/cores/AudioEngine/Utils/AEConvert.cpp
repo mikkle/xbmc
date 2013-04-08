@@ -648,6 +648,140 @@ unsigned int CAEConvert::Float_S16LE(float *data, const unsigned int samples, ui
   return samples << 1;
 }
 
+unsigned int CAEConvert::Float_S16LE(float *data, const unsigned int samples, int16_t *dest)
+{
+  int16_t *dst = dest;
+  #ifdef __SSE__
+
+  unsigned int count     = samples;
+  unsigned int unaligned = (0x10 - ((uintptr_t)data & 0xF)) >> 2;
+  if (unaligned == 4)
+    unaligned = 0;
+
+  /*
+    if we are only out by one, dont use SSE to correct it.
+    this must run before we do any SSE work so that the FPU
+    is in a working state without having to first call
+    _mm_empty()
+  */
+  if (unaligned == 1)
+    dst[0] = Endian_SwapLE16(safeRound(data[0] * ((float)INT16_MAX + CAEUtil::FloatRand1(-0.5f, 0.5f))));
+
+  MEMALIGN(16, static const __m128  mul) = _mm_set_ps1((float)INT16_MAX);
+  MEMALIGN(16, __m128  rand);
+  MEMALIGN(16, __m128  in  );
+  MEMALIGN(16, __m128i con );
+
+  /* if unaligned is greater then one, use SSE to correct it */
+  if (unaligned > 1)
+  {
+    switch (unaligned)
+    {
+      case 1: in = _mm_setr_ps(data[0], 0      , 0      , 0); break;
+      case 2: in = _mm_setr_ps(data[0], data[1], 0      , 0); break;
+      case 3: in = _mm_setr_ps(data[0], data[1], data[2], 0); break;
+    }
+
+    /* random round to dither */
+    CAEUtil::FloatRand4(-0.5f, 0.5f, NULL, &rand);
+    in  = _mm_mul_ps(in, _mm_add_ps(mul, rand));
+    con = _mm_cvtps_epi32(in);
+
+    #ifdef __BIG_ENDIAN__
+    con = _mm_or_si128(_mm_slli_epi16(con, 8), _mm_srli_epi16(con, 8));
+    #endif
+
+    dst[0] = _mm_extract_epi16(con, 0);
+    if (unaligned == 3)
+    {
+      dst[1] = _mm_extract_epi16(con, 2);
+      dst[2] = _mm_extract_epi16(con, 4);
+    }
+    else if (unaligned == 2)
+      dst[1] = _mm_extract_epi16(con, 2);
+  }
+
+  /* update our pointers and sample count */
+  data  += unaligned;
+  dst   += unaligned;
+  count -= unaligned;
+
+  const uint32_t even = count & ~0x3;
+  for (uint32_t i = 0; i < even; i += 4, data += 4, dst += 4)
+  {
+    /* random round to dither */
+    CAEUtil::FloatRand4(-0.5f, 0.5f, NULL, &rand);
+    in   = _mm_mul_ps(_mm_load_ps(data), _mm_add_ps(mul, rand));
+    con  = _mm_cvtps_epi32(in);
+
+    #ifdef __BIG_ENDIAN__
+    con = _mm_or_si128(_mm_slli_epi16(con, 8), _mm_srli_epi16(con, 8));
+    #endif
+
+    dst[0] = _mm_extract_epi16(con, 0);
+    dst[1] = _mm_extract_epi16(con, 2);
+    dst[2] = _mm_extract_epi16(con, 4);
+    dst[3] = _mm_extract_epi16(con, 6);
+  }
+
+  /* calculate the final unaligned samples if there is any */
+  if (samples != even)
+  {
+    unaligned = samples - even;
+    switch (unaligned)
+    {
+      case 1: in = _mm_setr_ps(data[0], 0      , 0      , 0); break;
+      case 2: in = _mm_setr_ps(data[0], data[1], 0      , 0); break;
+      case 3: in = _mm_setr_ps(data[0], data[1], data[2], 0); break;
+    }
+
+    /* random round to dither */
+    CAEUtil::FloatRand4(-0.5f, 0.5f, NULL, &rand);
+    in  = _mm_mul_ps(in, _mm_add_ps(mul, rand));
+    con = _mm_cvtps_epi32(in);
+
+    #ifdef __BIG_ENDIAN__
+    con = _mm_or_si128(_mm_slli_epi16(con, 8), _mm_srli_epi16(con, 8));
+    #endif
+
+    dst[0] = _mm_extract_epi16(con, 0);
+    if (unaligned == 3)
+    {
+      dst[1] = _mm_extract_epi16(con, 2);
+      dst[2] = _mm_extract_epi16(con, 4);
+    }
+    else if (unaligned == 2)
+      dst[1] = _mm_extract_epi16(con, 2);
+  }
+
+  /* cleanup */
+  _mm_empty();
+
+  #else /* no SSE */
+
+  uint32_t i    = 0;
+  uint32_t even = samples & ~0x3;
+
+  for(; i < even; i += 4)
+  {
+    /* random round to dither */
+    float rand[4];
+    CAEUtil::FloatRand4(-0.5f, 0.5f, rand);
+
+    *dst++ = Endian_SwapLE16(safeRound(*data++ * ((float)INT16_MAX + rand[0])));
+    *dst++ = Endian_SwapLE16(safeRound(*data++ * ((float)INT16_MAX + rand[1])));
+    *dst++ = Endian_SwapLE16(safeRound(*data++ * ((float)INT16_MAX + rand[2])));
+    *dst++ = Endian_SwapLE16(safeRound(*data++ * ((float)INT16_MAX + rand[3])));
+  }
+
+  for(; i < samples; ++i)
+    *dst++ = Endian_SwapLE16(safeRound(*data++ * ((float)INT16_MAX + CAEUtil::FloatRand1(-0.5f, 0.5f))));
+
+  #endif
+
+  return samples << 1;
+}
+
 unsigned int CAEConvert::Float_S16BE(float *data, const unsigned int samples, uint8_t *dest)
 {
   int16_t *dst = (int16_t*)dest;

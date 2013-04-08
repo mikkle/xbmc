@@ -57,5 +57,6 @@ public:
 
   static AEConvertToFn ToFloat(enum AEDataFormat dataFormat);
   static AEConvertFrFn FrFloat(enum AEDataFormat dataFormat);
+  static unsigned int Float_S16LE (float   *data, const unsigned int samples, int16_t *dest);
 };
 

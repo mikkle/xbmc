@@ -21,6 +21,7 @@
 #include "AESinkAUDIOTRACK.h"
 #include "Utils/AEUtil.h"
 #include "Utils/AERingBuffer.h"
+#include "Utils/AEConvert.h"
 #include "android/activity/XBMCApp.h"
 #include "utils/log.h"
 #if defined(HAS_AMLPLAYER)
@@ -28,11 +29,11 @@
 #endif
 
 #include <jni.h>
-#include "utils/CPUInfo.h"
 #include "android/activity/JNIThreading.h"
 
 #if defined(__ARM_NEON__)
 #include <arm_neon.h>
+#include "utils/CPUInfo.h"
 
 // LGPLv2 from PulseAudio
 // float values from AE are pre-clamped so we do not need to clamp again here
@@ -215,6 +216,15 @@ unsigned int CAESinkAUDIOTRACK::AddPackets(uint8_t *data, unsigned int frames, b
         m_sinkbuffer->Write((unsigned char*)m_alignedS16LE, write_frames * m_sink_frameSize);
         m_wake.Set();
         break;
+#else
+      case AE_FMT_FLOAT:
+        if (!m_alignedS16LE)
+          m_alignedS16LE = (int16_t*)_aligned_malloc(m_format.m_frames * m_sink_frameSize, 16);
+        //convert AE_FMT_S16LE to AE_FMT_FLOAT
+        CAEConvert::Float_S16LE((float *)data, (const unsigned int)write_frames * m_format.m_channelLayout.Count(), m_alignedS16LE);
+        m_sinkbuffer->Write((unsigned char*)m_alignedS16LE, write_frames * m_sink_frameSize);
+        m_wake.Set();
+        break;
 #endif
       default:
         break;
@@ -262,10 +272,7 @@ void CAESinkAUDIOTRACK::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
   m_info.m_sampleRates.push_back(44100);
   m_info.m_sampleRates.push_back(48000);
   m_info.m_dataFormats.push_back(AE_FMT_S16LE);
-#if defined(__ARM_NEON__)
-  if (g_cpuInfo.GetCPUFeatures() & CPU_FEATURE_NEON)
-    m_info.m_dataFormats.push_back(AE_FMT_FLOAT);
-#endif
+  m_info.m_dataFormats.push_back(AE_FMT_FLOAT);
 
   list.push_back(m_info);
 }
