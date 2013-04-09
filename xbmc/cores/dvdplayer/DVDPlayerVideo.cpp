@@ -45,6 +45,7 @@
 #include <numeric>
 #include <iterator>
 #include "utils/log.h"
+#include "guilib/GraphicContext.h"
 
 using namespace std;
 
