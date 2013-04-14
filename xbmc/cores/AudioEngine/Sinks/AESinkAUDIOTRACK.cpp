@@ -266,12 +266,13 @@ void CAESinkAUDIOTRACK::EnumerateDevicesEx(AEDeviceInfoList &list, bool force)
   m_info.m_deviceType = AE_DEVTYPE_PCM;
   m_info.m_deviceName = "AudioTrack";
   m_info.m_displayName = "android";
-  m_info.m_displayNameExtra = "audiotrack";
+  m_info.m_displayNameExtra = "audiotrackNoNeon";
   m_info.m_channels += AE_CH_FL;
   m_info.m_channels += AE_CH_FR;
   m_info.m_sampleRates.push_back(44100);
   m_info.m_sampleRates.push_back(48000);
   m_info.m_dataFormats.push_back(AE_FMT_S16LE);
+  CLog::Log(LOGDEBUG, "CAESinkAUDIOTRACK::EnumerateDevicesEx - Pushing back AE_FMT_FLOAT capacity");
   m_info.m_dataFormats.push_back(AE_FMT_FLOAT);
 
   list.push_back(m_info);
