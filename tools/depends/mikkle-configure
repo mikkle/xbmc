@@ -1,3 +1,2 @@
 #!/bin/sh
-./configure --with-toolchain=/usr/local/android-xbmc-toolchain-neon/android-14 --with-sdk=android-14 --prefix=/usr/local/opt/xbmc-deps/android/neon --host=arm-linux-androideabi  --with-ndk=/usr/local/android-ndk-r7-crystax-5.beta3 --with-sdk-path=/usr/local/android
-
+./configure --with-toolchain=/usr/local/android-xbmc-toolchain-noneon/android-14 --with-sdk=android-14 --prefix=/usr/local/opt/xbmc-deps/android/noneon --host=arm-linux-androideabi  --with-ndk=/usr/local/android-ndk-r7-crystax-5.beta3.vfpfix --with-sdk-path=/usr/local/android
