@@ -646,7 +646,7 @@ case $host in
      ARCH="arm"
      ffmpeg_target_os=linux
      use_joystick=no
-     use_neon=yes
+     use_neon=no
      use_gles=yes
      use_optical_drive=no
      use_sdl=no
@@ -2550,9 +2550,9 @@ XB_CONFIG_MODULE([lib/ffmpeg], [
       ffmpg_config="$ffmpg_config --enable-pic"
       ffmpg_config="$ffmpg_config --disable-armv5te --disable-armv6t2"
       if test "$use_neon"  = "yes"; then
-        ffmpg_config="$ffmpg_config --disable-neon"
+        ffmpg_config="$ffmpg_config --enable-armvfp"
       else
-        ffmpg_config="$ffmpg_config --disable-neon"
+        ffmpg_config="$ffmpg_config --enable-armvfp"
       fi
     else
       ffmpg_config="$ffmpg_config --disable-amd3dnow"
