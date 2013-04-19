@@ -24,7 +24,7 @@ if sys.version_info < (2, 7):
 else:
     import json as simplejson
 
-__addon__      = xbmcaddon.Addon()
+__addon__      = xbmcaddon.Addon(id='weather.wunderground')
 __addonname__  = __addon__.getAddonInfo('name')
 __addonid__    = __addon__.getAddonInfo('id')
 __cwd__        = __addon__.getAddonInfo('path').decode("utf-8")
