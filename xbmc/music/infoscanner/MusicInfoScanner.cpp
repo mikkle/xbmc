@@ -618,7 +618,7 @@ int CMusicInfoScanner::RetrieveMusicInfo(const CStdString& strDirectory, CFileIt
       // No - download the information
       CMusicAlbumInfo albumInfo;
       INFO_RET albumDownloadStatus = INFO_NOT_FOUND;
-      if (m_flags & SCAN_ONLINE)
+      if ((m_flags & SCAN_ONLINE) && albumScraper)
         albumDownloadStatus = DownloadAlbumInfo(*album, albumScraper, albumInfo);
 
       if (albumDownloadStatus == INFO_ADDED || albumDownloadStatus == INFO_HAVE_ALREADY)
@@ -640,7 +640,7 @@ int CMusicInfoScanner::RetrieveMusicInfo(const CStdString& strDirectory, CFileIt
       }
       else if (albumDownloadStatus == INFO_CANCELLED)
         break;
-      else // Cache the lookup failure so we don't retry
+      else
       {
         album->idAlbum = m_musicDatabase.AddAlbum(album->strAlbum,
                                                   album->strMusicBrainzAlbumID,
@@ -648,6 +648,12 @@ int CMusicInfoScanner::RetrieveMusicInfo(const CStdString& strDirectory, CFileIt
                                                   album->GetGenreString(),
                                                   album->iYear,
                                                   album->bCompilation);
+        
+        if (!album->art.empty())
+          m_musicDatabase.SetArtForItem(album->idAlbum,
+                                       "album", album->art);
+
+        // Cache the lookup failure so we don't retry
         m_albumCache.insert(make_pair(*album, *album));
       }
 
@@ -676,7 +682,7 @@ int CMusicInfoScanner::RetrieveMusicInfo(const CStdString& strDirectory, CFileIt
         // No - download the information
         CMusicArtistInfo artistInfo;
         INFO_RET artistDownloadStatus = INFO_NOT_FOUND;
-        if (m_flags & SCAN_ONLINE)
+        if ((m_flags & SCAN_ONLINE) && artistScraper)
           artistDownloadStatus = DownloadArtistInfo(artistTmp, artistScraper, artistInfo);
 
         if (artistDownloadStatus == INFO_ADDED || artistDownloadStatus == INFO_HAVE_ALREADY)
@@ -747,7 +753,7 @@ int CMusicInfoScanner::RetrieveMusicInfo(const CStdString& strDirectory, CFileIt
           // No - download the information
           CMusicArtistInfo artistInfo;
           INFO_RET artistDownloadStatus = INFO_NOT_FOUND;
-          if (m_flags & SCAN_ONLINE)
+          if ((m_flags & SCAN_ONLINE) && artistScraper)
             artistDownloadStatus = DownloadArtistInfo(artistTmp, artistScraper, artistInfo);
 
           if (artistDownloadStatus == INFO_ADDED || artistDownloadStatus == INFO_HAVE_ALREADY)
@@ -942,9 +948,9 @@ void CMusicInfoScanner::FindArtForAlbums(VECALBUMS &albums, const CStdString &pa
    the folder art.
    */
   std::string albumArt;
+  CFileItem album(path, true);
   if (albums.size() == 1)
   {
-    CFileItem album(path, true);
     albumArt = album.GetUserMusicThumb(true);
     if (!albumArt.empty())
       albums[0].art["thumb"] = albumArt;
@@ -1010,7 +1016,7 @@ void CMusicInfoScanner::FindArtForAlbums(VECALBUMS &albums, const CStdString &pa
   }
   if (albums.size() == 1 && !albumArt.empty())
   { // assign to folder thumb as well
-    CMusicThumbLoader::SetCachedImage(path, "thumb", albumArt);
+    CMusicThumbLoader::SetCachedImage(album, "thumb", albumArt);
   }
 }
 
@@ -1048,9 +1054,12 @@ INFO_RET CMusicInfoScanner::UpdateDatabaseAlbumInfo(const CStdString& strPath, C
 
   // find album info
   ADDON::ScraperPtr scraper;
-  if (!m_musicDatabase.GetScraperForPath(strPath, scraper, ADDON::ADDON_SCRAPER_ALBUMS) || !scraper)
-    return INFO_ERROR;
+  bool result = m_musicDatabase.GetScraperForPath(strPath, scraper, ADDON::ADDON_SCRAPER_ALBUMS);
+
   m_musicDatabase.Close();
+
+  if (!result || !scraper)
+    return INFO_ERROR;
 
 loop:
   CLog::Log(LOGDEBUG, "%s downloading info for: %s", __FUNCTION__, album.strAlbum.c_str());
