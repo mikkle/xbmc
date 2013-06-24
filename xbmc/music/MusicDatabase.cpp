@@ -607,9 +607,8 @@ int CMusicDatabase::AddArtist(const CStdString& strArtist, const CStdString& str
     if (NULL == m_pDB.get()) return -1;
     if (NULL == m_pDS.get()) return -1;
 
-     strSQL = PrepareSQL("SELECT * FROM artist WHERE strMusicBrainzArtistID = '%s' OR (strArtist = '%s' AND strMusicBrainzArtistID IS NULL)",
-                         strMusicBrainzArtistID.IsEmpty() ? "x" : strMusicBrainzArtistID.c_str(),
-                         strArtist.c_str());
+    strSQL = PrepareSQL("SELECT * FROM artist WHERE strArtist = '%s'", strArtist.c_str());
+
     m_pDS->query(strSQL.c_str());
 
     if (m_pDS->num_rows() == 0)
@@ -625,12 +624,18 @@ int CMusicDatabase::AddArtist(const CStdString& strArtist, const CStdString& str
                             strMusicBrainzArtistID.c_str());
       m_pDS->exec(strSQL.c_str());
       int idArtist = (int)m_pDS->lastinsertid();
+      m_pDS->close();
       return idArtist;
     }
     else
     {
       int idArtist = (int)m_pDS->fv("idArtist").get_asInt();
       m_pDS->close();
+      if (!strMusicBrainzArtistID.IsEmpty())
+      {
+        strSQL = PrepareSQL("UPDATE artist set strMusicBrainzArtistID = '%s' WHERE idArtist = '%i'", strMusicBrainzArtistID.c_str(), idArtist );
+        ExecuteQuery(strSQL);
+      }
       return idArtist;
     }
   }
@@ -676,6 +681,35 @@ bool CMusicDatabase::AddAlbumGenre(int idGenre, int idAlbum, int iOrder)
   CStdString strSQL;
   strSQL=PrepareSQL("replace into album_genre (idGenre, idAlbum, iOrder) values(%i,%i,%i)",
                     idGenre, idAlbum, iOrder);
+  ExecuteQuery(strSQL);
+
+  //Get the string representation of the relevant genre
+  strSQL=PrepareSQL("SELECT strGenre from genre WHERE idGenre = %i",
+                    idGenre);
+
+  m_pDS->query(strSQL.c_str());
+  CStdString strGenresUpdate = m_pDS->fv("strGenre").get_asString();
+  m_pDS->close();
+
+  //get the current strGenres from the relevant album
+  strSQL=PrepareSQL("SELECT * FROM album WHERE idAlbum = %i",
+                    idAlbum);
+
+  m_pDS->query(strSQL.c_str());
+  CStdString strGenresCurrent = m_pDS->fv("strGenres").get_asString();
+  m_pDS->close();
+
+  //check if the genre is already added as tring to the album
+  if (strGenresCurrent.find(strGenresUpdate) != string::npos)
+   return true;
+
+  if (!strGenresCurrent.IsEmpty())
+    strGenresUpdate = g_advancedSettings.m_musicItemSeparator + strGenresUpdate;
+
+  strSQL=PrepareSQL("UPDATE album set strGenres = concat(strGenres, '%s') WHERE idAlbum = %i",
+                    strGenresUpdate.c_str(),
+                    idAlbum);
+
   return ExecuteQuery(strSQL);
 };
 
