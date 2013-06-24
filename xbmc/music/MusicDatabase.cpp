@@ -440,13 +440,13 @@ int CMusicDatabase::AddSong(const int idAlbum,
   return idSong;
 }
 
-  int CMusicDatabase::UpdateSong(int idSong,
-                                 const CStdString& strTitle, const CStdString& strMusicBrainzTrackID,
-                                 const CStdString& strPathAndFileName, const CStdString& strComment, const CStdString& strThumb,
-                                 const std::vector<std::string>& artists, const std::vector<std::string>& genres,
-                                 int iTrack, int iDuration, int iYear,
-                                 int iTimesPlayed, int iStartOffset, int iEndOffset,
-                                 const CDateTime& dtLastPlayed, char rating, int iKaraokeNumber)
+int CMusicDatabase::UpdateSong(int idSong,
+                               const CStdString& strTitle, const CStdString& strMusicBrainzTrackID,
+                               const CStdString& strPathAndFileName, const CStdString& strComment, const CStdString& strThumb,
+                               const std::vector<std::string>& artists, const std::vector<std::string>& genres,
+                               int iTrack, int iDuration, int iYear,
+                               int iTimesPlayed, int iStartOffset, int iEndOffset,
+                               const CDateTime& dtLastPlayed, char rating, int iKaraokeNumber)
 {
   CStdString sql;
   if (idSong < 0)
@@ -507,21 +507,13 @@ int CMusicDatabase::AddAlbum(const CStdString& strAlbum, const CStdString& strMu
     {
       m_pDS->close();
       // doesnt exists, add it
-      if (strMusicBrainzAlbumID.IsEmpty())
-        strSQL=PrepareSQL("insert into album (idAlbum, strAlbum, strMusicBrainzAlbumID, strArtists, strGenres, iYear, bCompilation) values( NULL, '%s', NULL, '%s', '%s', %i, %i)",
-                          strAlbum.c_str(),
-                          strArtist.c_str(),
-                          strGenre.c_str(),
-                          year,
-                          bCompilation);
-      else
-        strSQL=PrepareSQL("insert into album (idAlbum, strAlbum, strMusicBrainzAlbumID, strArtists, strGenres, iYear, bCompilation) values( NULL, '%s', '%s', '%s', '%s', %i, %i)",
-                          strAlbum.c_str(),
-                          strMusicBrainzAlbumID.c_str(),
-                          strArtist.c_str(),
-                          strGenre.c_str(),
-                          year,
-                          bCompilation);
+      strSQL=PrepareSQL("insert into album (idAlbum, strAlbum, strMusicBrainzAlbumID, strArtists, strGenres, iYear, bCompilation) values( NULL, '%s', '%s', '%s', '%s', %i, %i)",
+                        strAlbum.c_str(),
+                        strMusicBrainzAlbumID.c_str(),
+                        strArtist.c_str(),
+                        strGenre.c_str(),
+                        year,
+                        bCompilation);
       m_pDS->exec(strSQL.c_str());
 
       return (int)m_pDS->lastinsertid();
@@ -3902,9 +3894,9 @@ bool CMusicDatabase::SaveAlbumThumb(int idAlbum, const CStdString& strThumb)
   SetArtForItem(idAlbum, "album", "thumb", strThumb);
   // TODO: We should prompt the user to update the art for songs
   CStdString sql = PrepareSQL("UPDATE art"
-                              " SET art_url='-'"
+                              " SET url='-'"
                               " WHERE media_type='song'"
-                              " AND art_type='thumb'"
+                              " AND type='thumb'"
                               " AND media_id IN"
                               " (SELECT idSong FROM song WHERE idAlbum=%ld)", idAlbum);
   ExecuteQuery(sql);
