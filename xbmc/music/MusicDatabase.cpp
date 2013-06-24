@@ -599,9 +599,12 @@ int CMusicDatabase::AddArtist(const CStdString& strArtist, const CStdString& str
     if (NULL == m_pDB.get()) return -1;
     if (NULL == m_pDS.get()) return -1;
 
-     strSQL = PrepareSQL("SELECT * FROM artist WHERE strMusicBrainzArtistID = '%s' OR (strArtist = '%s' AND strMusicBrainzArtistID IS NULL)",
-                         strMusicBrainzArtistID.IsEmpty() ? "x" : strMusicBrainzArtistID.c_str(),
-                         strArtist.c_str());
+//MIKKLE
+//     strSQL = PrepareSQL("SELECT * FROM artist WHERE strMusicBrainzArtistID = '%s' OR (strArtist = '%s' AND strMusicBrainzArtistID IS NULL)",
+//                         strMusicBrainzArtistID.IsEmpty() ? "x" : strMusicBrainzArtistID.c_str(),
+//                         strArtist.c_str());
+    strSQL = PrepareSQL("SELECT * FROM artist WHERE strArtist = '%s'", strArtist.c_str());
+
     m_pDS->query(strSQL.c_str());
 
     if (m_pDS->num_rows() == 0)
@@ -668,6 +671,31 @@ bool CMusicDatabase::AddAlbumGenre(int idGenre, int idAlbum, int iOrder)
   CStdString strSQL;
   strSQL=PrepareSQL("replace into album_genre (idGenre, idAlbum, iOrder) values(%i,%i,%i)",
                     idGenre, idAlbum, iOrder);
+
+//MIKKLE
+  ExecuteQuery(strSQL);
+
+  //Get the string representation of the relevant genre
+  strSQL=PrepareSQL("SELECT strGenre from genre WHERE idGenre = %i", idGenre);
+  m_pDS->query(strSQL.c_str());
+  CStdString strGenresUpdate = m_pDS->fv("strGenre").get_asString();
+  m_pDS->close();
+
+  //get the current strGenres from the relevant album
+  strSQL=PrepareSQL("SELECT * FROM album WHERE idAlbum = %i", idAlbum);
+  m_pDS->query(strSQL.c_str());
+  CStdString strGenresCurrent = m_pDS->fv("strGenres").get_asString();
+  m_pDS->close();
+
+  //check if the genre is already added as tring to the album
+  size_t found = strGenresCurrent.find(strGenresUpdate);
+  if (found != string::npos)
+   return true;
+
+  if (!strGenresCurrent.IsEmpty())
+    strGenresUpdate = g_advancedSettings.m_musicItemSeparator + strGenresUpdate;
+
+  strSQL=PrepareSQL("UPDATE album set strGenres = concat(strGenres, '%s') WHERE idAlbum = %i", strGenresUpdate.c_str(), idAlbum);
   return ExecuteQuery(strSQL);
 };
 
