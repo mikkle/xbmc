@@ -145,7 +145,16 @@
       <speedunit>kmh</speedunit>
       <timezone>IST</timezone>
     </region>
-    
+
+    <region name="Denmark" locale="DK">
+      <dateshort>DD-MM-YYYY</dateshort>
+      <datelong>D. MMMM YYYY</datelong>
+      <time symbolAM="" symbolPM="">H:mm:ss</time>
+      <tempunit>C</tempunit>
+      <speedunit>mps</speedunit>
+      <timezone>CEST</timezone>
+    </region>
+
   </regions>
 
   <sorttokens>
