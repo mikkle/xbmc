@@ -1,7 +1,3 @@
-[submodule "touched"]
-	path = addons/skin.touched
-	url = git://github.com/xbmc/skin.touched.git
-	ignore = all
-[submodule "pvr-addons"]
-	path = xbmc-pvr-addons
-	url = https://github.com/opdenkamp/xbmc-pvr-addons.git
+[submodule "addons/skin.re-touched"]
+	path = addons/skin.re-touched
+	url = git://github.com/xbmc/skin.re-touched.git
