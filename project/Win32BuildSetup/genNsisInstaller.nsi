@@ -91,6 +91,34 @@ Section "${APP_NAME}" SecAPP
   SetShellVarContext current
   SectionIn RO
   SectionIn 1 2 3 #section is in install type Normal/Full/Minimal
+  
+  ;Move XBMC portable_data and appdata folder if exists to new location
+  ;and safe clean out old install folder
+  Var /GLOBAL INSTDIR_OLD
+  ReadRegStr $INSTDIR_OLD HKCU "Software\XBMC" ""
+  ${IfNot} $INSTDIR_OLD == ""
+      IfFileExists "$APPDATA\XBMC\*.*" 0 +3
+        Rename "$APPDATA\XBMC\" "$APPDATA\${APP_NAME}\"
+        MessageBox MB_OK|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Your current XBMC userdata folder was moved to the new ${APP_NAME} userdata location.$\n.This to make the transition as smooth as possible without any user interactions needed."
+
+    ${IfNot} $INSTDIR_OLD == $INSTDIR
+      IfFileExists $INSTDIR_OLD\portable_data\*.* 0 +3
+        Rename "$INSTDIR_OLD\portable_data\" "$INSTDIR\portable_data\"
+        MessageBox MB_OK|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Your current XBMC portable_data folder was moved to the new installation folder.$\nPlease manually adjust the short-cut for starting ${APP_NAME} accordingly."
+      
+      RMDir /r "$INSTDIR_OLD\addons"
+      RMDir /r "$INSTDIR_OLD\language"
+      RMDir /r "$INSTDIR_OLD\media"
+      RMDir /r "$INSTDIR_OLD\sounds"
+      RMDir /r "$INSTDIR_OLD\system"
+      RMDir /r "$INSTDIR_OLD\userdata"
+      Delete "$INSTDIR_OLD\*.*"
+      RMDir "$INSTDIR_OLD"
+    ${EndIf}
+    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\XBMC"
+    DeleteRegKey HKCU "Software\XBMC"
+  ${EndIf}
+
   ;Clean up install folder
   RMDir /r $INSTDIR\addons
   RMDir /r $INSTDIR\language
@@ -113,26 +141,6 @@ Section "${APP_NAME}" SecAPP
   SetOutPath "$INSTDIR\system"
   File /r "${app_root}\application\system\*.*"
   
-  ;Move XBMC portable_data and appdata folder if exists to new location
-  ;and safe clean out old install folder
-  Var /GLOBAL INSTDIR_OLD
-  ReadRegStr $INSTDIR_OLD HKCU "Software\XBMC" ""
-  ${IfNot} $INSTDIR_OLD == ""
-    IfFileExists $INSTDIR_OLD\portable_data\*.* 0 +2
-      Rename "$INSTDIR_OLD\portable_data\" "$INSTDIR\portable_data\"
-      MessageBox MB_OK|MB_ICONEXCLAMATION|MB_TOPMOST|MB_SETFOREGROUND "Your current XBMC portable_data folder was moved to the new installation folder.$\nPlease manually adjust the short-cut for starting ${APP_NAME} accordingly."
-    IfFileExists "$APPDATA\XBMC\*.*" 0 +1
-      Rename "$APPDATA\XBMC\" "$APPDATA\${APP_NAME}\"
-    RMDir /r "$INSTDIR_OLD\addons"
-    RMDir /r "$INSTDIR_OLD\language"
-    RMDir /r "$INSTDIR_OLD\media"
-    RMDir /r "$INSTDIR_OLD\sounds"
-    RMDir /r "$INSTDIR_OLD\system"
-    RMDir /r "$INSTDIR_OLD\userdata"
-    Delete "$INSTDIR_OLD\*.*"
-    RMDir "$INSTDIR_OLD"
-  ${EndIf}
-
   ;Turn off overwrite to prevent files in APPDATA\xbmc\userdata\ from being overwritten
   SetOverwrite off
   IfFileExists $INSTDIR\userdata\*.* 0 +2
@@ -247,12 +255,12 @@ Section "Uninstall"
   SetShellVarContext current
 
   ;ADD YOUR OWN FILES HERE...
-  Delete "$INSTDIR\*.*"
   RMDir /r "$INSTDIR\addons"
   RMDir /r "$INSTDIR\language"
   RMDir /r "$INSTDIR\media"
   RMDir /r "$INSTDIR\sounds"
   RMDir /r "$INSTDIR\system"
+  Delete "$INSTDIR\*.*"
   
   ;Un-install User Data if option is checked, otherwise skip
   ${If} $UnPageProfileCheckbox_State == ${BST_CHECKED}
@@ -268,6 +276,7 @@ Section "Uninstall"
       RMDir /r "$APPDATA\${APP_NAME}\userdata\"
       RMDir "$APPDATA\${APP_NAME}"
   ${EndIf}
+  RMDir "$INSTDIR"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
   Delete "$SMPROGRAMS\$StartMenuFolder\${APP_NAME}.lnk"
