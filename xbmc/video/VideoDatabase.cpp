@@ -409,8 +409,6 @@ void CVideoDatabase::CreateViews()
                                       "    bookmark.idFile=episode.idFile AND bookmark.type=1", VIDEODB_ID_TV_TITLE, VIDEODB_ID_TV_STUDIOS, VIDEODB_ID_TV_PREMIERED, VIDEODB_ID_TV_MPAA,VIDEODB_ID_EPISODE_SEASON);
   m_pDS->exec(episodeview.c_str());
 
-  /* NOTE: The tvshowview needs to have "GROUP BY tvshow.idShow" added to any usage if you wish to
-           avoid duplicates due to multiple paths per tvshow (from the join on tvshowlinkpath) */
   CLog::Log(LOGINFO, "create tvshowcounts");
   CStdString tvshowcounts = PrepareSQL("CREATE VIEW tvshowcounts AS SELECT "
                                        "      tvshow.idShow AS idShow,"
@@ -440,7 +438,8 @@ void CVideoDatabase::CreateViews()
                                      "  LEFT JOIN path ON"
                                      "    path.idPath=tvshowlinkpath.idPath"
                                      "  INNER JOIN tvshowcounts ON"
-                                     "  tvshow.idShow = tvshowcounts.idShow");
+                                     "    tvshow.idShow = tvshowcounts.idShow "
+                                     "GROUP BY tvshow.idShow");
   m_pDS->exec(tvshowview.c_str());
 
   CLog::Log(LOGINFO, "create seasonview");
@@ -1894,7 +1893,6 @@ void CVideoDatabase::GetTvShowsByActor(const CStdString& strActor, CFileItemList
                  "LEFT JOIN directorlinktvshow ON directorlinktvshow.idShow=tvshowview.idShow "
                  "LEFT JOIN actors d ON d.idActor=directorlinktvshow.idDirector";
   filter.where = PrepareSQL("a.strActor='%s' OR d.strActor='%s'", strActor.c_str(), strActor.c_str());
-  filter.group = "tvshowview.idShow";
   GetTvShowsByWhere("videodb://tvshows/titles/", filter, items);
 }
 
@@ -3195,14 +3193,13 @@ void CVideoDatabase::DeleteMovie(int idMovie, bool bKeepId /* = false */)
     // the ancilliary tables are still purged
     if (!bKeepId)
     {
-      strSQL=PrepareSQL("delete from movie where idMovie=%i", idMovie);
-      m_pDS->exec(strSQL.c_str());
-
-      // TODO: Why are we invalidating paths here?
       int idFile = GetDbId(PrepareSQL("SELECT idFile FROM movie WHERE idMovie=%i", idMovie));
       std::string path = GetSingleValue(PrepareSQL("SELECT strPath FROM path JOIN files ON files.idPath=path.idPath WHERE files.idFile=%i", idFile));
       if (!path.empty())
         InvalidatePathHash(path);
+
+      strSQL=PrepareSQL("delete from movie where idMovie=%i", idMovie);
+      m_pDS->exec(strSQL.c_str());
     }
 
     //TODO: move this below CommitTransaction() once UPnP doesn't rely on this anymore
@@ -3405,14 +3402,13 @@ void CVideoDatabase::DeleteMusicVideo(int idMVideo, bool bKeepId /* = false */)
     // the ancilliary tables are still purged
     if (!bKeepId)
     {
-      strSQL=PrepareSQL("delete from musicvideo where idMVideo=%i", idMVideo);
-      m_pDS->exec(strSQL.c_str());
-
-      // TODO: Why are we invalidating paths here?
       int idFile = GetDbId(PrepareSQL("SELECT idFile FROM musicvideo WHERE idMVideo=%i", idMVideo));
       std::string path = GetSingleValue(PrepareSQL("SELECT strPath FROM path JOIN files ON files.idPath=path.idPath WHERE files.idFile=%i", idFile));
       if (!path.empty())
         InvalidatePathHash(path);
+
+      strSQL=PrepareSQL("delete from musicvideo where idMVideo=%i", idMVideo);
+      m_pDS->exec(strSQL.c_str());
     }
 
     //TODO: move this below CommitTransaction() once UPnP doesn't rely on this anymore
@@ -4751,7 +4747,7 @@ void CVideoDatabase::UpdateTables(int iVersion)
         }
       }
       // cleanup duplicate seasons
-      m_pDS->exec("DELETE FROM seasons WHERE idSeason NOT IN (SELECT idSeason FROM (SELECT min(idSeason) FROM seasons GROUP BY idShow,season) AS sub)");
+      m_pDS->exec("DELETE FROM seasons WHERE idSeason NOT IN (SELECT idSeason FROM (SELECT min(idSeason) as idSeason FROM seasons GROUP BY idShow,season) AS sub)");
     }
   }
   if (iVersion < 84)
@@ -4797,7 +4793,7 @@ void CVideoDatabase::UpdateTables(int iVersion)
 
 int CVideoDatabase::GetSchemaVersion() const
 {
-  return 89;
+  return 90;
 }
 
 bool CVideoDatabase::LookupByFolders(const CStdString &path, bool shows)
@@ -6372,7 +6368,6 @@ bool CVideoDatabase::GetTvShowsByWhere(const CStdString& strBaseDir, const Filte
     CVideoDbUrl videoUrl;
     std::string strSQLExtra;
     Filter extFilter = filter;
-    extFilter.AppendGroup("tvshowview.idShow");
     SortDescription sorting = sortDescription;
     if (!BuildSQL(strBaseDir, strSQLExtra, extFilter, strSQLExtra, videoUrl, sorting))
       return false;
@@ -7980,6 +7975,10 @@ void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const se
       if (URIUtils::IsStack(fullPath))
         fullPath = CStackDirectory::GetFirstStackedFile(fullPath);
 
+      // get the actual archive path
+      if (URIUtils::IsInArchive(fullPath))
+        fullPath = CURL(fullPath).GetHostName();
+
       // remove optical, non-existing files
       if (URIUtils::IsOnDVD(fullPath) || !CFile::Exists(fullPath, false))
         filesToTestForDelete += m_pDS->fv("files.idFile").get_asString() + ",";
@@ -8093,7 +8092,7 @@ void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const se
     }
 
     CLog::Log(LOGDEBUG, "%s: Cleaning paths that don't exist and have content set...", __FUNCTION__);
-    sql = "SELECT path.idPath, path.strPath FROM path "
+    sql = "SELECT path.idPath, path.strPath, path.idParentPath FROM path "
             "WHERE NOT ((strContent IS NULL OR strContent = '') "
                    "AND (strSettings IS NULL OR strSettings = '') "
                    "AND (strHash IS NULL OR strHash = '') "
@@ -8103,8 +8102,12 @@ void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const se
     while (!m_pDS->eof())
     {
       std::map<int, bool>::const_iterator pathsDeleteDecision = pathsDeleteDecisions.find(m_pDS->fv(0).get_asInt());
-      if ((pathsDeleteDecision != pathsDeleteDecisions.end() && pathsDeleteDecision->second) ||
-          (pathsDeleteDecision == pathsDeleteDecisions.end() && !CDirectory::Exists(m_pDS->fv(1).get_asString(), false)))
+      // Check if we have a decision for the parent path
+      std::map<int, bool>::const_iterator pathsDeleteDecisionByParent = pathsDeleteDecisions.find(m_pDS->fv(2).get_asInt());
+      if (((pathsDeleteDecision != pathsDeleteDecisions.end() && pathsDeleteDecision->second) ||
+           (pathsDeleteDecision == pathsDeleteDecisions.end() && !CDirectory::Exists(m_pDS->fv(1).get_asString(), false))) &&
+          ((pathsDeleteDecisionByParent != pathsDeleteDecisions.end() && pathsDeleteDecisionByParent->second) ||
+           (pathsDeleteDecisionByParent == pathsDeleteDecisions.end())))
         strIds += m_pDS->fv(0).get_asString() + ",";
 
       m_pDS->next();
@@ -8120,15 +8123,9 @@ void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const se
     }
 
     CLog::Log(LOGDEBUG, "%s: Cleaning tvshow table", __FUNCTION__);
-    sql = "DELETE FROM tvshow WHERE NOT EXISTS (SELECT 1 FROM tvshowlinkpath WHERE tvshowlinkpath.idShow = tvshow.idShow)";
-    m_pDS->exec(sql.c_str());
 
     std::string tvshowsToDelete;
-    sql = "SELECT tvshow.idShow FROM tvshow "
-            "JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow "
-            "JOIN path ON path.idPath = tvshowlinkpath.idPath "
-          "WHERE NOT EXISTS (SELECT 1 FROM episode WHERE episode.idShow = tvshow.idShow) "
-            "AND (path.strContent IS NULL OR path.strContent = '')";
+    sql = "SELECT idShow FROM tvshow WHERE NOT EXISTS (SELECT 1 FROM tvshowlinkpath WHERE tvshowlinkpath.idShow = tvshow.idShow)";
     m_pDS->query(sql.c_str());
     while (!m_pDS->eof())
     {
@@ -8141,6 +8138,30 @@ void CVideoDatabase::CleanDatabase(CGUIDialogProgressBarHandle* handle, const se
     {
       sql = "DELETE FROM tvshow WHERE idShow IN (" + StringUtils::TrimRight(tvshowsToDelete, ",") + ")";
       m_pDS->exec(sql.c_str());
+    }
+
+    // Keep empty series if the user wants to hide them
+    if (!g_advancedSettings.m_bVideoLibraryHideEmptySeries)
+    {
+      tvshowsToDelete = "";
+      sql = "SELECT tvshow.idShow FROM tvshow "
+              "JOIN tvshowlinkpath ON tvshow.idShow = tvshowlinkpath.idShow "
+              "JOIN path ON path.idPath = tvshowlinkpath.idPath "
+            "WHERE NOT EXISTS (SELECT 1 FROM episode WHERE episode.idShow = tvshow.idShow) "
+              "AND (path.strContent IS NULL OR path.strContent = '')";
+      m_pDS->query(sql.c_str());
+      while (!m_pDS->eof())
+      {
+        tvshowIDs.push_back(m_pDS->fv(0).get_asInt());
+        tvshowsToDelete += m_pDS->fv(0).get_asString() + ",";
+        m_pDS->next();
+      }
+      m_pDS->close();
+      if (!tvshowsToDelete.empty())
+      {
+        sql = "DELETE FROM tvshow WHERE idShow IN (" + StringUtils::TrimRight(tvshowsToDelete, ",") + ")";
+        m_pDS->exec(sql.c_str());
+      }
     }
 
     if (!musicVideoIDs.empty())
@@ -8667,7 +8688,7 @@ void CVideoDatabase::ExportToXML(const CStdString &path, bool singleFiles /* = f
     m_pDS->close();
 
     // repeat for all tvshows
-    sql = "SELECT * FROM tvshowview GROUP BY tvshowview.idShow";
+    sql = "SELECT * FROM tvshowview";
     m_pDS->query(sql.c_str());
 
     total = m_pDS->num_rows();

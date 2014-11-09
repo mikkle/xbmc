@@ -319,6 +319,9 @@
     <Filter Include="utils\win32">
       <UniqueIdentifier>{3adbba6a-6fbf-4192-b215-108d94bde1e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="video\videosync">
+      <UniqueIdentifier>{9775d5c0-c640-4606-a625-e6cdcf9f959e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\xbmc\win32\pch.cpp">
@@ -2262,6 +2265,9 @@
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\AEFactory.cpp">
       <Filter>cores\AudioEngine</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\xbmc\cores\AudioEngine\AEResampleFactory.cpp">
+      <Filter>cores\AudioEngine</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\AESinkFactory.cpp">
       <Filter>cores\AudioEngine</Filter>
     </ClCompile>
@@ -2936,7 +2942,7 @@
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEBuffer.cpp">
       <Filter>cores\AudioEngine\Engines\ActiveAE</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEResample.cpp">
+    <ClCompile Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEResampleFFMPEG.cpp">
       <Filter>cores\AudioEngine\Engines\ActiveAE</Filter>
     </ClCompile>
     <ClCompile Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAESink.cpp">
@@ -3070,6 +3076,12 @@
     </ClCompile>
     <ClCompile Include="..\..\xbmc\utils\MarkWatchedJob.cpp">
       <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\filesystem\BlurayFile.cpp">
+      <Filter>filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\xbmc\video\videosync\VideoSyncD3D.cpp">
+      <Filter>video\videosync</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -5276,10 +5288,16 @@
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\AEFactory.h">
       <Filter>cores\AudioEngine</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\xbmc\cores\AudioEngine\AEResampleFactory.h">
+      <Filter>cores\AudioEngine</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\AESinkFactory.h">
       <Filter>cores\AudioEngine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Interfaces\AE.h">
+      <Filter>cores\AudioEngine\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\cores\AudioEngine\Interfaces\AEResample.h">
       <Filter>cores\AudioEngine\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Interfaces\AEEncoder.h">
@@ -5844,7 +5862,7 @@
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEBuffer.h">
       <Filter>cores\AudioEngine\Engines\ActiveAE</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEResample.h">
+    <ClInclude Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAEResampleFFMPEG.h">
       <Filter>cores\AudioEngine\Engines\ActiveAE</Filter>
     </ClInclude>
     <ClInclude Include="..\..\xbmc\cores\AudioEngine\Engines\ActiveAE\ActiveAESink.h">
@@ -6006,6 +6024,15 @@
     </ClInclude>
     <ClInclude Include="..\..\xbmc\settings\DiscSettings.h">
       <Filter>settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\filesystem\BlurayFile.h">
+      <Filter>filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\video\videosync\VideoSyncD3D.h">
+      <Filter>video\videosync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\xbmc\video\videosync\VideoSync.h">
+      <Filter>video\videosync</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

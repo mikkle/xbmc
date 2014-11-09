@@ -400,6 +400,24 @@ void CNetworkServices::OnSettingChanged(const CSetting *setting)
   }
 }
 
+bool CNetworkServices::OnSettingUpdate(CSetting* &setting, const char *oldSettingId, const TiXmlNode *oldSettingNode)
+{
+  if (setting == NULL)
+    return false;
+
+  const std::string &settingId = setting->GetId();
+  if (settingId == "services.webserverusername")
+  {
+    CSettingString *webserverusername = (CSettingString*)setting;
+    // if webserverusername is xbmc and pw is not empty we treat it as altered
+    // and don't change the username to kodi - part of rebrand
+    if (CSettings::Get().GetString("services.webserverusername") == "xbmc" &&
+        !CSettings::Get().GetString("services.webserverpassword").empty())
+      return true;
+  }
+  return false;
+}
+
 void CNetworkServices::Start()
 {
   StartZeroconf();
@@ -530,9 +548,22 @@ bool CNetworkServices::StartAirPlayServer()
   std::vector<std::pair<std::string, std::string> > txt;
   CNetworkInterface* iface = g_application.getNetwork().GetFirstConnectedInterface();
   txt.push_back(make_pair("deviceid", iface != NULL ? iface->GetMacAddress() : "FF:FF:FF:FF:FF:F2"));
-  txt.push_back(make_pair("features", "0x77"));
   txt.push_back(make_pair("model", "Xbmc,1"));
   txt.push_back(make_pair("srcvers", AIRPLAY_SERVER_VERSION_STR));
+
+  if (CSettings::Get().GetBool("services.airplayios8compat"))
+  {
+    // for ios8 clients we need to announce mirroring support
+    // else we won't get video urls anymore.
+    // We also announce photo caching support (as it seems faster and
+    // we have implemented it anyways). 
+    txt.push_back(make_pair("features", "0x20F7"));
+  }
+  else
+  {
+    txt.push_back(make_pair("features", "0x77"));
+  }
+
   CZeroconf::GetInstance()->PublishService("servers.airplay", "_airplay._tcp", g_infoManager.GetLabel(SYSTEM_FRIENDLY_NAME), g_advancedSettings.m_airPlayPort, txt);
 #endif // HAS_ZEROCONF
 
