@@ -1783,7 +1783,7 @@ bool CApplication::OnSettingUpdate(CSetting* &setting, const char *oldSettingId,
     if (!aml_present())
     {
       CSettingBool *useamcodec = (CSettingBool*)setting;
-      useamcodec->SetValue(false);
+      return useamcodec->SetValue(false);
     }
   }
 #endif
@@ -1796,13 +1796,13 @@ bool CApplication::OnSettingUpdate(CSetting* &setting, const char *oldSettingId,
     if (CAndroidFeatures::GetVersion() < 16)
     {
       CSettingBool *usemediacodec = (CSettingBool*)setting;
-      usemediacodec->SetValue(false);
+      return usemediacodec->SetValue(false);
     }
   }
   else if (settingId == "videoplayer.usestagefright")
   {
     CSettingBool *usestagefright = (CSettingBool*)setting;
-    usestagefright->SetValue(false);
+    return usestagefright->SetValue(false);
   }
 #endif
 #if defined(TARGET_DARWIN_OSX)
@@ -2326,10 +2326,11 @@ void CApplication::Render()
     if (frameTime < singleFrameTime)
       Sleep(singleFrameTime - frameTime);
   }
-  m_lastFrameTime = XbmcThreads::SystemClockMillis();
 
   if (flip)
     g_graphicsContext.Flip(dirtyRegions);
+
+  m_lastFrameTime = XbmcThreads::SystemClockMillis();
   CTimeUtils::UpdateFrameTime(flip);
 
   g_renderManager.UpdateResolution();
