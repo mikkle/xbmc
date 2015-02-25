@@ -275,12 +275,12 @@ typedef enum
 
 static char remoteStatus = 0xFF; // paired, battery OK
 
-CLinuxInputDevice::CLinuxInputDevice(const std::string fileName, int index)
+CLinuxInputDevice::CLinuxInputDevice(const std::string& fileName, int index):
+  m_fileName(fileName)
 {
   m_fd = -1;
   m_vt_fd = -1;
   m_hasLeds = false;
-  m_fileName = fileName;
   m_ledState[0] = false;
   m_ledState[1] = false;
   m_ledState[2] = false;
@@ -749,7 +749,7 @@ void CLinuxInputDevice::SetupKeyboardAutoRepeat(int fd)
   bool enable = true;
 
 #if defined(HAS_LIBAMCODEC)
-  if (aml_present())
+  if (aml_get_device_type() == AML_DEVICE_TYPE_M1 || aml_get_device_type() == AML_DEVICE_TYPE_M3)
   {
     // ignore the native aml driver named 'key_input',
     //  it is the dedicated power key handler (am_key_input)

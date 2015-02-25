@@ -150,8 +150,11 @@ bool CVAAPIContext::CreateContext()
     CLog::Log(LOGDEBUG, "VAAPI - driver in use: %s", vaQueryVendorString(m_display));
 
   QueryCaps();
-  if (!m_profileCount || !m_attributeCount)
+  if (!m_profileCount)
     return false;
+
+  if (!m_attributeCount)
+    CLog::Log(LOGWARNING, "VAAPI - driver did not return anything from vlVaQueryDisplayAttributes");
 
   return true;
 }
@@ -240,7 +243,7 @@ bool CVAAPIContext::CheckSuccess(VAStatus status)
 {
   if (status != VA_STATUS_SUCCESS)
   {
-    CLog::Log(LOGERROR, "VAAPI error: %s", vaErrorStr(status));
+    CLog::Log(LOGERROR, "VAAPI::%s error: %s", __FUNCTION__, vaErrorStr(status));
     return false;
   }
   return true;
@@ -468,6 +471,7 @@ CDecoder::CDecoder() : m_vaapiOutput(&m_inMsgEvent)
   m_vaapiConfig.contextId = VA_INVALID_ID;
   m_vaapiConfig.configId = VA_INVALID_ID;
   m_avctx = NULL;
+  m_getBufferError = false;
 }
 
 CDecoder::~CDecoder()
@@ -593,7 +597,9 @@ bool CDecoder::Open(AVCodecContext* avctx, const enum PixelFormat fmt, unsigned 
   else
     m_vaapiConfig.maxReferences = 2;
 
-  m_vaapiConfig.maxReferences += surfaces;
+  // add an extra surface for safety, some faulty material
+  // make ffmpeg require more buffers
+  m_vaapiConfig.maxReferences += surfaces + 1;
 
   if (!ConfigVAAPI())
   {
@@ -692,9 +698,9 @@ int CDecoder::FFGetBuffer(AVCodecContext *avctx, AVFrame *pic, int flags)
     uint16_t decoded, processed, render;
     bool vpp;
     va->m_bufferStats.Get(decoded, processed, render, vpp);
-    CLog::Log(LOGERROR, "VAAPI::FFGetBuffer - no surface available - dec: %d, render: %d",
+    CLog::Log(LOGWARNING, "VAAPI::FFGetBuffer - no surface available - dec: %d, render: %d",
                          decoded, render);
-    va->m_DisplayState = VAAPI_ERROR;
+    va->m_getBufferError = true;
     return -1;
   }
 
@@ -729,6 +735,8 @@ void CDecoder::FFReleaseBuffer(uint8_t *data)
 
 int CDecoder::Decode(AVCodecContext* avctx, AVFrame* pFrame)
 {
+  m_getBufferError = false;
+
   int result = Check(avctx);
   if (result)
     return result;
@@ -845,6 +853,7 @@ int CDecoder::Decode(AVCodecContext* avctx, AVFrame* pFrame)
 
 int CDecoder::Check(AVCodecContext* avctx)
 {
+  int ret = 0;
   EDisplayState state;
 
   { CSingleLock lock(m_DecoderSection);
@@ -886,7 +895,12 @@ int CDecoder::Check(AVCodecContext* avctx)
     else
       return VC_ERROR;
   }
-  return 0;
+
+  if (m_getBufferError)
+    ret |= VC_NOBUFFER;
+
+  m_getBufferError = false;
+  return ret;
 }
 
 bool CDecoder::GetPicture(AVCodecContext* avctx, AVFrame* frame, DVDVideoPicture* picture)
@@ -940,7 +954,7 @@ bool CDecoder::CheckSuccess(VAStatus status)
 {
   if (status != VA_STATUS_SUCCESS)
   {
-    CLog::Log(LOGERROR, "VAAPI - error: %s", vaErrorStr(status));
+    CLog::Log(LOGERROR, "VAAPI::%s - error: %s", __FUNCTION__, vaErrorStr(status));
     m_ErrorCount++;
 
     if(m_DisplayState == VAAPI_OPEN)
@@ -2306,7 +2320,7 @@ bool COutput::CheckSuccess(VAStatus status)
 {
   if (status != VA_STATUS_SUCCESS)
   {
-    CLog::Log(LOGERROR, "VAAPI - Error: %s(%d)", vaErrorStr(status), status);
+    CLog::Log(LOGERROR, "VAAPI::%s - Error: %s(%d)", __FUNCTION__, vaErrorStr(status), status);
     m_vaError = true;
     return false;
   }
@@ -2477,6 +2491,9 @@ bool CVppPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
   // create config
   if (!CheckSuccess(vaCreateConfig(m_config.dpy, VAProfileNone, VAEntrypointVideoProc, NULL, 0, &m_configId)))
   {
+    if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+      CLog::Log(LOGDEBUG, "CVppPostproc::PreInit  - VPP init failed");
+
     return false;
   }
 
@@ -2491,6 +2508,9 @@ bool CVppPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
                                      nb_surfaces,
                                      NULL, 0)))
   {
+    if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+      CLog::Log(LOGDEBUG, "CVppPostproc::PreInit  - VPP init failed");
+
     return false;
   }
   for (int i=0; i<nb_surfaces; i++)
@@ -2509,6 +2529,9 @@ bool CVppPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
                                     &m_contextId)))
   {
     m_contextId = VA_INVALID_ID;
+    if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+      CLog::Log(LOGDEBUG, "CVppPostproc::PreInit  - VPP init failed");
+
     return false;
   }
 
@@ -2519,6 +2542,9 @@ bool CVppPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
 
   if (!CheckSuccess(vaQueryVideoProcFilters(m_config.dpy, m_contextId, filters, &numFilters)))
   {
+    if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+      CLog::Log(LOGDEBUG, "CVppPostproc::PreInit  - VPP init failed");
+
     return false;
   }
 
@@ -2528,6 +2554,9 @@ bool CVppPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
                                                deinterlacingCaps,
                                                &numDeinterlacingCaps)))
   {
+    if (g_advancedSettings.CanLogComponent(LOGVIDEO))
+      CLog::Log(LOGDEBUG, "CVppPostproc::PreInit  - VPP init failed");
+
     return false;
   }
 
@@ -2912,7 +2941,7 @@ bool CVppPostproc::CheckSuccess(VAStatus status)
 {
   if (status != VA_STATUS_SUCCESS)
   {
-    CLog::Log(LOGERROR, "VAAPI - Error: %s(%d)", vaErrorStr(status), status);
+    CLog::Log(LOGERROR, "VAAPI::%s - Error: %s(%d)", __FUNCTION__, vaErrorStr(status), status);
     return false;
   }
   return true;
@@ -2961,6 +2990,7 @@ bool CFFmpegPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
     return false;
 
   VAImage image;
+  image.image_id = VA_INVALID_ID;
   VASurfaceID surface = config.videoSurfaces->GetAtIndex(0);
   VAStatus status = vaDeriveImage(config.dpy, surface, &image);
   if (status != VA_STATUS_SUCCESS)
@@ -2968,17 +2998,18 @@ bool CFFmpegPostproc::PreInit(CVaapiConfig &config, SDiMethods *methods)
     CLog::Log(LOGWARNING,"VAAPI::SupportsFilter vaDeriveImage not supported");
     use_filter = false;
   }
-  if (image.format.fourcc != VA_FOURCC_NV12)
+  if (use_filter && (image.format.fourcc != VA_FOURCC_NV12))
   {
     CLog::Log(LOGWARNING,"VAAPI::SupportsFilter image format not NV12");
     use_filter = false;
   }
-  if ((image.pitches[0] % 64) || (image.pitches[1] % 64))
+  if (use_filter && ((image.pitches[0] % 64) || (image.pitches[1] % 64)))
   {
     CLog::Log(LOGWARNING,"VAAPI::SupportsFilter patches no multiple of 64");
     use_filter = false;
   }
-  CheckSuccess(vaDestroyImage(config.dpy,image.image_id));
+  if (image.image_id != VA_INVALID_ID)
+    CheckSuccess(vaDestroyImage(config.dpy,image.image_id));
 
   if (use_filter)
   {

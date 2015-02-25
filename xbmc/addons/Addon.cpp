@@ -81,7 +81,7 @@ static const TypeMapping types[] =
    {"xbmc.python.module",                ADDON_SCRIPT_MODULE,       24082, "DefaultAddonLibrary.png" },
    {"xbmc.subtitle.module",              ADDON_SUBTITLE_MODULE,     24012, "DefaultAddonSubtitles.png" },
    {"xbmc.gui.skin",                     ADDON_SKIN,                  166, "DefaultAddonSkin.png" },
-   {"xbmc.gui.webinterface",             ADDON_WEB_INTERFACE,         199, "DefaultAddonWebSkin.png" },
+   {"xbmc.webinterface",                 ADDON_WEB_INTERFACE,         199, "DefaultAddonWebSkin.png" },
    {"xbmc.addon.repository",             ADDON_REPOSITORY,          24011, "DefaultAddonRepository.png" },
    {"xbmc.pvrclient",                    ADDON_PVRDLL,              24019, "DefaultAddonPVRClient.png" },
    {"xbmc.addon.video",                  ADDON_VIDEO,                1037, "DefaultAddonVideo.png" },
@@ -115,6 +115,7 @@ TYPE TranslateType(const std::string &string)
     if (string == map.name)
       return map.type;
   }
+
   return ADDON_UNKNOWN;
 }
 
@@ -216,7 +217,7 @@ void AddonProps::Serialize(CVariant &variant) const
     variant["fanart"] = URIUtils::AddFileToFolder(path, fanart);
 
   variant["dependencies"] = CVariant(CVariant::VariantTypeArray);
-  for (ADDONDEPS::const_iterator it = dependencies.begin(); it != dependencies.end(); it++)
+  for (ADDONDEPS::const_iterator it = dependencies.begin(); it != dependencies.end(); ++it)
   {
     CVariant dep(CVariant::VariantTypeObject);
     dep["addonid"] = it->first;
@@ -229,7 +230,7 @@ void AddonProps::Serialize(CVariant &variant) const
   else
     variant["broken"] = broken;
   variant["extrainfo"] = CVariant(CVariant::VariantTypeArray);
-  for (InfoMap::const_iterator it = extrainfo.begin(); it != extrainfo.end(); it++)
+  for (InfoMap::const_iterator it = extrainfo.begin(); it != extrainfo.end(); ++it)
   {
     CVariant info(CVariant::VariantTypeObject);
     info["key"] = it->first;
@@ -295,9 +296,9 @@ CAddon::CAddon(const AddonProps &props)
 }
 
 CAddon::CAddon(const CAddon &rhs)
-  : m_props(rhs.Props())
+  : m_props(rhs.Props()),
+    m_settings(rhs.m_settings)
 {
-  m_settings  = rhs.m_settings;
   m_addonXmlDoc = rhs.m_addonXmlDoc;
   m_settingsLoaded = rhs.m_settingsLoaded;
   m_userSettingsLoaded = rhs.m_userSettingsLoaded;

@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="webinterface.default"
-  version="2.2.20"
+  version="2.2.21"
   name="Default"
   provider-name="Team-Kodi">
   <requires>
-    <import addon="xbmc.gui" version="4.0.0"/>
     <import addon="xbmc.json" version="6.0.0"/>
   </requires>
   <extension
-    point="xbmc.gui.webinterface"/>
+    point="xbmc.webinterface"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="af">Span Kodi Web Koppelvlak. (Kodi se verstek web koppelvlak)</summary>
     <summary lang="am">የ Kodi የዌብ ገጽታዎች (የ Kodi ነባር የዌብ ገጽታዎች)</summary>
@@ -41,6 +40,7 @@
     <summary lang="hr">Tim Kodi Web sučelje. (Kodijevo uobičajeno web sučelje)</summary>
     <summary lang="hu">Az Kodi csapat Webes kezelőfelülete (Kodi alapértelmezett webes kezelőfelülete)</summary>
     <summary lang="id">Antar Muka Web Tim Kodi. (Antar muka web bawaan Kodi)</summary>
+    <summary lang="is">Team-Kodi Vefviðmót. (Sjálfgefið vefviðmót á Kodi)</summary>
     <summary lang="it">Interfaccia Web del Team-Kodi. (Interfaccia web di default per Kodi)</summary>
     <summary lang="ja">Team-Kodi Web Interface. (Kodi's default web interface)</summary>
     <summary lang="ko">Team-Kodi 웹 인터페이스. (Kodi 기본 웹 인터페이스)</summary>

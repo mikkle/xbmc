@@ -192,6 +192,11 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, unsigne
 #else
   hwSupport += "iMXVPU:no ";
 #endif
+#if defined(HAS_MMAL)
+  hwSupport += "MMAL:yes ";
+#else
+  hwSupport += "MMAL:no ";
+#endif
   CLog::Log(LOGDEBUG, "CDVDFactoryCodec: compiled in hardware support: %s", hwSupport.c_str());
 
   if (hint.stills && (hint.codec == AV_CODEC_ID_MPEG2VIDEO || hint.codec == AV_CODEC_ID_MPEG1VIDEO))
@@ -206,7 +211,18 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, unsigne
     // amcodec can handle dvd playback.
     if (!hint.software && CSettings::Get().GetBool("videoplayer.useamcodec"))
     {
-      if ( (pCodec = OpenCodec(new CDVDVideoCodecAmlogic(), hint, options)) ) return pCodec;
+      switch(hint.codec)
+      {
+        case AV_CODEC_ID_MPEG4:
+        case AV_CODEC_ID_MSMPEG4V2:
+        case AV_CODEC_ID_MSMPEG4V3:
+          // Avoid h/w decoder for SD; Those files might use features
+          // not supported and can easily be soft-decoded
+          if (hint.width <= 800)
+            break;
+        default:
+          if ( (pCodec = OpenCodec(new CDVDVideoCodecAmlogic(), hint, options)) ) return pCodec;
+      }
     }
 #endif
 
@@ -249,8 +265,19 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, unsigne
 #if defined(TARGET_ANDROID)
     if (!hint.software && CSettings::Get().GetBool("videoplayer.usemediacodec"))
     {
-      CLog::Log(LOGINFO, "MediaCodec Video Decoder...");
-      if ( (pCodec = OpenCodec(new CDVDVideoCodecAndroidMediaCodec(), hint, options)) ) return pCodec;
+      switch(hint.codec)
+      {
+        case AV_CODEC_ID_MPEG4:
+        case AV_CODEC_ID_MSMPEG4V2:
+        case AV_CODEC_ID_MSMPEG4V3:
+          // Avoid h/w decoder for SD; Those files might use features
+          // not supported and can easily be soft-decoded
+          if (hint.width <= 800)
+            break;
+        default:
+          CLog::Log(LOGINFO, "MediaCodec Video Decoder...");
+          if ( (pCodec = OpenCodec(new CDVDVideoCodecAndroidMediaCodec(), hint, options)) ) return pCodec;
+      }
     }
 #endif
 
@@ -282,19 +309,15 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, unsigne
     {
       switch(hint.codec)
       {
-        case CODEC_ID_H264:
-        case CODEC_ID_MPEG4:
-        case CODEC_ID_MPEG2VIDEO:
-        case CODEC_ID_VC1:
-        case CODEC_ID_WMV3:
-        case CODEC_ID_VP3:
-        case CODEC_ID_VP6:
-        case CODEC_ID_VP6F:
-        case CODEC_ID_VP8:
-          if ( (pCodec = OpenCodec(new CDVDVideoCodecStageFright(), hint, options)) ) return pCodec;
-          break;
+        case AV_CODEC_ID_MPEG4:
+        case AV_CODEC_ID_MSMPEG4V2:
+        case AV_CODEC_ID_MSMPEG4V3:
+          // Avoid h/w decoder for SD; Those files might use features
+          // not supported and can easily be soft-decoded
+          if (hint.width <= 800)
+            break;
         default:
-          break;
+          if ( (pCodec = OpenCodec(new CDVDVideoCodecStageFright(), hint, options)) ) return pCodec;
       }
     }
 #endif

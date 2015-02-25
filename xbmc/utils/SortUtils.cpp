@@ -24,9 +24,10 @@
 #include "XBDateTime.h"
 #include "settings/AdvancedSettings.h"
 #include "utils/CharsetConverter.h"
-#include "utils/StdString.h"
 #include "utils/StringUtils.h"
 #include "utils/Variant.h"
+
+#include <algorithm>
 
 using namespace std;
 
@@ -120,7 +121,7 @@ string ByAlbum(SortAttribute attributes, const SortItem &values)
   if (attributes & SortAttributeIgnoreArticle)
     album = SortUtils::RemoveArticles(album);
 
-  CStdString label = StringUtils::Format("%s %s", album.c_str(), ArrayToString(attributes, values.at(FieldArtist)).c_str());
+  std::string label = StringUtils::Format("%s %s", album.c_str(), ArrayToString(attributes, values.at(FieldArtist)).c_str());
 
   const CVariant &track = values.at(FieldTrackNumber);
   if (!track.isNull())
@@ -136,7 +137,7 @@ string ByAlbumType(SortAttribute attributes, const SortItem &values)
 
 string ByArtist(SortAttribute attributes, const SortItem &values)
 {
-  CStdString label = ArrayToString(attributes, values.at(FieldArtist));
+  std::string label = ArrayToString(attributes, values.at(FieldArtist));
 
   const CVariant &year = values.at(FieldYear);
   if (g_advancedSettings.m_bMusicLibraryAlbumsSortByArtistThenYear &&
@@ -161,7 +162,7 @@ string ByTrackNumber(SortAttribute attributes, const SortItem &values)
 
 string ByTime(SortAttribute attributes, const SortItem &values)
 {
-  CStdString label;
+  std::string label;
   const CVariant &time = values.at(FieldTime);
   if (time.isInteger())
     label = StringUtils::Format("%i", (int)time.asInteger());
@@ -193,7 +194,7 @@ string ByCountry(SortAttribute attributes, const SortItem &values)
 
 string ByYear(SortAttribute attributes, const SortItem &values)
 {
-  CStdString label;
+  std::string label;
   const CVariant &airDate = values.at(FieldAirDate);
   if (!airDate.isNull() && !airDate.asString().empty())
     label = airDate.asString() + " ";
@@ -656,7 +657,7 @@ void SortUtils::Sort(SortBy sortBy, SortOrder sortOrder, SortAttribute attribute
             item->insert(pair<Field, CVariant>(*field, CVariant::ConstNullVariant));
         }
 
-        CStdStringW sortLabel;
+        std::wstring sortLabel;
         g_charsetConverter.utf8ToW(preparator(attributes, *item), sortLabel, false);
         item->insert(pair<Field, CVariant>(FieldSort, CVariant(sortLabel)));
       }
@@ -695,7 +696,7 @@ void SortUtils::Sort(SortBy sortBy, SortOrder sortOrder, SortAttribute attribute
             (*item)->insert(pair<Field, CVariant>(*field, CVariant::ConstNullVariant));
         }
 
-        CStdStringW sortLabel;
+        std::wstring sortLabel;
         g_charsetConverter.utf8ToW(preparator(attributes, **item), sortLabel, false);
         (*item)->insert(pair<Field, CVariant>(FieldSort, CVariant(sortLabel)));
       }
@@ -724,7 +725,7 @@ void SortUtils::Sort(const SortDescription &sortDescription, SortItems& items)
   Sort(sortDescription.sortBy, sortDescription.sortOrder, sortDescription.sortAttributes, items, sortDescription.limitEnd, sortDescription.limitStart);
 }
 
-bool SortUtils::SortFromDataset(const SortDescription &sortDescription, const MediaType &mediaType, const std::auto_ptr<dbiplus::Dataset> &dataset, DatabaseResults &results)
+bool SortUtils::SortFromDataset(const SortDescription &sortDescription, const MediaType &mediaType, const std::unique_ptr<dbiplus::Dataset> &dataset, DatabaseResults &results)
 {
   FieldList fields;
   if (!DatabaseUtils::GetSelectFields(SortUtils::GetFieldsForSorting(sortDescription.sortBy), mediaType, fields))

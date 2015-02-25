@@ -206,7 +206,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
         if (CMediaSettings::Get().GetWatchedMode(items.GetContent()) == WatchedModeAll)
           AddSortMethod(SortByPlaycount, 567, LABEL_MASKS("%T", "%V", "%T", "%V"));  // Title, Playcount | Title, Playcount
 
-        SetSortMethod(SortByLabel, SortAttributeIgnoreArticle);
+        SetSortMethod(SortByLabel);
 
         const CViewState *viewState = CViewStateSettings::Get().Get("videonavgenres");
         SetViewAsControl(viewState->m_viewMode);
@@ -216,7 +216,7 @@ CGUIViewStateWindowVideoNav::CGUIViewStateWindowVideoNav(const CFileItemList& it
     case NODE_TYPE_TAGS:
       {
         AddSortMethod(SortByLabel, sortAttributes, 551, LABEL_MASKS("%T","", "%T",""));  // Title, empty | Title, empty
-        SetSortMethod(SortByLabel, sortAttributes);
+        SetSortMethod(SortByLabel);
         
         const CViewState *viewState = CViewStateSettings::Get().Get("videonavgenres");
         SetViewAsControl(viewState->m_viewMode);
@@ -434,6 +434,31 @@ bool CGUIViewStateWindowVideoNav::AutoPlayNextItem()
     return CSettings::Get().GetBool("musicplayer.autoplaynextitem");
 
   return CSettings::Get().GetBool("videoplayer.autoplaynextitem");
+}
+
+bool CGUIViewStateWindowVideoNav::JumpToFirstUnplayedItem()
+{
+  if (m_items.IsVideoDb())
+  {
+    NODE_TYPE NodeType = CVideoDatabaseDirectory::GetDirectoryChildType(m_items.GetPath());
+    switch (NodeType)
+    {
+    case NODE_TYPE_EPISODES:
+      if (GetSortMethod().sortBy == SortBy::SortByEpisodeNumber)
+        return CSettings::Get().GetBool("videolibrary.jumptofirstunplayeditem");
+      else
+        return false;
+
+    case NODE_TYPE_SEASONS:
+      return CSettings::Get().GetBool("videolibrary.jumptofirstunplayeditem");
+
+    default:
+      return false;
+      break;
+    }
+  }
+
+  return CGUIViewStateWindowVideo::JumpToFirstUnplayedItem();
 }
 
 CGUIViewStateWindowVideoPlaylist::CGUIViewStateWindowVideoPlaylist(const CFileItemList& items) : CGUIViewStateWindowVideo(items)

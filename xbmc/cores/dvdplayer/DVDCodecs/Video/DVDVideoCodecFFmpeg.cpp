@@ -36,7 +36,7 @@
 #include "settings/Settings.h"
 #include "settings/VideoSettings.h"
 #include "utils/log.h"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "threads/Atomics.h"
 
 #ifndef TARGET_POSIX
@@ -70,7 +70,7 @@ extern "C" {
 #include "libavfilter/buffersrc.h"
 }
 
-using namespace boost;
+using namespace std;
 
 enum PixelFormat CDVDVideoCodecFFmpeg::GetFormat( struct AVCodecContext * avctx
                                                 , const PixelFormat * fmt )
@@ -184,6 +184,8 @@ CDVDVideoCodecFFmpeg::CDVDVideoCodecFFmpeg() : CDVDVideoCodec()
   m_dts = DVD_NOPTS_VALUE;
   m_started = false;
   m_decoderPts = DVD_NOPTS_VALUE;
+  m_codecControlFlags = 0;
+  m_requestSkipDeint = false;
 }
 
 CDVDVideoCodecFFmpeg::~CDVDVideoCodecFFmpeg()
@@ -296,7 +298,7 @@ bool CDVDVideoCodecFFmpeg::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options
   for(std::vector<CDVDCodecOption>::iterator it = options.m_keys.begin(); it != options.m_keys.end(); ++it)
   {
     if (it->m_name == "surfaces")
-      m_uSurfacesCount = std::atoi(it->m_value.c_str());
+      m_uSurfacesCount = atoi(it->m_value.c_str());
     else
       av_opt_set(m_pCodecContext, it->m_name.c_str(), it->m_value.c_str(), 0);
   }
@@ -345,6 +347,7 @@ void CDVDVideoCodecFFmpeg::Dispose()
     m_pCodecContext = NULL;
   }
   SAFE_RELEASE(m_pHardware);
+  DisposeHWDecoders();
 
   FilterClose();
 }
@@ -448,10 +451,6 @@ int CDVDVideoCodecFFmpeg::Decode(uint8_t* pData, int iSize, double dts, double p
   shared_ptr<CSingleLock> lock;
   if(m_pHardware)
   {
-    CCriticalSection* section = m_pHardware->Section();
-    if(section)
-      lock = shared_ptr<CSingleLock>(new CSingleLock(*section));
-
     int result;
     if(pData)
       result = m_pHardware->Check(m_pCodecContext);
@@ -496,6 +495,15 @@ int CDVDVideoCodecFFmpeg::Decode(uint8_t* pData, int iSize, double dts, double p
 
   if (len < 0)
   {
+    if(m_pHardware)
+    {
+      int result = m_pHardware->Check(m_pCodecContext);
+      if (result & VC_NOBUFFER)
+      {
+        result = m_pHardware->Decode(m_pCodecContext, NULL);
+        return result;
+      }
+    }
     CLog::Log(LOGERROR, "%s - avcodec_decode_video returned failure", __FUNCTION__);
     return VC_ERROR;
   }
@@ -556,6 +564,8 @@ int CDVDVideoCodecFFmpeg::Decode(uint8_t* pData, int iSize, double dts, double p
 
   if(result & VC_FLUSHED)
     Reset();
+
+  DisposeHWDecoders();
 
   return result;
 }
@@ -887,4 +897,21 @@ bool CDVDVideoCodecFFmpeg::GetCodecStats(double &pts, int &droppedPics)
 void CDVDVideoCodecFFmpeg::SetCodecControl(int flags)
 {
   m_codecControlFlags = flags;
+}
+
+void CDVDVideoCodecFFmpeg::SetHardware(IHardwareDecoder* hardware)
+{
+  if (m_pHardware)
+    m_disposeDecoders.push_back(m_pHardware);
+  m_pHardware = hardware;
+  UpdateName();
+}
+
+void CDVDVideoCodecFFmpeg::DisposeHWDecoders()
+{
+  while (!m_disposeDecoders.empty())
+  {
+    m_disposeDecoders.back()->Release();
+    m_disposeDecoders.pop_back();
+  }
 }

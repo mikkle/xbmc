@@ -42,6 +42,7 @@
 #include "URL.h"
 
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 using namespace XFILE;
@@ -164,12 +165,12 @@ AddonPtr CScraper::Clone() const
 }
 
 CScraper::CScraper(const CScraper &rhs)
-  : CAddon(rhs), m_fLoaded(false)
+  : CAddon(rhs), m_fLoaded(false),
+    m_language(rhs.m_language),
+    m_requiressettings(rhs.m_requiressettings),
+    m_persistence(rhs.m_persistence),
+    m_pathContent(rhs.m_pathContent)
 {
-  m_pathContent = rhs.m_pathContent;
-  m_persistence = rhs.m_persistence;
-  m_requiressettings = rhs.m_requiressettings;
-  m_language = rhs.m_language;
 }
 
 bool CScraper::Supports(const CONTENT_TYPE &content) const
@@ -383,7 +384,7 @@ bool CScraper::Load()
           break;
         }
       }
-      itr++;
+      ++itr;
     }
   }
 

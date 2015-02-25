@@ -38,9 +38,9 @@ public:
   class CStartupWindow
   {
   public:
-    CStartupWindow(int id, const std::string &name)
+    CStartupWindow(int id, const std::string &name):
+        m_id(id), m_name(name)
     {
-      m_id = id; m_name = name;
     };
     int m_id;
     std::string m_name;
@@ -152,4 +152,4 @@ protected:
 
 } /*namespace ADDON*/
 
-extern boost::shared_ptr<ADDON::CSkinInfo> g_SkinInfo;
+extern std::shared_ptr<ADDON::CSkinInfo> g_SkinInfo;

@@ -32,6 +32,8 @@
 #include "settings/AdvancedSettings.h"
 #include "threads/Atomics.h"
 
+#include <cassert>
+
 #define FRAME_ALIGN 16
 #define MEDIAINFO 1
 #define _4CC(c1,c2,c3,c4) (((uint32_t)(c4)<<24)|((uint32_t)(c3)<<16)|((uint32_t)(c2)<<8)|(uint32_t)(c1))
@@ -418,9 +420,12 @@ bool CDVDVideoCodecIMX::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options)
     m_pFormatName = "iMX-h263";
     break;
   case CODEC_ID_H264:
-    if (m_hints.profile == 110)
+  {
+    // Test for VPU unsupported profiles to revert to sw decoding
+    if ((m_hints.profile == 110) || //hi10p
+        (m_hints.profile == 578))   //quite uncommon h264 profile
     {
-      CLog::Log(LOGNOTICE, "i.MX6 VPU is not able to decode AVC high 10 profile\n");
+      CLog::Log(LOGNOTICE, "i.MX6 VPU is not able to decode AVC profile %d", m_hints.profile);
       return false;
     }
     m_decOpenParam.CodecFormat = VPU_V_AVC;
@@ -434,6 +439,7 @@ bool CDVDVideoCodecIMX::Open(CDVDStreamInfo &hints, CDVDCodecOptions &options)
       }
     }
     break;
+  }
   case CODEC_ID_VC1:
     m_decOpenParam.CodecFormat = VPU_V_VC1_AP;
     m_pFormatName = "iMX-vc1";

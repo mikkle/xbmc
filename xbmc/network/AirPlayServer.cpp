@@ -138,7 +138,7 @@ const char *eventStrings[] = {"playing", "paused", "loading", "stopped"};
 "<key>protovers</key>\r\n"\
 "<string>1.0</string>\r\n"\
 "<key>srcvers</key>\r\n"\
-"<string>"AIRPLAY_SERVER_VERSION_STR"</string>\r\n"\
+"<string>" AIRPLAY_SERVER_VERSION_STR "</string>\r\n"\
 "</dict>\r\n"\
 "</plist>\r\n"
 
@@ -273,7 +273,7 @@ void CAirPlayServer::AnnounceToClients(int state)
   CSingleLock lock (m_connectionLock);
   
   std::vector<CTCPClient>::iterator it;
-  for (it = m_connections.begin(); it != m_connections.end(); it++)
+  for (it = m_connections.begin(); it != m_connections.end(); ++it)
   {
     std::string reverseHeader;
     std::string reverseBody;

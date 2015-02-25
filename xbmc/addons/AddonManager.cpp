@@ -275,7 +275,19 @@ bool CAddonMgr::Init()
   m_cp_context = m_cpluff->create_context(&status);
   assert(m_cp_context);
   status = m_cpluff->register_pcollection(m_cp_context, CSpecialProtocol::TranslatePath("special://home/addons").c_str());
+  if (status != CP_OK)
+  {
+    CLog::Log(LOGERROR, "ADDONS: Fatal Error, cp_register_pcollection() returned status: %i", status);
+    return false;
+  }
+
   status = m_cpluff->register_pcollection(m_cp_context, CSpecialProtocol::TranslatePath("special://xbmc/addons").c_str());
+  if (status != CP_OK)
+  {
+    CLog::Log(LOGERROR, "ADDONS: Fatal Error, cp_register_pcollection() returned status: %i", status);
+    return false;
+  }
+
   status = m_cpluff->register_pcollection(m_cp_context, CSpecialProtocol::TranslatePath("special://xbmcbin/addons").c_str());
   if (status != CP_OK)
   {
@@ -391,7 +403,7 @@ bool CAddonMgr::GetAllOutdatedAddons(VECADDONS &addons, bool getLocalVersion /*=
       {
         // Ignore duplicates due to add-ons with multiple extension points
         bool found = false;
-        for (VECADDONS::const_iterator addonIt = addons.begin(); addonIt != addons.end(); addonIt++)
+        for (VECADDONS::const_iterator addonIt = addons.begin(); addonIt != addons.end(); ++addonIt)
         {
           if ((*addonIt)->ID() == temp[j]->ID())
             found = true;
@@ -619,7 +631,7 @@ std::string CAddonMgr::GetTranslatedString(const cp_cfg_element_t *root, const c
     if (strcmp(tag, child.name) == 0)
     { // see if we have a "lang" attribute
       const char *lang = m_cpluff->lookup_cfg_value((cp_cfg_element_t*)&child, "@lang");
-      if (lang && 0 == strcmp(lang,g_langInfo.GetLanguageLocale(true).c_str()))
+      if (lang && 0 == strcmp(lang,g_langInfo.GetLanguageLocale().c_str()))
         return child.value ? child.value : "";
       if (!lang || 0 == strcmp(lang, "en"))
         eng = &child;
@@ -876,7 +888,7 @@ bool CAddonMgr::StartServices(const bool beforelogin)
   bool ret = true;
   for (IVECADDONS it = services.begin(); it != services.end(); ++it)
   {
-    boost::shared_ptr<CService> service = boost::dynamic_pointer_cast<CService>(*it);
+    std::shared_ptr<CService> service = std::dynamic_pointer_cast<CService>(*it);
     if (service)
     {
       if ( (beforelogin && service->GetStartOption() == CService::STARTUP)
@@ -898,7 +910,7 @@ void CAddonMgr::StopServices(const bool onlylogin)
 
   for (IVECADDONS it = services.begin(); it != services.end(); ++it)
   {
-    boost::shared_ptr<CService> service = boost::dynamic_pointer_cast<CService>(*it);
+    std::shared_ptr<CService> service = std::dynamic_pointer_cast<CService>(*it);
     if (service)
     {
       if ( (onlylogin && service->GetStartOption() == CService::LOGIN)

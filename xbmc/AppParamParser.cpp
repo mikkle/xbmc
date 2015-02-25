@@ -35,6 +35,7 @@
 #ifndef TARGET_WINDOWS
 #include "linux/XTimeUtils.h"
 #endif
+#include <stdlib.h>
 
 CAppParamParser::CAppParamParser()
 {
@@ -119,7 +120,7 @@ void CAppParamParser::EnableDebugMode()
   CLog::SetLogLevel(g_advancedSettings.m_logLevel);
 }
 
-void CAppParamParser::ParseArg(const CStdString &arg)
+void CAppParamParser::ParseArg(const std::string &arg)
 {
   if (arg == "-fs" || arg == "--fullscreen")
     g_advancedSettings.m_startFullScreen = true;

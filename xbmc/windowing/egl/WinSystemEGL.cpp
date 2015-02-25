@@ -151,6 +151,18 @@ bool CWinSystemEGL::CreateWindow(RESOLUTION_INFO &res)
   if(m_egl)
     m_egl->SetNativeResolution(res);
 
+  int quirks;
+  m_egl->GetQuirks(&quirks);
+  if (quirks & EGL_QUIRK_RECREATE_DISPLAY_ON_CREATE_WINDOW)
+  {
+    if (m_context != EGL_NO_CONTEXT)
+      if (!m_egl->InitDisplay(&m_display))
+      {
+        CLog::Log(LOGERROR, "%s: Could not reinit display",__FUNCTION__);
+        return false;
+      }
+  }
+
   if (!m_egl->CreateSurface(m_display, m_config, &m_surface))
   {
     CLog::Log(LOGNOTICE, "%s: Could not create a surface. Trying with a fresh Native Window.",__FUNCTION__);
@@ -210,6 +222,7 @@ bool CWinSystemEGL::CreateWindow(RESOLUTION_INFO &res)
     return false;
   }
 
+
   // for the non-trivial dirty region modes, we need the EGL buffer to be preserved across updates
   if (g_advancedSettings.m_guiAlgorithmDirtyRegions == DIRTYREGION_SOLVER_COST_REDUCTION ||
       g_advancedSettings.m_guiAlgorithmDirtyRegions == DIRTYREGION_SOLVER_UNION)
@@ -231,7 +244,9 @@ bool CWinSystemEGL::DestroyWindowSystem()
   DestroyWindow();
 
   if (m_context != EGL_NO_CONTEXT)
+  {
     m_egl->DestroyContext(m_display, m_context);
+  }
   m_context = EGL_NO_CONTEXT;
 
   if (m_display != EGL_NO_DISPLAY)
@@ -246,10 +261,11 @@ bool CWinSystemEGL::DestroyWindowSystem()
   delete m_egl;
   m_egl = NULL;
 
+  CWinSystemBase::DestroyWindowSystem();
   return true;
 }
 
-bool CWinSystemEGL::CreateNewWindow(const CStdString& name, bool fullScreen, RESOLUTION_INFO& res, PHANDLE_EVENT_FUNC userFunction)
+bool CWinSystemEGL::CreateNewWindow(const std::string& name, bool fullScreen, RESOLUTION_INFO& res, PHANDLE_EVENT_FUNC userFunction)
 {
   RESOLUTION_INFO current_resolution;
   current_resolution.iWidth = current_resolution.iHeight = 0;
@@ -286,7 +302,7 @@ bool CWinSystemEGL::CreateNewWindow(const CStdString& name, bool fullScreen, RES
 
   CSingleLock lock(m_resourceSection);
   // tell any shared resources
-  for (std::vector<IDispResource *>::iterator i = m_resources.begin(); i != m_resources.end(); i++)
+  for (std::vector<IDispResource *>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
     (*i)->OnResetDevice();
 
   return true;

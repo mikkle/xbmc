@@ -24,20 +24,37 @@ else()
 endif()
 get_filename_component(APP_ROOT "${APP_ROOT}" ABSOLUTE)
 
-if(NOT WIN32)
-  if(NOT DEPENDS_PATH)
-    set(DEPENDS_PATH "${PROJECT_SOURCE_DIR}/output/depends")
-  else()
-    file(TO_CMAKE_PATH "${DEPENDS_PATH}" DEPENDS_PATH)
-  endif()
+if(NOT BUILD_DIR)
+  set(BUILD_DIR "${CMAKE_BINARY_DIR}/build")
+else()
+  file(TO_CMAKE_PATH "${BUILD_DIR}" BUILD_DIR)
+endif()
+get_filename_component(BUILD_DIR "${BUILD_DIR}" ABSOLUTE)
 
-  # make sure CMAKE_PREFIX_PATH is set
-  if(NOT CMAKE_PREFIX_PATH)
-    set(CMAKE_PREFIX_PATH "${DEPENDS_PATH}")
-  else()
-    file(TO_CMAKE_PATH "${CMAKE_PREFIX_PATH}" CMAKE_PREFIX_PATH)
-    list(APPEND CMAKE_PREFIX_PATH "${DEPENDS_PATH}")
-  endif()
+if(NOT DEPENDS_PATH)
+  set(DEPENDS_PATH "${BUILD_DIR}/depends")
+else()
+  file(TO_CMAKE_PATH "${DEPENDS_PATH}" DEPENDS_PATH)
+endif()
+get_filename_component(DEPENDS_PATH "${DEPENDS_PATH}" ABSOLUTE)
+
+if(NOT PLATFORM_DIR)
+  set(PLATFORM_DIR ${APP_ROOT}/project/cmake/platform/${CORE_SYSTEM_NAME})
+  file(TO_CMAKE_PATH "${PLATFORM_DIR}" PLATFORM_DIR)
+endif()
+
+# make sure CMAKE_PREFIX_PATH is set
+if(NOT CMAKE_PREFIX_PATH)
+  set(CMAKE_PREFIX_PATH "${DEPENDS_PATH}")
+else()
+  file(TO_CMAKE_PATH "${CMAKE_PREFIX_PATH}" CMAKE_PREFIX_PATH)
+  list(APPEND CMAKE_PREFIX_PATH "${DEPENDS_PATH}")
+endif()
+
+# check for autoconf stuff to pass on
+if(AUTOCONF_FILES)
+  separate_arguments(AUTOCONF_FILES)
+  set(CROSS_AUTOCONF "yes")
 endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
@@ -47,9 +64,11 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 
 set(BUILD_ARGS -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}
                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-               -DCMAKE_BUILD_TYPE=Release
+               -DPACKAGE_CONFIG_PATH=${DEPENDS_PATH}/lib/pkgconfig
+               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DCMAKE_USER_MAKE_RULES_OVERRIDE=${CMAKE_USER_MAKE_RULES_OVERRIDE}
                -DCMAKE_USER_MAKE_RULES_OVERRIDE_CXX=${CMAKE_USER_MAKE_RULES_OVERRIDE_CXX}
+               -DCORE_SYSTEM_NAME=${CORE_SYSTEM_NAME}
                -DBUILD_SHARED_LIBS=1)
 
 if(PACKAGE_ZIP)
@@ -71,16 +90,36 @@ else()
   separate_arguments(ADDONS_TO_BUILD)
 endif()
 
-if(NOT WIN32)
-  # copy the prepare-env.cmake script to the depends path so that we can include it
-  file(COPY ${APP_ROOT}/project/cmake/scripts/common/prepare-env.cmake DESTINATION ${DEPENDS_PATH}/lib/kodi)
-
-  # add the location of prepare-env.cmake to CMAKE_MODULE_PATH so that it is found
-  list(APPEND CMAKE_MODULE_PATH ${DEPENDS_PATH}/lib/kodi)
-
-  # include prepare-env.cmake which contains the logic to install the addon header bindings etc
-  include(prepare-env)
+if(NOT KODI_LIB_DIR)
+  set(KODI_LIB_DIR "${DEPENDS_PATH}/lib/kodi")
+else()
+  file(TO_CMAKE_PATH "${KODI_LIB_DIR}" KODI_LIB_DIR)
 endif()
+
+# check for platform specific stuff
+if(EXISTS ${PLATFORM_DIR}/defines.txt)
+  file(STRINGS ${PLATFORM_DIR}/defines.txt platformdefines)
+
+  if(NOT ARCH_DEFINES AND platformdefines)
+    set(ARCH_DEFINES ${platformdefines})
+  endif()
+endif()
+
+# include check_target_platform() function
+include(${APP_ROOT}/project/cmake/scripts/common/check_target_platform.cmake)
+
+### prepare the build environment for the binary addons
+# copy the prepare-env.cmake script to the depends path so that we can include it
+file(COPY ${APP_ROOT}/project/cmake/scripts/common/prepare-env.cmake DESTINATION ${KODI_LIB_DIR})
+
+# add the location of prepare-env.cmake to CMAKE_MODULE_PATH so that it is found
+list(APPEND CMAKE_MODULE_PATH ${KODI_LIB_DIR})
+
+# include prepare-env.cmake which contains the logic to install the addon header bindings etc
+include(prepare-env)
+
+### add the depends subdirectory for any general dependencies
+add_subdirectory(depends)
 
 ### get and build all the binary addons
 # look for all the addons to be built
@@ -94,23 +133,10 @@ foreach(addon ${addons})
     list(FIND ADDONS_TO_BUILD ${id} idx)
     if(idx GREATER -1 OR ADDONS_TO_BUILD STREQUAL "all")
       get_filename_component(dir ${addon} PATH)
-      set(platform_found FALSE)
 
       # check if the addon has a platforms.txt
-      if(EXISTS ${dir}/platforms.txt)
-        # get all the specified platforms
-        file(STRINGS ${dir}/platforms.txt platforms)
-        separate_arguments(platforms)
-
-        # check if the addon should be built for the current platform
-        foreach(platform ${platforms})
-          if(${platform} STREQUAL "all" OR ${platform} STREQUAL ${CORE_SYSTEM_NAME})
-            set(platform_found TRUE)
-          endif()
-        endforeach()
-      else()
-        set(platform_found TRUE)
-      endif()
+      set(platform_found FALSE)
+      check_target_platform(${dir} ${CORE_SYSTEM_NAME} platform_found)
 
       if (${platform_found})
         # make sure the output directory is clean
@@ -118,30 +144,75 @@ foreach(addon ${addons})
           file(REMOVE_RECURSE "${CMAKE_INSTALL_PREFIX}/${id}/")
         endif()
 
-        # prepare the setup of the call to externalproject_add()
-        set(EXTERNALPROJECT_SETUP INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
-                                  CMAKE_ARGS ${BUILD_ARGS})
-
         # get the URL and revision of the addon
         list(LENGTH def deflength)
         list(GET def 1 url)
-        # check if there's a third parameter in the file
+
+        set(archive_name ${id})
+
+          # if there is a 3rd parameter in the file, we consider it a git revision
         if(deflength GREATER 2)
-          # the third parameter is considered as a revision of a git repository
           list(GET def 2 revision)
 
-          externalproject_add(${id}
-                              GIT_REPOSITORY ${url}
-                              GIT_TAG ${revision}
-                              "${EXTERNALPROJECT_SETUP}"
-                             )
-        else()
-          externalproject_add(${id}
-                              URL ${url}
-                              "${EXTERNALPROJECT_SETUP}"
-                             )
+          # Note: downloading specific revisions via http in the format below is probably github specific
+          # if we ever use other repositories, this might need adapting
+          set(url ${url}/archive/${revision}.tar.gz)
+          set(archive_name ${archive_name}-${revision})
         endif()
+
+        # download and extract the addon
+        if(NOT EXISTS ${BUILD_DIR}/download/${archive_name}.tar.gz)
+          # cleanup any of the previously downloaded archives of this addon
+          file(GLOB archives "${BUILD_DIR}/download/${id}*.tar.gz")
+          if(archives)
+            message(STATUS "Removing old archives of ${id}: ${archives}")
+            file(REMOVE ${archives})
+          endif()
+
+          # download the addon
+          file(DOWNLOAD "${url}" "${BUILD_DIR}/download/${archive_name}.tar.gz" STATUS dlstatus LOG dllog SHOW_PROGRESS)
+          list(GET dlstatus 0 retcode)
+          if(NOT ${retcode} EQUAL 0)
+            message(FATAL_ERROR "ERROR downloading ${url} - status: ${dlstatus} log: ${dllog}")
+          endif()
+        endif()
+
+        # remove any previously extracted version of the addon
+        if(EXISTS "${BUILD_DIR}/${id}")
+          file(REMOVE_RECURSE "${BUILD_DIR}/${id}")
+        endif()
+
+        # extract the addon from the archive
+        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzvf ${BUILD_DIR}/download/${archive_name}.tar.gz
+                        WORKING_DIRECTORY ${BUILD_DIR})
+        file(GLOB extract_dir "${BUILD_DIR}/${archive_name}*")
+        if(extract_dir STREQUAL "")
+          message(FATAL_ERROR "Error extracting ${BUILD_DIR}/download/${archive_name}.tar.gz")
+        else()
+          file(RENAME "${extract_dir}" "${BUILD_DIR}/${id}")
+        endif()
+
+        list(APPEND downloaded_addons ${id})
+
       endif()
+    endif()
+  endif()
+endforeach()
+
+foreach(id ${downloaded_addons})
+  externalproject_add(${id}
+                      SOURCE_DIR ${BUILD_DIR}/${id}
+                      INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                      CMAKE_ARGS ${BUILD_ARGS})
+
+  set(${id}_DEPENDS_DIR ${BUILD_DIR}/${id}/depends)
+
+  if(EXISTS ${${id}_DEPENDS_DIR})
+    include(${APP_ROOT}/project/cmake/scripts/common/handle-depends.cmake)
+    add_addon_depends(${id} ${${id}_DEPENDS_DIR})
+    if (${id}_DEPS AND NOT "${${id}_DEPS}" STREQUAL "")
+      message(STATUS "${id} DEPENDENCIES: ${${id}_DEPS}")
+      add_dependencies(${id} ${${id}_DEPS})
     endif()
   endif()
 endforeach()

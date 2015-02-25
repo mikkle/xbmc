@@ -112,6 +112,7 @@ const CMusicInfoTag& CMusicInfoTag::operator =(const CMusicInfoTag& tag)
   m_strMusicBrainzTRMID = tag.m_strMusicBrainzTRMID;
   m_strComment = tag.m_strComment;
   m_strLyrics = tag.m_strLyrics;
+  m_cuesheet = tag.m_cuesheet;
   m_lastPlayed = tag.m_lastPlayed;
   m_bCompilation = tag.m_bCompilation;
   m_iDuration = tag.m_iDuration;
@@ -168,12 +169,12 @@ int CMusicInfoTag::GetDuration() const
   return m_iDuration;
 }
 
-const CStdString& CMusicInfoTag::GetTitle() const
+const std::string& CMusicInfoTag::GetTitle() const
 {
   return m_strTitle;
 }
 
-const CStdString& CMusicInfoTag::GetURL() const
+const std::string& CMusicInfoTag::GetURL() const
 {
   return m_strURL;
 }
@@ -183,7 +184,7 @@ const std::vector<std::string>& CMusicInfoTag::GetArtist() const
   return m_artist;
 }
 
-const CStdString& CMusicInfoTag::GetAlbum() const
+const std::string& CMusicInfoTag::GetAlbum() const
 {
   return m_strAlbum;
 }
@@ -223,19 +224,24 @@ const std::string &CMusicInfoTag::GetType() const
   return m_type;
 }
 
-CStdString CMusicInfoTag::GetYearString() const
+std::string CMusicInfoTag::GetYearString() const
 {
   return m_dwReleaseDate.wYear ? StringUtils::Format("%i", m_dwReleaseDate.wYear) : StringUtils::Empty;
 }
 
-const CStdString &CMusicInfoTag::GetComment() const
+const std::string &CMusicInfoTag::GetComment() const
 {
   return m_strComment;
 }
 
-const CStdString &CMusicInfoTag::GetLyrics() const
+const std::string &CMusicInfoTag::GetLyrics() const
 {
   return m_strLyrics;
+}
+
+const std::string &CMusicInfoTag::GetCueSheet() const
+{
+  return m_cuesheet;
 }
 
 char CMusicInfoTag::GetRating() const
@@ -293,17 +299,17 @@ int CMusicInfoTag::HasReplayGainInfo() const
   return m_iHasGainInfo;
 }
 
-void CMusicInfoTag::SetURL(const CStdString& strURL)
+void CMusicInfoTag::SetURL(const std::string& strURL)
 {
   m_strURL = strURL;
 }
 
-void CMusicInfoTag::SetTitle(const CStdString& strTitle)
+void CMusicInfoTag::SetTitle(const std::string& strTitle)
 {
   m_strTitle = Trim(strTitle);
 }
 
-void CMusicInfoTag::SetArtist(const CStdString& strArtist)
+void CMusicInfoTag::SetArtist(const std::string& strArtist)
 {
   if (!strArtist.empty())
     SetArtist(StringUtils::Split(strArtist, g_advancedSettings.m_musicItemSeparator));
@@ -316,7 +322,7 @@ void CMusicInfoTag::SetArtist(const std::vector<std::string>& artists)
   m_artist = artists;
 }
 
-void CMusicInfoTag::SetAlbum(const CStdString& strAlbum)
+void CMusicInfoTag::SetAlbum(const std::string& strAlbum)
 {
   m_strAlbum = Trim(strAlbum);
 }
@@ -326,7 +332,7 @@ void CMusicInfoTag::SetAlbumId(const int iAlbumId)
   m_iAlbumId = iAlbumId;
 }
 
-void CMusicInfoTag::SetAlbumArtist(const CStdString& strAlbumArtist)
+void CMusicInfoTag::SetAlbumArtist(const std::string& strAlbumArtist)
 {
   if (!strAlbumArtist.empty())
     SetAlbumArtist(StringUtils::Split(strAlbumArtist, g_advancedSettings.m_musicItemSeparator));
@@ -339,7 +345,7 @@ void CMusicInfoTag::SetAlbumArtist(const std::vector<std::string>& albumArtists)
   m_albumArtist = albumArtists;
 }
 
-void CMusicInfoTag::SetGenre(const CStdString& strGenre)
+void CMusicInfoTag::SetGenre(const std::string& strGenre)
 {
   if (!strGenre.empty())
     SetGenre(StringUtils::Split(strGenre, g_advancedSettings.m_musicItemSeparator));
@@ -389,12 +395,17 @@ void CMusicInfoTag::SetDuration(int iSec)
   m_iDuration = iSec;
 }
 
-void CMusicInfoTag::SetComment(const CStdString& comment)
+void CMusicInfoTag::SetComment(const std::string& comment)
 {
   m_strComment = comment;
 }
 
-void CMusicInfoTag::SetLyrics(const CStdString& lyrics)
+void CMusicInfoTag::SetCueSheet(const std::string& cueSheet)
+{
+  m_cuesheet = cueSheet;
+}
+
+void CMusicInfoTag::SetLyrics(const std::string& lyrics)
 {
   m_strLyrics = lyrics;
 }
@@ -414,7 +425,7 @@ void CMusicInfoTag::SetPlayCount(int playcount)
   m_iTimesPlayed = playcount;
 }
 
-void CMusicInfoTag::SetLastPlayed(const CStdString& lastplayed)
+void CMusicInfoTag::SetLastPlayed(const std::string& lastplayed)
 {
   m_lastPlayed.SetFromDBDateTime(lastplayed);
 }
@@ -439,7 +450,7 @@ bool CMusicInfoTag::Loaded() const
   return m_bLoaded;
 }
 
-const CStdString& CMusicInfoTag::GetMusicBrainzTrackID() const
+const std::string& CMusicInfoTag::GetMusicBrainzTrackID() const
 {
   return m_strMusicBrainzTrackID;
 }
@@ -449,7 +460,7 @@ const std::vector<std::string>& CMusicInfoTag::GetMusicBrainzArtistID() const
   return m_musicBrainzArtistID;
 }
 
-const CStdString& CMusicInfoTag::GetMusicBrainzAlbumID() const
+const std::string& CMusicInfoTag::GetMusicBrainzAlbumID() const
 {
   return m_strMusicBrainzAlbumID;
 }
@@ -459,12 +470,12 @@ const std::vector<std::string>& CMusicInfoTag::GetMusicBrainzAlbumArtistID() con
   return m_musicBrainzAlbumArtistID;
 }
 
-const CStdString& CMusicInfoTag::GetMusicBrainzTRMID() const
+const std::string& CMusicInfoTag::GetMusicBrainzTRMID() const
 {
   return m_strMusicBrainzTRMID;
 }
 
-void CMusicInfoTag::SetMusicBrainzTrackID(const CStdString& strTrackID)
+void CMusicInfoTag::SetMusicBrainzTrackID(const std::string& strTrackID)
 {
   m_strMusicBrainzTrackID=strTrackID;
 }
@@ -474,7 +485,7 @@ void CMusicInfoTag::SetMusicBrainzArtistID(const std::vector<std::string>& music
   m_musicBrainzArtistID = musicBrainzArtistId;
 }
 
-void CMusicInfoTag::SetMusicBrainzAlbumID(const CStdString& strAlbumID)
+void CMusicInfoTag::SetMusicBrainzAlbumID(const std::string& strAlbumID)
 {
   m_strMusicBrainzAlbumID=strAlbumID;
 }
@@ -484,7 +495,7 @@ void CMusicInfoTag::SetMusicBrainzAlbumArtistID(const std::vector<std::string>& 
   m_musicBrainzAlbumArtistID = musicBrainzAlbumArtistId;
 }
 
-void CMusicInfoTag::SetMusicBrainzTRMID(const CStdString& strTRMID)
+void CMusicInfoTag::SetMusicBrainzTRMID(const std::string& strTRMID)
 {
   m_strMusicBrainzTRMID=strTRMID;
 }
@@ -556,6 +567,7 @@ void CMusicInfoTag::SetSong(const CSong& song)
   SetAlbumArtist(song.albumArtist);
   SetMusicBrainzTrackID(song.strMusicBrainzTrackID);
   SetComment(song.strComment);
+  SetCueSheet(song.strCueSheet);
   SetPlayCount(song.iTimesPlayed);
   SetLastPlayed(song.lastPlayed);
   SetCoverArtInfo(song.embeddedArt.size, song.embeddedArt.mime);
@@ -663,6 +675,7 @@ void CMusicInfoTag::Archive(CArchive& ar)
     ar << m_bCompilation;
     ar << m_listeners;
     ar << m_coverArt;
+    ar << m_cuesheet;
   }
   else
   {
@@ -692,6 +705,7 @@ void CMusicInfoTag::Archive(CArchive& ar)
     ar >> m_bCompilation;
     ar >> m_listeners;
     ar >> m_coverArt;
+    ar >> m_cuesheet;
   }
 }
 
@@ -714,6 +728,7 @@ void CMusicInfoTag::Clear()
   m_lastPlayed.Reset();
   m_bCompilation = false;
   m_strComment.clear();
+  m_cuesheet.clear();
   m_rating = '0';
   m_iDbId = -1;
   m_type.clear();
@@ -728,42 +743,42 @@ void CMusicInfoTag::Clear()
   m_iHasGainInfo = 0;
 }
 
-void CMusicInfoTag::AppendArtist(const CStdString &artist)
+void CMusicInfoTag::AppendArtist(const std::string &artist)
 {
   for (unsigned int index = 0; index < m_artist.size(); index++)
   {
-    if (artist.Equals(m_artist.at(index).c_str()))
+    if (StringUtils::EqualsNoCase(artist, m_artist.at(index)))
       return;
   }
 
   m_artist.push_back(artist);
 }
 
-void CMusicInfoTag::AppendAlbumArtist(const CStdString &albumArtist)
+void CMusicInfoTag::AppendAlbumArtist(const std::string &albumArtist)
 {
   for (unsigned int index = 0; index < m_albumArtist.size(); index++)
   {
-    if (albumArtist.Equals(m_albumArtist.at(index).c_str()))
+    if (StringUtils::EqualsNoCase(albumArtist, m_albumArtist.at(index)))
       return;
   }
 
   m_albumArtist.push_back(albumArtist);
 }
 
-void CMusicInfoTag::AppendGenre(const CStdString &genre)
+void CMusicInfoTag::AppendGenre(const std::string &genre)
 {
   for (unsigned int index = 0; index < m_genre.size(); index++)
   {
-    if (genre.Equals(m_genre.at(index).c_str()))
+    if (StringUtils::EqualsNoCase(genre, m_genre.at(index)))
       return;
   }
 
   m_genre.push_back(genre);
 }
 
-CStdString CMusicInfoTag::Trim(const CStdString &value) const
+std::string CMusicInfoTag::Trim(const std::string &value) const
 {
-  CStdString trimmedValue(value);
+  std::string trimmedValue(value);
   StringUtils::TrimLeft(trimmedValue, " ");
   StringUtils::TrimRight(trimmedValue, " \n\r");
   return trimmedValue;

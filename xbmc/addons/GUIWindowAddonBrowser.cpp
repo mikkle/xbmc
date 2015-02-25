@@ -210,7 +210,7 @@ bool CGUIWindowAddonBrowser::OnContextButton(int itemNumber,
 
   if (button == CONTEXT_BUTTON_SCAN)
   {
-    RepositoryPtr repo = boost::dynamic_pointer_cast<CRepository>(addon);
+    RepositoryPtr repo = std::dynamic_pointer_cast<CRepository>(addon);
     CAddonInstaller::Get().UpdateRepos(true);
     return true;
   }
@@ -375,11 +375,8 @@ bool CGUIWindowAddonBrowser::GetDirectory(const std::string& strDirectory,
       int i=0;
       while (i < items.Size())
       {
-        if (!FilterVar(CSettings::Get().GetBool("general.addonforeignfilter"),
-                      items[i]->GetProperty("Addon.Language"), "en") ||
-            !FilterVar(CSettings::Get().GetBool("general.addonforeignfilter"),
-                      items[i]->GetProperty("Addon.Language"),
-                      g_langInfo.GetLanguageLocale()))
+        if (!FilterVar(true, items[i]->GetProperty("Addon.Language"), "en") ||
+            !FilterVar(true, items[i]->GetProperty("Addon.Language"), g_langInfo.GetLanguageLocale()))
         {
           i++;
         }
@@ -537,7 +534,7 @@ int CGUIWindowAddonBrowser::SelectAddonID(const vector<ADDON::TYPE> &types, vect
 
   if (addonIDs.size() > 0)
   {
-    for (vector<string>::const_iterator it = addonIDs.begin(); it != addonIDs.end() ; it++)
+    for (vector<string>::const_iterator it = addonIDs.begin(); it != addonIDs.end() ; ++it)
     {
       CFileItemPtr item = items.Get(*it);
       if (item)

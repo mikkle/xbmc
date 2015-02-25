@@ -37,6 +37,8 @@
 #include "utils/XBMCTinyXML.h"
 #include "utils/XMLUtils.h"
 
+#include <algorithm>
+
 using namespace std;
 using namespace PVR;
 
@@ -44,28 +46,26 @@ using namespace PVR;
 
 #define SPEED_UNIT_STRINGS 20200
 
-CLangInfo::CRegion::CRegion(const CRegion& region)
+CLangInfo::CRegion::CRegion(const CRegion& region):
+  m_strGuiCharSet(region.m_strGuiCharSet),
+  m_strSubtitleCharSet(region.m_strSubtitleCharSet),
+  m_strDVDMenuLanguage(region.m_strDVDMenuLanguage),
+  m_strDVDAudioLanguage(region.m_strDVDAudioLanguage),
+  m_strDVDSubtitleLanguage(region.m_strDVDSubtitleLanguage),
+  m_strLangLocaleName(region.m_strLangLocaleName),
+  m_strLangLocaleCodeTwoChar(region.m_strLangLocaleCodeTwoChar),
+  m_strRegionLocaleName(region.m_strRegionLocaleName),
+  m_forceUnicodeFont(region.m_forceUnicodeFont),
+  m_strName(region.m_strName),
+  m_strDateFormatLong(region.m_strDateFormatLong),
+  m_strDateFormatShort(region.m_strDateFormatShort),
+  m_strTimeFormat(region.m_strTimeFormat),
+  m_strTimeZone(region.m_strTimeZone)
 {
-  m_strName=region.m_strName;
-  m_forceUnicodeFont=region.m_forceUnicodeFont;
-  m_strGuiCharSet=region.m_strGuiCharSet;
-  m_strSubtitleCharSet=region.m_strSubtitleCharSet;
-  m_strDVDMenuLanguage=region.m_strDVDMenuLanguage;
-  m_strDVDAudioLanguage=region.m_strDVDAudioLanguage;
-  m_strDVDSubtitleLanguage=region.m_strDVDSubtitleLanguage;
-  m_strLangLocaleName = region.m_strLangLocaleName;
-  m_strLangLocaleCodeTwoChar = region.m_strLangLocaleCodeTwoChar;
-  m_strRegionLocaleName = region.m_strRegionLocaleName;
-
-  m_strDateFormatShort=region.m_strDateFormatShort;
-  m_strDateFormatLong=region.m_strDateFormatLong;
-  m_strTimeFormat=region.m_strTimeFormat;
   m_strMeridiemSymbols[MERIDIEM_SYMBOL_PM]=region.m_strMeridiemSymbols[MERIDIEM_SYMBOL_PM];
   m_strMeridiemSymbols[MERIDIEM_SYMBOL_AM]=region.m_strMeridiemSymbols[MERIDIEM_SYMBOL_AM];
-  m_strTimeFormat=region.m_strTimeFormat;
   m_tempUnit=region.m_tempUnit;
   m_speedUnit=region.m_speedUnit;
-  m_strTimeZone = region.m_strTimeZone;
 }
 
 CLangInfo::CRegion::CRegion()
@@ -198,6 +198,7 @@ void CLangInfo::CRegion::SetGlobalLocale()
     strLocale = "C";
   }
 
+  g_langInfo.m_locale = current_locale; // TODO: move to CLangInfo class
   locale::global(current_locale);
 #endif
   g_charsetConverter.resetSystemCharset();
@@ -421,6 +422,8 @@ void CLangInfo::SetDefaults()
 
   // Set the default region, we may be unable to load langinfo.xml
   m_currentRegion=&m_defaultRegion;
+
+  m_locale = std::locale::classic();
   
   m_languageCodeGeneral = "eng";
 }
@@ -532,12 +535,9 @@ const std::string CLangInfo::GetDVDSubtitleLanguage() const
   return code;
 }
 
-const std::string CLangInfo::GetLanguageLocale(bool twochar /* = false */) const
+const std::string& CLangInfo::GetLanguageLocale() const
 {
-  if (twochar)
-    return m_currentRegion->m_strLangLocaleCodeTwoChar;
-
-  return m_currentRegion->m_strLangLocaleName;
+  return m_currentRegion->m_strLangLocaleCodeTwoChar;
 }
 
 const std::string& CLangInfo::GetRegionLocale() const
