@@ -66,6 +66,7 @@
 #include "utils/XMLUtils.h"
 #include "URL.h"
 #include "playlists/SmartPlayList.h"
+#include "CueInfoLoader.h"
 
 using namespace std;
 using namespace AUTOPTR;
@@ -3625,6 +3626,12 @@ bool CMusicDatabase::GetSongsByWhere(const std::string &baseDir, const Filter &f
 
     // cleanup
     m_pDS->close();
+
+    // Load some info from embedded cuesheet if present (now only ReplayGain)
+    CueInfoLoader cueLoader;
+    for (int i = 0; i < items.Size(); ++i)
+      cueLoader.Load(LoadCuesheet(items[i]->GetMusicInfoTag()->GetURL()), items[i]);
+
     CLog::Log(LOGDEBUG, "%s(%s) - took %d ms", __FUNCTION__, filter.where.c_str(), XbmcThreads::SystemClockMillis() - time);
     return true;
   }
@@ -5185,7 +5192,7 @@ void CMusicDatabase::ExportKaraokeInfo(const std::string & outFile, bool asHTML)
       outdoc = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta></head>\n"
           "<body>\n<table>\n";
 
-      if (file.Write(outdoc.c_str(), outdoc.size()) != outdoc.size())
+      if (file.Write(outdoc.c_str(), outdoc.size()) != static_cast<ssize_t>(outdoc.size()))
         return; // error
     }
 
@@ -5199,7 +5206,7 @@ void CMusicDatabase::ExportKaraokeInfo(const std::string & outFile, bool asHTML)
       else
         outdoc = songnum + '\t' + StringUtils::Join(song.artist, g_advancedSettings.m_musicItemSeparator) + '\t' + song.strTitle + '\t' + song.strFileName + "\r\n";
 
-      if (file.Write(outdoc.c_str(), outdoc.size()) != outdoc.size())
+      if (file.Write(outdoc.c_str(), outdoc.size()) != static_cast<ssize_t>(outdoc.size()))
         return; // error
 
       if ((current % 50) == 0 && progress)
@@ -5222,7 +5229,7 @@ void CMusicDatabase::ExportKaraokeInfo(const std::string & outFile, bool asHTML)
     if ( asHTML )
     {
       outdoc = "</table>\n</body>\n</html>\n";
-      if (file.Write(outdoc.c_str(), outdoc.size()) != outdoc.size())
+      if (file.Write(outdoc.c_str(), outdoc.size()) != static_cast<ssize_t>(outdoc.size()))
         return; // error
     }
 

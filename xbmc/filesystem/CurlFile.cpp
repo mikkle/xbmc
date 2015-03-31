@@ -875,7 +875,7 @@ bool CCurlFile::Download(const std::string& strURL, const std::string& strFileNa
   if (pdwSize != NULL)
     *pdwSize = written > 0 ? written : 0;
 
-  return written == strData.size();
+  return written == static_cast<ssize_t>(strData.size());
 }
 
 // Detect whether we are "online" or not! Very simple and dirty!
@@ -1120,7 +1120,7 @@ bool CCurlFile::Exists(const CURL& url)
   g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_NOBODY, 1);
   g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_WRITEDATA, NULL); /* will cause write failure*/
 
-  if(url2.IsProtocol("ftp"))
+  if(url2.IsProtocol("ftp") || url2.IsProtocol("ftps"))
   {
     g_curlInterface.easy_setopt(m_state->m_easyHandle, CURLOPT_FILETIME, 1);
     // nocwd is less standard, will return empty list for non-existed remote dir on some ftp server, avoid it.

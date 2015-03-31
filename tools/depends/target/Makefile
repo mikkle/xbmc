@@ -12,7 +12,7 @@ DEPENDS = \
 	libogg libvorbis libflac fribidi libmpeg2 \
 	libass libsquish \
 	libmodplug librtmp libxml2 yajl libmicrohttpd mysql libffi \
-	python26 afpfs-ng libshairplay \
+	python26 libshairplay \
 	libplist libcec libbluray boost tinyxml dummy-libxbmc \
 	libamplayer libssh taglib libusb libnfs libmp3lame \
 	pythonmodule-pil libxslt ffmpeg
@@ -36,7 +36,7 @@ ifeq ($(OS),osx)
 endif
 
 ifeq ($(OS),android)
-  DEPENDS += mdnsresponder android-sources-ics
+  DEPENDS += mdnsresponder android-sources-ics google-breakpad
 endif
 
 DEPENDS := $(filter-out $(EXCLUDED_DEPENDS),$(DEPENDS))
@@ -80,10 +80,9 @@ libvorbis: libogg
 libflac: libogg gettext
 libass: fontconfig libpng freetype2 expat $(ICONV)
 librtmp: openssl
-libmicrohttpd: openssl libgpg-error libgcrypt
+libmicrohttpd: gnutls libgcrypt libgpg-error
 python26: expat gettext libxml2 sqlite3 openssl libffi
 libcdio: $(ICONV)
-afpfs-ng: libgcrypt $(ICONV)
 libplist: libxml2 $(ZLIB)
 libbluray: $(ICONV) libxml2
 libssh: openssl

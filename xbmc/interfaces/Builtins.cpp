@@ -27,12 +27,14 @@
 #include "Autorun.h"
 #include "Builtins.h"
 #include "input/ButtonTranslator.h"
+#include "input/InputManager.h"
 #include "FileItem.h"
 #include "addons/GUIDialogAddonSettings.h"
 #include "dialogs/GUIDialogFileBrowser.h"
 #include "guilib/GUIKeyboardFactory.h"
-#include "guilib/Key.h"
+#include "input/Key.h"
 #include "guilib/StereoscopicsManager.h"
+#include "guilib/GUIAudioManager.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "dialogs/GUIDialogNumeric.h"
 #include "dialogs/GUIDialogProgress.h"
@@ -66,6 +68,8 @@
 #include "URL.h"
 #include "music/MusicDatabase.h"
 #include "cores/IPlayer.h"
+#include "pvr/channels/PVRChannel.h"
+#include "pvr/recordings/PVRRecording.h"
 
 #include "filesystem/PluginDirectory.h"
 #ifdef HAS_FILESYSTEM_RAR
@@ -230,7 +234,7 @@ const BUILT_IN commands[] = {
 #if defined(TARGET_ANDROID)
   { "StartAndroidActivity",       true,   "Launch an Android native app with the given package name.  Optional parms (in order): intent, dataType, dataURI." },
 #endif
-  { "SetStereoMode",              true,   "Changes the stereo mode of the GUI. Params can be: toggle, next, previous, select, tomono or any of the supported stereomodes (off, split_vertical, split_horizontal, row_interleaved, hardware_based, anaglyph_cyan_red, anaglyph_green_magenta, monoscopic)" }
+  { "SetStereoMode",              true,   "Changes the stereo mode of the GUI. Params can be: toggle, next, previous, select, tomono or any of the supported stereomodes (off, split_vertical, split_horizontal, row_interleaved, hardware_based, anaglyph_cyan_red, anaglyph_green_magenta, anaglyph_yellow_blue, monoscopic)" }
 };
 
 bool CBuiltins::HasCommand(const std::string& execString)
@@ -289,6 +293,22 @@ void CBuiltins::GetHelp(std::string &help)
     help += commands[i].description;
     help += "\n";
   }
+}
+
+bool CBuiltins::ActivateWindow(int iWindowID, const std::vector<std::string>& params /* = {} */, bool swappingWindows /* = false */)
+{
+  // don't activate a window if there are active modal dialogs
+  if (g_windowManager.HasModalDialog() && !g_windowManager.GetWindow(iWindowID)->IsDialog())
+  {
+    CLog::Log(LOG_LEVEL_DEBUG, "Activate of window '%i' refused because there are active modal dialogs", iWindowID);
+    g_audioManager.PlayActionSound(CAction(ACTION_ERROR));
+    return false;
+  }
+
+  // disable the screensaver
+  g_application.WakeUpScreenSaverAndDPMS();
+  g_windowManager.ActivateWindow(iWindowID, params, swappingWindows);
+  return true;
 }
 
 int CBuiltins::Execute(const std::string& execString)
@@ -439,9 +459,7 @@ int CBuiltins::Execute(const std::string& execString)
       // activate window only if window and path differ from the current active window
       if (iWindow != g_windowManager.GetActiveWindow() || !bIsSameStartFolder)
       {
-        // disable the screensaver
-        g_application.WakeUpScreenSaverAndDPMS();
-        g_windowManager.ActivateWindow(iWindow, params, execute != "activatewindow");
+        return ActivateWindow(iWindow, params, execute != "activatewindow");
       }
     }
     else
@@ -467,10 +485,8 @@ int CBuiltins::Execute(const std::string& execString)
     {
       if (iWindow != g_windowManager.GetActiveWindow())
       {
-        // disable the screensaver
-        g_application.WakeUpScreenSaverAndDPMS();
-        vector<string> dummy;
-        g_windowManager.ActivateWindow(iWindow, dummy, execute != "activatewindowandfocus");
+        if (!ActivateWindow(iWindow, {}, execute != "activatewindowandfocus"))
+          return false;
 
         unsigned int iPtr = 1;
         while (params.size() > iPtr + 1)
@@ -530,7 +546,7 @@ int CBuiltins::Execute(const std::string& execString)
       if (!filename.empty())
         argv[0] = filename;
 
-      CScriptInvocationManager::Get().Execute(scriptpath, addon, argv);
+      CScriptInvocationManager::Get().ExecuteAsync(scriptpath, addon, argv);
     }
   }
 #if defined(TARGET_DARWIN_OSX)
@@ -748,7 +764,7 @@ int CBuiltins::Execute(const std::string& execString)
     if (item.m_bIsFolder)
     {
       CFileItemList items;
-      std::string extensions = g_advancedSettings.m_videoExtensions + "|" + g_advancedSettings.m_musicExtensions;
+      std::string extensions = g_advancedSettings.m_videoExtensions + "|" + g_advancedSettings.GetMusicExtensions();
       CDirectory::GetDirectory(item.GetPath(),items,extensions);
 
       bool containsMusic = false, containsVideo = false;
@@ -1061,6 +1077,21 @@ int CBuiltins::Execute(const std::string& execString)
       // send messages so now playing window can get updated
       CGUIMessage msg(GUI_MSG_PLAYLISTPLAYER_REPEAT, 0, 0, iPlaylist, (int)state);
       g_windowManager.SendThreadMessage(msg);
+    }
+    else if (StringUtils::StartsWithNoCase(parameter, "resumelivetv"))
+    {
+      CFileItem& fileItem(g_application.CurrentFileItem());
+      PVR::CPVRChannelPtr channel = fileItem.HasPVRRecordingInfoTag() ? fileItem.GetPVRRecordingInfoTag()->Channel() : PVR::CPVRChannelPtr();
+
+      if (channel)
+      {
+        CFileItem playItem(channel);
+        if (!g_application.PlayMedia(playItem, channel->IsRadio() ? PLAYLIST_MUSIC : PLAYLIST_VIDEO))
+        {
+          CLog::Log(LOGERROR, "ResumeLiveTv could not play channel: %s", channel->ChannelName().c_str());
+          return false;
+        }
+      }
     }
   }
   else if (execute == "playwith")
@@ -1467,7 +1498,10 @@ int CBuiltins::Execute(const std::string& execString)
     g_application.getNetwork().NetworkMessage(CNetwork::SERVICES_DOWN,1);
     CProfilesManager::Get().LoadMasterProfileForLogin();
     g_passwordManager.bMasterUser = false;
-    g_windowManager.ActivateWindow(WINDOW_LOGIN_SCREEN);
+
+    if (!ActivateWindow(WINDOW_LOGIN_SCREEN))
+      return false;
+
     if (!CNetworkServices::Get().StartEventServer()) // event server could be needed in some situations
       CGUIDialogKaiToast::QueueNotification(CGUIDialogKaiToast::Warning, g_localizeStrings.Get(33102), g_localizeStrings.Get(33100));
   }
@@ -1772,29 +1806,6 @@ int CBuiltins::Execute(const std::string& execString)
   {
     CApplicationMessenger::Get().CECStandby();
   }
-#if defined(HAS_LIRC) || defined(HAS_IRSERVERSUITE)
-  else if (execute == "lirc.stop")
-  {
-    g_RemoteControl.Disconnect();
-    g_RemoteControl.setUsed(false);
-  }
-  else if (execute == "lirc.start")
-  {
-    g_RemoteControl.setUsed(true);
-    g_RemoteControl.Initialize();
-  }
-  else if (execute == "lirc.send")
-  {
-    std::string command;
-    for (int i = 0; i < (int)params.size(); i++)
-    {
-      command += params[i];
-      if (i < (int)params.size() - 1)
-        command += ' ';
-    }
-    g_RemoteControl.AddSendCommand(command);
-  }
-#endif
   else if (execute == "weather.locationset" && !params.empty())
   {
     int loc = atoi(params[0].c_str());
@@ -1851,6 +1862,6 @@ int CBuiltins::Execute(const std::string& execString)
     }
   }
   else
-    return -1;
+    return CInputManager::Get().ExecuteBuiltin(execute, params);
   return 0;
 }
