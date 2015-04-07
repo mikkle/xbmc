@@ -107,9 +107,6 @@
 #include <SDL2/SDL.h>
 #endif
 
-#if defined(FILESYSTEM) && !defined(TARGET_POSIX)
-#include "filesystem/FileDAAP.h"
-#endif
 #ifdef HAS_UPNP
 #include "network/upnp/UPnP.h"
 #include "network/upnp/UPnPSettings.h"
@@ -190,6 +187,7 @@
 #include "utils/XMLUtils.h"
 #include "addons/AddonInstaller.h"
 #include "addons/AddonManager.h"
+#include "music/tags/MusicInfoTag.h"
 #include "music/tags/MusicInfoTagLoaderFactory.h"
 #include "CompileInfo.h"
 
@@ -1936,7 +1934,6 @@ void CApplication::Render()
   }
 
   CSingleLock lock(g_graphicsContext);
-  g_infoManager.UpdateFPS();
 
   if (g_graphicsContext.IsFullScreenVideo() && m_pPlayer->IsPlaying() && vsync_mode == VSYNC_VIDEO)
     g_Windowing.SetVSync(true);
@@ -1981,11 +1978,16 @@ void CApplication::Render()
   // fresh for the next process(), or after a windowclose animation (where process()
   // isn't called)
   g_infoManager.ResetCache();
-  lock.Leave();
+
 
   unsigned int now = XbmcThreads::SystemClockMillis();
   if (hasRendered)
+  {
+    g_infoManager.UpdateFPS();
     m_lastRenderTime = now;
+  }
+
+  lock.Leave();
 
   //when nothing has been rendered for m_guiDirtyRegionNoFlipTimeout milliseconds,
   //we don't call g_graphicsContext.Flip() anymore, this saves gpu and cpu usage
@@ -2596,10 +2598,6 @@ void CApplication::Stop(int exitCode)
     StopServices();
     //Sleep(5000);
 
-#if HAS_FILESYTEM_DAAP
-    CLog::Log(LOGNOTICE, "stop daap clients");
-    g_DaapClient.Release();
-#endif
 #ifdef HAS_FILESYSTEM_SAP
     CLog::Log(LOGNOTICE, "stop sap announcement listener");
     g_sapsessions.StopThread();
