@@ -328,6 +328,7 @@ CApplication::CApplication(void)
   m_currentStackPosition = 0;
   m_lastFrameTime = 0;
   m_lastRenderTime = 0;
+  m_skipGuiRender = false;
   m_bTestMode = false;
 
   m_muted = false;
@@ -1557,9 +1558,15 @@ bool CApplication::Load(const TiXmlNode *settings)
   const TiXmlElement *audioElement = settings->FirstChildElement("audio");
   if (audioElement != NULL)
   {
+#ifndef TARGET_ANDROID
     XMLUtils::GetBoolean(audioElement, "mute", m_muted);
     if (!XMLUtils::GetFloat(audioElement, "fvolumelevel", m_volumeLevel, VOLUME_MINIMUM, VOLUME_MAXIMUM))
       m_volumeLevel = VOLUME_MAXIMUM;
+#else
+    // Use system volume settings
+    m_volumeLevel = CXBMCApp::GetSystemVolume();
+    m_muted = (m_volumeLevel == 0);
+#endif
   }
 
   return true;
@@ -1948,31 +1955,39 @@ void CApplication::Render()
   if(!g_Windowing.BeginRender())
     return;
 
-  CDirtyRegionList dirtyRegions = g_windowManager.GetDirty();
-  if(g_graphicsContext.GetStereoMode())
-  {
-    g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_LEFT);
-    if(RenderNoPresent())
-      hasRendered = true;
+  CDirtyRegionList dirtyRegions;
 
-    if(g_graphicsContext.GetStereoMode() != RENDER_STEREO_MODE_MONO)
+  // render gui layer
+  if (!m_skipGuiRender)
+  {
+    dirtyRegions = g_windowManager.GetDirty();
+    if (g_graphicsContext.GetStereoMode())
     {
-      g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_RIGHT);
-      if(RenderNoPresent())
+      g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_LEFT);
+      if (RenderNoPresent())
+        hasRendered = true;
+
+      if (g_graphicsContext.GetStereoMode() != RENDER_STEREO_MODE_MONO)
+      {
+        g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_RIGHT);
+        if (RenderNoPresent())
+          hasRendered = true;
+      }
+      g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_OFF);
+    }
+    else
+    {
+      if (RenderNoPresent())
         hasRendered = true;
     }
-    g_graphicsContext.SetStereoView(RENDER_STEREO_VIEW_OFF);
+    // execute post rendering actions (finalize window closing)
+    g_windowManager.AfterRender();
   }
-  else
-  {
-    if(RenderNoPresent())
-      hasRendered = true;
-  }
+
+  // render video layer
+  g_windowManager.RenderEx();
 
   g_Windowing.EndRender();
-
-  // execute post rendering actions (finalize window closing)
-  g_windowManager.AfterRender();
 
   // reset our info cache - we do this at the end of Render so that it is
   // fresh for the next process(), or after a windowclose animation (where process()
@@ -2389,7 +2404,7 @@ bool CApplication::OnAction(const CAction &action)
   }
 
   // Check for global volume control
-  if (action.GetAmount() && (action.GetID() == ACTION_VOLUME_UP || action.GetID() == ACTION_VOLUME_DOWN))
+  if (action.GetAmount() && (action.GetID() == ACTION_VOLUME_UP || action.GetID() == ACTION_VOLUME_DOWN || action.GetID() == ACTION_VOLUME_SET))
   {
     if (!m_pPlayer->IsPassthrough())
     {
@@ -2406,13 +2421,18 @@ bool CApplication::OnAction(const CAction &action)
         step *= action.GetRepeat() * 50; // 50 fps
 #endif
       if (action.GetID() == ACTION_VOLUME_UP)
-        volume += action.GetAmount() * action.GetAmount() * step;
+        volume += (float)fabs(action.GetAmount()) * action.GetAmount() * step;
+      else if (action.GetID() == ACTION_VOLUME_DOWN)
+        volume -= (float)fabs(action.GetAmount()) * action.GetAmount() * step;
       else
-        volume -= action.GetAmount() * action.GetAmount() * step;
-      SetVolume(volume, false);
+        volume = action.GetAmount() * step;
+      if (volume != m_volumeLevel)
+      {
+        SetVolume(volume, false);
+        // show visual feedback of volume change...
+        ShowVolumeBar(&action);
+      }
     }
-    // show visual feedback of volume change...
-    ShowVolumeBar(&action);
     return true;
   }
   if (action.GetID() == ACTION_GUIPROFILE_BEGIN)
@@ -2471,8 +2491,26 @@ void CApplication::FrameMove(bool processEvents, bool processGUI)
   }
   if (processGUI && m_renderGUI)
   {
+    m_skipGuiRender = false;
+    int fps = 0;
+
+#if defined(TARGET_RASPBERRY_PI) || defined(HAS_IMXVPU)
+    // This code reduces rendering fps of the GUI layer when playing videos in fullscreen mode
+    // it makes only sense on architectures with multiple layers
+    if (g_graphicsContext.IsFullScreenVideo() && !m_pPlayer->IsPausedPlayback() && g_renderManager.IsVideoLayer())
+      fps = CSettings::Get().GetInt("videoplayer.limitguiupdate");
+#endif
+
+    unsigned int now = XbmcThreads::SystemClockMillis();
+    unsigned int frameTime = now - m_lastRenderTime;
+    if (fps > 0 && frameTime * fps < 1000)
+      m_skipGuiRender = true;
+
     if (!m_bStop)
-      g_windowManager.Process(CTimeUtils::GetFrameTime());
+    {
+      if (!m_skipGuiRender)
+        g_windowManager.Process(CTimeUtils::GetFrameTime());
+    }
     g_windowManager.FrameMove();
   }
 }
