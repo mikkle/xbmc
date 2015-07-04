@@ -665,6 +665,8 @@ namespace INFO
 #define LISTITEM_IMDBNUMBER         (LISTITEM_START + 146)
 #define LISTITEM_EPISODENAME        (LISTITEM_START + 147)
 #define LISTITEM_IS_COLLECTION      (LISTITEM_START + 148)
+#define LISTITEM_HASTIMERSCHEDULE   (LISTITEM_START + 149)
+#define LISTITEM_TIMERTYPE          (LISTITEM_START + 150)
 
 #define LISTITEM_PROPERTY_START     (LISTITEM_START + 200)
 #define LISTITEM_PROPERTY_END       (LISTITEM_PROPERTY_START + 1000)
@@ -803,6 +805,7 @@ public:
   std::string GetCurrentSeekTime(TIME_FORMAT format = TIME_FORMAT_GUESS) const;
   int GetPlayTimeRemaining() const;
   int GetTotalPlayTime() const;
+  float GetSeekPercent() const;
   std::string GetCurrentPlayTimeRemaining(TIME_FORMAT format) const;
   std::string GetVersionShort(void);
   std::string GetAppName();
@@ -811,14 +814,11 @@ public:
 
   bool GetDisplayAfterSeek();
   void SetDisplayAfterSeek(unsigned int timeOut = 2500, int seekOffset = 0);
-  void SetSeekStepSize(int seekStepSize) { m_seekStepSize = seekStepSize; };
-  void SetSeeking(bool seeking) { m_playerSeeking = seeking; };
   void SetShowTime(bool showtime) { m_playerShowTime = showtime; };
   void SetShowCodec(bool showcodec) { m_playerShowCodec = showcodec; };
   void SetShowInfo(bool showinfo) { m_playerShowInfo = showinfo; };
   void ToggleShowCodec() { m_playerShowCodec = !m_playerShowCodec; };
   bool ToggleShowInfo() { m_playerShowInfo = !m_playerShowInfo; return m_playerShowInfo; };
-  bool m_performingSeek;
 
   std::string GetSystemHeatInfo(int info);
   CTemperature GetGPUTemperature();
@@ -939,8 +939,6 @@ protected:
   //Fullscreen OSD Stuff
   unsigned int m_AfterSeekTimeout;
   int m_seekOffset;
-  int m_seekStepSize;
-  bool m_playerSeeking;
   bool m_playerShowTime;
   bool m_playerShowCodec;
   bool m_playerShowInfo;

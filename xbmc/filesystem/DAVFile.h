@@ -19,7 +19,6 @@
  *
  */
 
-#include "IFile.h"
 #include "CurlFile.h"
 
 namespace XFILE
@@ -31,11 +30,9 @@ namespace XFILE
     virtual ~CDAVFile(void);
 
     virtual bool Execute(const CURL& url);
+
     virtual bool Delete(const CURL& url);
     virtual bool Rename(const CURL& url, const CURL& urlnew);
-
-    virtual bool Exists(const CURL& url);
-    virtual int Stat(const CURL& url, struct __stat64* buffer);
 
     virtual int GetLastResponseCode() { return lastResponseCode; }
 

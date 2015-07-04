@@ -20,11 +20,8 @@
 
 #include "GUIWindowPVRGuide.h"
 
-#include "Application.h"
 #include "ContextMenuManager.h"
 #include "GUIUserMessages.h"
-#include "dialogs/GUIDialogOK.h"
-#include "guilib/GUIWindowManager.h"
 #include "input/Key.h"
 #include "pvr/PVRManager.h"
 #include "pvr/channels/PVRChannelGroupsContainer.h"
@@ -32,8 +29,6 @@
 #include "settings/AdvancedSettings.h"
 #include "settings/Settings.h"
 #include "threads/SingleLock.h"
-#include "utils/log.h"
-#include "utils/StringUtils.h"
 #include "pvr/addons/PVRClients.h"
 #include "pvr/timers/PVRTimers.h"
 
@@ -80,15 +75,17 @@ void CGUIWindowPVRGuide::GetContextButtons(int itemNumber, CContextButtons &butt
   {
     if (timer->GetPVRTimerInfoTag()->IsRecording())
       buttons.Add(CONTEXT_BUTTON_STOP_RECORD, 19059);  /* stop recording */
-    else
+    else if (timer->GetPVRTimerInfoTag()->HasTimerType() &&
+             !timer->GetPVRTimerInfoTag()->GetTimerType()->IsReadOnly())
       buttons.Add(CONTEXT_BUTTON_STOP_RECORD, 19060);  /* delete timer */
   }
   else if (pItem->HasEPGInfoTag() && pItem->GetEPGInfoTag()->EndAsLocalTime() > CDateTime::GetCurrentDateTime())
   {
     if (pItem->GetEPGInfoTag()->StartAsLocalTime() < CDateTime::GetCurrentDateTime())
       buttons.Add(CONTEXT_BUTTON_START_RECORD, 264);   /* record */
-    else
-      buttons.Add(CONTEXT_BUTTON_START_RECORD, 19061); /* add timer */
+
+    buttons.Add(CONTEXT_BUTTON_START_RECORD, 19061);   /* add timer */
+    buttons.Add(CONTEXT_BUTTON_ADVANCED_RECORD, 841);  /* add custom timer */
   }
 
   buttons.Add(CONTEXT_BUTTON_INFO, 19047);              /* epg info */
@@ -301,7 +298,7 @@ void CGUIWindowPVRGuide::UpdateViewNow()
 
   m_vecItems->Clear();
   int iEpgItems = GetGroup()->GetEPGNow(*m_vecItems);
-  
+
   if (iEpgItems == 0)
   {
     CFileItemPtr item;
@@ -360,23 +357,23 @@ void CGUIWindowPVRGuide::UpdateViewTimeline()
   CDateTime startDate(m_cachedChannelGroup->GetFirstEPGDate());
   CDateTime endDate(m_cachedChannelGroup->GetLastEPGDate());
   CDateTime currentDate = CDateTime::GetCurrentDateTime().GetAsUTCDateTime();
-  
+
   if (!startDate.IsValid())
     startDate = currentDate;
-  
+
   if (!endDate.IsValid() || endDate < startDate)
     endDate = startDate;
-  
+
   // limit start to linger time
   CDateTime maxPastDate = currentDate - CDateTimeSpan(0, 0, g_advancedSettings.m_iEpgLingerTime, 0);
   if (startDate < maxPastDate)
     startDate = maxPastDate;
-  
+
   epgGridContainer->SetStartEnd(startDate, endDate);
 
   SET_CONTROL_LABEL(CONTROL_LABEL_HEADER1, g_localizeStrings.Get(19032));
   SET_CONTROL_LABEL(CONTROL_LABEL_HEADER2, GetGroup()->GroupName());
-  
+
   m_viewControl.SetItems(*m_vecItems);
 
   epgGridContainer->SetChannel(GetSelectedItemPath(m_bRadio));
@@ -447,7 +444,7 @@ bool CGUIWindowPVRGuide::OnContextButtonNow(CFileItem *item, CONTEXT_BUTTON butt
     epgGridContainer->GoToNow();
     bReturn = true;
   }
-  
+
   return bReturn;
 }
 
@@ -481,9 +478,10 @@ bool CGUIWindowPVRGuide::OnContextButtonStartRecord(CFileItem *item, CONTEXT_BUT
 {
   bool bReturn = false;
 
-  if (button == CONTEXT_BUTTON_START_RECORD)
+  if ((button == CONTEXT_BUTTON_START_RECORD) ||
+      (button == CONTEXT_BUTTON_ADVANCED_RECORD))
   {
-    StartRecordFile(*item);
+    StartRecordFile(item, button == CONTEXT_BUTTON_ADVANCED_RECORD);
     bReturn = true;
   }
 
@@ -496,7 +494,7 @@ bool CGUIWindowPVRGuide::OnContextButtonStopRecord(CFileItem *item, CONTEXT_BUTT
 
   if (button == CONTEXT_BUTTON_STOP_RECORD)
   {
-    StopRecordFile(*item);
+    StopRecordFile(item);
     bReturn = true;
   }
 

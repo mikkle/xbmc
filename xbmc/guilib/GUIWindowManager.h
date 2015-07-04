@@ -37,6 +37,7 @@
 #include <list>
 
 class CGUIDialog;
+enum class DialogModalityType;
 
 #define WINDOW_ID_MASK 0xffff
 
@@ -59,8 +60,9 @@ public:
   void Remove(int id);
   void Delete(int id);
   void ActivateWindow(int iWindowID, const std::string &strPath = "");
+  void ForceActivateWindow(int iWindowID, const std::string &strPath = "");
   void ChangeActiveWindow(int iNewID, const std::string &strPath = "");
-  void ActivateWindow(int iWindowID, const std::vector<std::string>& params, bool swappingWindows = false);
+  void ActivateWindow(int iWindowID, const std::vector<std::string>& params, bool swappingWindows = false, bool force = false);
   void PreviousWindow();
 
   void CloseDialogs(bool forceClose = false) const;
@@ -145,7 +147,7 @@ public:
   int GetActiveWindow() const;
   int GetActiveWindowID();
   int GetFocusedWindow() const;
-  bool HasModalDialog() const;
+  bool HasModalDialog(const std::vector<DialogModalityType>& types = std::vector<DialogModalityType>()) const;
   bool HasDialogOnScreen() const;
   bool IsWindowActive(int id, bool ignoreClosing = true) const;
   bool IsWindowVisible(int id) const;
@@ -181,7 +183,15 @@ private:
   CGUIWindow *GetTopMostDialog() const;
 
   friend class CApplicationMessenger;
-  void ActivateWindow_Internal(int windowID, const std::vector<std::string> &params, bool swappingWindows);
+
+  /*! \brief Activate the given window.
+   *
+   * \param windowID The window ID to activate.
+   * \param params Parameter
+   * \param swappingWindows True if the window should be swapped with the previous window instead of put it in the window history, otherwise false
+   * \param force True to ignore checks which refuses opening the window, otherwise false
+   */
+  void ActivateWindow_Internal(int windowID, const std::vector<std::string> &params, bool swappingWindows, bool force = false);
 
   typedef std::map<int, CGUIWindow *> WindowMap;
   WindowMap m_mapWindows;

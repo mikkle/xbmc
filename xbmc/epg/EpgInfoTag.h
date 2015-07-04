@@ -1,5 +1,4 @@
 #pragma once
-
 /*
  *      Copyright (C) 2012-2013 Team XBMC
  *      http://xbmc.org
@@ -20,15 +19,14 @@
  *
  */
 
-#include "addons/include/xbmc_pvr_types.h"
-#include "XBDateTime.h"
-#include "utils/ISerializable.h"
-#include "pvr/channels/PVRChannel.h"
-#include "pvr/timers/PVRTimerInfoTag.h"
-#include "pvr/recordings/PVRRecording.h"
-
 #include <memory>
 #include <string>
+
+#include "XBDateTime.h"
+#include "addons/include/xbmc_pvr_types.h"
+#include "pvr/channels/PVRChannel.h"
+#include "pvr/timers/PVRTimerInfoTag.h"
+#include "utils/ISerializable.h"
 
 #define EPG_DEBUGGING 0
 
@@ -70,13 +68,13 @@ namespace EPG
 
     // Prevent copy construction, even for CEpgInfoTag instances and friends.
     // Note: Only declared, but intentionally not implemented
-    //       to prevent compiler generated copy ctor and to force 
+    //       to prevent compiler generated copy ctor and to force
     //       a linker error in case somebody tries to call it.
     CEpgInfoTag(const CEpgInfoTag &tag);
 
     // Prevent copy by assignment, even for CEpgInfoTag instances and friends.
     // Note: Only declared, but intentionally not implemented
-    //       to prevent compiler generated assignment operator and to force 
+    //       to prevent compiler generated assignment operator and to force
     //       a linker error in case somebody tries to call it.
     CEpgInfoTag &operator =(const CEpgInfoTag &other);
 
@@ -332,6 +330,12 @@ namespace EPG
      * @return True if it has an active timer tag, false if not.
      */
     bool HasTimer(void) const;
+
+    /*!
+     * @brief Check whether this event has an active timer schedule.
+     * @return True if it has an active timer schedule, false if not.
+     */
+    bool HasTimerSchedule(void) const;
 
     /*!
      * @brief Get a pointer to the timer for event or NULL if there is none.

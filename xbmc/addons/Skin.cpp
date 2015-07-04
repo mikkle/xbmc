@@ -20,7 +20,6 @@
 
 #include "Skin.h"
 #include "AddonManager.h"
-#include "LangInfo.h"
 #include "Util.h"
 #include "dialogs/GUIDialogKaiToast.h"
 #include "dialogs/GUIDialogYesNo.h"
@@ -276,20 +275,15 @@ const INFO::CSkinVariableString* CSkinInfo::CreateSkinVariable(const std::string
   return m_includes.CreateSkinVariable(name, context);
 }
 
-bool CSkinInfo::OnPreInstall()
+void CSkinInfo::OnPreInstall()
 {
-  // check whether this is an active skin - we need to unload it if so
   if (IsInUse())
-  {
     CApplicationMessenger::Get().ExecBuiltIn("UnloadSkin", true);
-    return true;
-  }
-  return false;
 }
 
-void CSkinInfo::OnPostInstall(bool restart, bool update, bool modal)
+void CSkinInfo::OnPostInstall(bool update, bool modal)
 {
-  if (restart || (!update && !modal && CGUIDialogYesNo::ShowAndGetInput(Name(), g_localizeStrings.Get(24099),"","")))
+  if (IsInUse() || (!update && !modal && CGUIDialogYesNo::ShowAndGetInput(Name(), 24099)))
   {
     CGUIDialogKaiToast *toast = (CGUIDialogKaiToast *)g_windowManager.GetWindow(WINDOW_DIALOG_KAI_TOAST);
     if (toast)
@@ -400,7 +394,9 @@ void CSkinInfo::SettingOptionsSkinSoundFiller(const CSetting *setting, std::vect
   current = "SKINDEFAULT";
 
   list.push_back(make_pair(g_localizeStrings.Get(474), "OFF"));
-  list.push_back(make_pair(g_localizeStrings.Get(15109), "SKINDEFAULT"));
+
+  if (CDirectory::Exists(URIUtils::AddFileToFolder(g_SkinInfo->Path(), "sounds")))
+    list.push_back(make_pair(g_localizeStrings.Get(15106), "SKINDEFAULT"));
 
   ADDON::VECADDONS addons;
   if (ADDON::CAddonMgr::Get().GetAddons(ADDON::ADDON_RESOURCE_UISOUNDS, addons))

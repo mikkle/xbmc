@@ -20,11 +20,9 @@
 
 #include "GUIWindowAddonBrowser.h"
 #include "addons/AddonManager.h"
-#include "addons/Repository.h"
 #include "GUIDialogAddonInfo.h"
 #include "GUIDialogAddonSettings.h"
 #include "dialogs/GUIDialogBusy.h"
-#include "dialogs/GUIDialogOK.h"
 #include "dialogs/GUIDialogYesNo.h"
 #include "dialogs/GUIDialogSelect.h"
 #include "dialogs/GUIDialogFileBrowser.h"
@@ -33,18 +31,12 @@
 #include "utils/URIUtils.h"
 #include "URL.h"
 #include "FileItem.h"
-#include "filesystem/File.h"
-#include "filesystem/Directory.h"
 #include "filesystem/AddonsDirectory.h"
 #include "addons/AddonInstaller.h"
-#include "utils/JobManager.h"
-#include "utils/log.h"
-#include "threads/SingleLock.h"
 #include "settings/Settings.h"
 #include "settings/MediaSourceSettings.h"
 #include "utils/StringUtils.h"
 #include "AddonDatabase.h"
-#include "settings/AdvancedSettings.h"
 #include "storage/MediaManager.h"
 #include "LangInfo.h"
 #include "input/Key.h"
@@ -125,7 +117,7 @@ bool CGUIWindowAddonBrowser::OnMessage(CGUIMessage& message)
       }
       else if (iControl == CONTROL_CHECK_FOR_UPDATES)
       {
-        CAddonInstaller::Get().UpdateRepos(true);
+        CAddonInstaller::Get().UpdateRepos(true, false, true);
         return true;
       }
       else if (m_viewControl.HasControl(iControl))  // list/thumb control
@@ -199,13 +191,18 @@ bool CGUIWindowAddonBrowser::OnContextButton(int itemNumber, CONTEXT_BUTTON butt
   CFileItemPtr pItem = m_vecItems->Get(itemNumber);
 
   std::string addonId = pItem->GetProperty("Addon.ID").asString();
-  AddonPtr addon;
-  if (!addonId.empty() && CAddonMgr::Get().GetAddon(addonId, addon, ADDON_UNKNOWN, false))
+  if (!addonId.empty())
   {
-    if (button == CONTEXT_BUTTON_SETTINGS)
-      return CGUIDialogAddonSettings::ShowAndGetInput(addon);
     if (button == CONTEXT_BUTTON_INFO)
+    {
       return CGUIDialogAddonInfo::ShowForItem(pItem);
+    }
+    else if (button == CONTEXT_BUTTON_SETTINGS)
+    {
+      AddonPtr addon;
+      if (CAddonMgr::Get().GetAddon(addonId, addon, ADDON_UNKNOWN, false))
+        return CGUIDialogAddonSettings::ShowAndGetInput(addon);
+    }
   }
 
   return CGUIMediaWindow::OnContextButton(itemNumber, button);
@@ -225,13 +222,6 @@ class UpdateAddons : public IRunnable
   }
 };
 
-class UpdateRepos : public IRunnable
-{
-  virtual void Run()
-  {
-    CAddonInstaller::Get().UpdateRepos(true, true);
-  }
-};
 
 bool CGUIWindowAddonBrowser::OnClick(int iItem)
 {
@@ -247,14 +237,6 @@ bool CGUIWindowAddonBrowser::OnClick(int iItem)
       CAddonInstaller::Get().InstallFromZip(path);
     return true;
   }
-  else if (item->GetPath() == "addons://check/")
-  {
-    // perform the check for updates
-    UpdateRepos updater;
-    if (CGUIDialogBusy::Wait(&updater))
-      Refresh();
-    return true;
-  }
   if (item->GetPath() == "addons://update_all/")
   {
     // fire off a threaded update of all addons
@@ -268,9 +250,7 @@ bool CGUIWindowAddonBrowser::OnClick(int iItem)
     // cancel a downloading job
     if (item->HasProperty("Addon.Downloading"))
     {
-      if (CGUIDialogYesNo::ShowAndGetInput(g_localizeStrings.Get(24000),
-                                           item->GetProperty("Addon.Name").asString(),
-                                           g_localizeStrings.Get(24066),""))
+      if (CGUIDialogYesNo::ShowAndGetInput(24000, item->GetProperty("Addon.Name").asString(), 24066, ""))
       {
         if (CAddonInstaller::Get().Cancel(item->GetProperty("Addon.ID").asString()))
           Refresh();
@@ -653,7 +633,7 @@ int CGUIWindowAddonBrowser::SelectAddonID(const vector<ADDON::TYPE> &types, vect
 
         // if the addon is disabled we need to enable it
         if (CAddonMgr::Get().IsAddonDisabled(addon->ID()))
-          CAddonMgr::Get().DisableAddon(addon->ID(), false);
+          CAddonMgr::Get().EnableAddon(addon->ID());
       }
     }
 

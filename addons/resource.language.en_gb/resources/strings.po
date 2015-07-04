@@ -1,17 +1,25 @@
 # Kodi Media Center language file
 msgid ""
 msgstr ""
-"Project-Id-Version: XBMC Main\n"
-"Report-Msgid-Bugs-To: http://trac.xbmc.org/\n"
+"Project-Id-Version: KODI Main\n"
+"Report-Msgid-Bugs-To: http://trac.kodi.tv/\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Kodi Translation Team\n"
-"Language-Team: English (http://www.transifex.com/projects/p/xbmc-main/language/en/)\n"
+"Language-Team: English (United Kingdom) (http://www.transifex.com/projects/p/kodi-main/language/en_GB/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
+"Language: en_GB\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#[Consistency] Make terms, settings names, brands and other minutiae, consistent throughout file.
+#[Capitalization] Avoid capitalizing every second word. See http://grammarist.com/capitalization/
+#For example, prefer wording as "This new string" instead of "This New String".
+#[Referencing] If a suitable string already exists, reuse it, making a note of where it's used!
+#[Description / location] For example, "#. Description of some setting" used on "#: xbmc/addons/guidialogaddoninfo.cpp"
+#When writing a description or setting, refer to a setting name in quotes. See existing entries for guidance.
+#For example, "Press \"OK\" for \"All seasons\"" instead of "Press OK for All seasons" after first word.
 
 #: xbmc/addons/Addon.cpp
 #: system/settings/settings.xml
@@ -38,7 +46,7 @@ msgstr ""
 
 #: Used in Confluence
 msgctxt "#4"
-msgid "TV-Guide"
+msgid "TV guide"
 msgstr ""
 
 #: Used in Confluence
@@ -48,6 +56,9 @@ msgid "Settings"
 msgstr ""
 
 #: Unknown
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
+#: xbmc/music/windows/GUIWindowMusicNav.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#6"
 msgid "Kodi SVN"
@@ -451,12 +462,12 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#120"
-msgid "Confirm file copy"
+msgid "Confirm copy"
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#121"
-msgid "Confirm file move"
+msgid "Confirm move"
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
@@ -466,17 +477,17 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#123"
-msgid "Copy these files?"
+msgid "Would you like to copy the selected file(s)?"
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#124"
-msgid "Move these files?"
+msgid "Would you like to move the selected file(s)?"
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#125"
-msgid "Delete these files? - Deleting files cannot be undone!"
+msgid "Would you like to delete the selected file(s)?[CR]Warning - this action can't be undone!"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogMediaFilter.cpp
@@ -502,6 +513,7 @@ msgctxt "#129"
 msgid "Slideshow"
 msgstr ""
 
+#. skin sub-menu
 msgctxt "#130"
 msgid "System info"
 msgstr ""
@@ -557,7 +569,7 @@ msgid "Search"
 msgstr ""
 
 msgctxt "#138"
-msgid "System Information"
+msgid "System information"
 msgstr ""
 
 msgctxt "#139"
@@ -777,8 +789,10 @@ msgctxt "#188"
 msgid "Select all"
 msgstr ""
 
+#: xbmc/music/MusicDatabase.cpp
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#189"
-msgid "Scanning media info"
+msgid "Scanning media information"
 msgstr ""
 
 msgctxt "#190"
@@ -797,13 +811,17 @@ msgctxt "#193"
 msgid "Scan"
 msgstr ""
 
+#: xbmc/pvr/windows/GUIWindowPVRSearch.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#194"
 msgid "Searching..."
 msgstr ""
 
 #: xbmc/addons/guidialogaddoninfo.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#195"
-msgid "No info found!"
+msgid "No information found!"
 msgstr ""
 
 msgctxt "#196"
@@ -811,7 +829,7 @@ msgid "Select movie:"
 msgstr ""
 
 msgctxt "#197"
-msgid "Querying %s info"
+msgid "Querying %s information"
 msgstr ""
 
 msgctxt "#198"
@@ -950,7 +968,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#225"
-msgid "Vertical Shift"
+msgid "Vertical shift"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -1018,11 +1036,11 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#240"
-msgid "Display Mode"
+msgid "Display mode"
 msgstr ""
 
 msgctxt "#241"
-msgid "Full Screen #%d"
+msgid "Full screen #%d"
 msgstr ""
 
 msgctxt "#242"
@@ -1031,7 +1049,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#243"
-msgid "Refresh Rate"
+msgid "Refresh rate"
 msgstr ""
 
 msgctxt "#244"
@@ -1093,6 +1111,8 @@ msgid "Fetching CD information"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 #: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#257"
 msgid "Error"
@@ -1206,6 +1226,9 @@ msgctxt "#283"
 msgid "Search results"
 msgstr ""
 
+#: xbmc/pvr/windows/GUIWindowPVRSearch.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#284"
 msgid "No results found"
 msgstr ""
@@ -1331,6 +1354,7 @@ msgctxt "#312"
 msgid "(0=auto)"
 msgstr ""
 
+#: xbmc/music/MusicDatabase.cpp
 msgctxt "#313"
 msgid "Cleaning database"
 msgstr ""
@@ -1411,6 +1435,7 @@ msgctxt "#332"
 msgid "Error compressing database"
 msgstr ""
 
+#: xbmc/music/MusicDatabase.cpp
 msgctxt "#333"
 msgid "Do you want to clean the library?"
 msgstr ""
@@ -1546,7 +1571,7 @@ msgid "Screensaver"
 msgstr ""
 
 msgctxt "#361"
-msgid "R. Slideshow"
+msgid "Recursive slideshow"
 msgstr ""
 
 msgctxt "#362"
@@ -1821,7 +1846,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#420"
-msgid "Best Match"
+msgid "Best match"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -1830,7 +1855,7 @@ msgid "Keep audio device alive"
 msgstr ""
 
 msgctxt "#422"
-msgid "Delete album info"
+msgid "Delete album information"
 msgstr ""
 
 msgctxt "#423"
@@ -1845,6 +1870,7 @@ msgctxt "#425"
 msgid "No album information found"
 msgstr ""
 
+#: xbmc/music/MusicDatabase.cpp
 msgctxt "#426"
 msgid "No CD information found"
 msgstr ""
@@ -1854,7 +1880,7 @@ msgid "Disc"
 msgstr ""
 
 msgctxt "#428"
-msgid "Insert correct CD/DVD"
+msgid "Insert correct CD / DVD"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogPlayEject.cpp
@@ -1875,7 +1901,7 @@ msgid "Remove movie from library"
 msgstr ""
 
 msgctxt "#433"
-msgid "Really remove '%s'?"
+msgid "Would you really like to remove '%s' from library?"
 msgstr ""
 
 #. From <wind dir.> at <speed> <unit>
@@ -1883,10 +1909,12 @@ msgctxt "#434"
 msgid "From %s at %i %s"
 msgstr ""
 
+#: xbmc/Application.cpp
 msgctxt "#435"
 msgid "No optical disc drive detected"
 msgstr ""
 
+#: xbmc/Application.cpp
 msgctxt "#436"
 msgid "You need an optical disc drive to play this video"
 msgstr ""
@@ -2048,6 +2076,9 @@ msgctxt "#476"
 msgid "Music & video"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
+#: xbmc/music/windows/GUIWindowMusicNav.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#477"
 msgid "Unable to load playlist"
@@ -2108,7 +2139,7 @@ msgid "Resize VobSubs"
 msgstr ""
 
 msgctxt "#493"
-msgid "Advanced options (Experts Only!)"
+msgid "Advanced options (experts only!)"
 msgstr ""
 
 msgctxt "#494"
@@ -2116,7 +2147,7 @@ msgid "Overall audio headroom"
 msgstr ""
 
 msgctxt "#495"
-msgid "Upsample videos to GUI resolution"
+msgid "Upscale videos to GUI resolution"
 msgstr ""
 
 msgctxt "#496"
@@ -2136,6 +2167,7 @@ msgctxt "#499"
 msgid "Unable to connect to online lookup service"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#500"
 msgid "Downloading album information failed"
 msgstr ""
@@ -2157,7 +2189,7 @@ msgid "Empty"
 msgstr ""
 
 msgctxt "#505"
-msgid "Loading media info from files..."
+msgid "Loading media information from files..."
 msgstr ""
 
 #empty string with id 506
@@ -2489,7 +2521,7 @@ msgid "Times played"
 msgstr ""
 
 msgctxt "#577"
-msgid "Date Taken"
+msgid "Date taken"
 msgstr ""
 
 #empty strings from id 578 to 579
@@ -2608,12 +2640,10 @@ msgid "To:"
 msgstr ""
 
 msgctxt "#608"
-msgid "Could not rip CD or track"
+msgid "Couldn't rip CD or track because CDDARipPath is not set."
 msgstr ""
 
-msgctxt "#609"
-msgid "CDDARipPath is not set."
-msgstr ""
+#empty string with id 609
 
 msgctxt "#610"
 msgid "Rip audio track"
@@ -2696,7 +2726,7 @@ msgstr ""
 #: system/settings/settings.xml
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#633"
-msgid "Wide Zoom"
+msgid "Wide zoom"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -2707,7 +2737,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#635"
-msgid "Original Size"
+msgid "Original size"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -2760,6 +2790,7 @@ msgid "Remove from library"
 msgstr ""
 
 #: system/settings/settings.xml
+#: xbmc/video/VideoDatabase.cpp
 msgctxt "#647"
 msgid "Export video library"
 msgstr ""
@@ -2792,7 +2823,7 @@ msgid "Update library"
 msgstr ""
 
 msgctxt "#654"
-msgid "Show debug info"
+msgid "Show debug information"
 msgstr ""
 
 msgctxt "#655"
@@ -2835,7 +2866,7 @@ msgid "Would you like to remove it from the library?"
 msgstr ""
 
 msgctxt "#664"
-msgid "Browse for Script"
+msgid "Browse for script"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -2850,7 +2881,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#667"
-msgid "Enable Dolby Digital transcoding"
+msgid "Enable Dolby Digital (AC3) transcoding"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -2860,59 +2891,59 @@ msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#669"
-msgid "Verbose logging for SMB library"
+msgid "Verbose logging for the [B]SMB[/B] library"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#670"
-msgid "Verbose logging for CURL library (http, dav)"
+msgid "Verbose logging for the [B]libcURL[/B] library (HTTP(S), DAV)"
 msgstr ""
 
 #empty string with id 671
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#672"
-msgid "Verbose logging for FFMPEG libraries"
+msgid "Verbose logging for the [B]FFmpeg[/B] libraries"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#673"
-msgid "Verbose logging for RTMP library"
+msgid "Verbose logging for the [B]RTMP[/B] library"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#674"
-msgid "Verbose logging for DBUS calls"
+msgid "Verbose logging for [B]D-Bus[/B] calls"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#675"
-msgid "Verbose logging for JSON-RPC requests"
+msgid "Verbose logging for [B]JSON-RPC[/B] requests"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#676"
-msgid "Verbose logging for AUDIO component"
+msgid "Verbose logging for the [B]Audio[/B] component"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#677"
-msgid "Verbose logging for AirTunes library"
+msgid "Verbose logging for the [B]AirTunes[/B] library"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#678"
-msgid "Verbose logging for UPnP components"
+msgid "Verbose logging for the [B]UPnP[/B] components"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#679"
-msgid "Verbose logging for CEC library"
+msgid "Verbose logging for the [B]libCEC[/B] library"
 msgstr ""
 
 #: xbmc/settings/AdvancedSettings.cpp
 msgctxt "#680"
-msgid "Verbose logging for VIDEO component"
+msgid "Verbose logging for the [B]Video[/B] component"
 msgstr ""
 
 #empty strings from id 681 to 699
@@ -2975,7 +3006,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#717"
-msgid "Manual (Static)"
+msgid "Manual (static)"
 msgstr ""
 
 #empty string with id 718
@@ -3115,7 +3146,6 @@ msgid "Mirror image"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
-#: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#750"
 msgid "Are you sure?"
 msgstr ""
@@ -3319,18 +3349,15 @@ msgid "Internet access"
 msgstr ""
 
 msgctxt "#799"
-msgid "Library Update"
+msgid "Library update"
 msgstr ""
 
 #: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#800"
-msgid "Music library needs to rescan tags from files."
+msgid "Music library needs to rescan tags from files. Would you like to scan now?"
 msgstr ""
 
-#: xbmc/music/windows/GUIWindowMusicBase.cpp
-msgctxt "#801"
-msgid "Would you like to scan now?"
-msgstr ""
+#empty string with id 801
 
 #. Label of progess bar which shows the available/total space of pvr backend
 #: xbmc/pvr/PVRGUIInfo.cpp
@@ -3338,7 +3365,231 @@ msgctxt "#802"
 msgid "%s of %s available"
 msgstr ""
 
-#empty strings from id 803 to 849
+#. Label of list control for choosing the timer type (one time, repeating, ...) in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#803"
+msgid "Type"
+msgstr ""
+
+#. Label of 'Guide data title search' edit field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#804"
+msgid "Search guide for"
+msgstr ""
+
+#. Help of 'Guide data title search' edit field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#805"
+msgid "Enter the search string to use to lookup matching events in the guide"
+msgstr ""
+
+#. Label of "Fulltext search" edit field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#806"
+msgid "Fulltext search (or title search only)"
+msgstr ""
+
+#. special days of week representation value for a timer schedule
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#807"
+msgid "Any day"
+msgstr ""
+
+#. special days of week representation for a repeating timer
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#808"
+msgid "Every day"
+msgstr ""
+
+#. special channel representation value for a repeating timer
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#809"
+msgid "Any channel"
+msgstr ""
+
+#. Label of "Any time" radio button in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#810"
+msgid "Any time"
+msgstr ""
+
+# Label of "Recording group" list in the PVR timer setting dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#811"
+msgid "Recording group"
+msgstr ""
+
+#. Label for setting TV->Recordings->Prevent duplicate episodes
+#: system/settings/settings.xml
+#. Label of prevent duplicate episodes list control (if user does not want to record the same episode multiple times) in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#812"
+msgid "Prevent duplicate episodes"
+msgstr ""
+
+#. Label of pre-record margin spinner in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#813"
+msgid "Start padding time"
+msgstr ""
+
+#. Label of post-record margin spinner in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#814"
+msgid "End padding time"
+msgstr ""
+
+#. Value of prevent duplicate episodes list control
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#815"
+msgid "Record all episodes"
+msgstr ""
+
+#. Value of prevent duplicate episodes list control
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
+msgctxt "#816"
+msgid "Record only new episodes"
+msgstr ""
+
+#empty strings from id 817 to 819
+
+#. Representation of a one-time timer.
+#: xbmc/pvr/addons/PVRClient.cpp
+msgctxt "#820"
+msgid "One time"
+msgstr ""
+
+#. Representation of an epg-based one-time timer.
+#: xbmc/pvr/addons/PVRClient.cpp
+msgctxt "#821"
+msgid "One time (guide-based)"
+msgstr ""
+
+#. Representation of a timer schedule
+#: xbmc/pvr/addons/PVRClient.cpp
+msgctxt "#822"
+msgid "Repeating"
+msgstr ""
+
+#. Representation of an epg-based timer schedule.
+#: xbmc/pvr/addons/PVRClient.cpp
+msgctxt "#823"
+msgid "Repeating (guide-based)"
+msgstr ""
+
+#empty string with id 824
+
+#. Representation of PVR timer state "disabled"
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#825"
+msgid "Inactive"
+msgstr ""
+
+#. Notification text to announce that a timer was activated
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#826"
+msgid "Timer activated"
+msgstr ""
+
+#. Notification text to announce that a timer was deactivated
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#827"
+msgid "Timer deactivated"
+msgstr ""
+
+#. Text for notification that a repeating timer has been deleted
+#: xbmc/pvr/timers/PVRTimers.cpp
+msgctxt "#828"
+msgid "Repeating timer deleted"
+msgstr ""
+
+#empty string from id 829 to 830
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#831"
+msgid "Mondays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#832"
+msgid "Tuesdays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#833"
+msgid "Wednesdays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#834"
+msgid "Thursdays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#835"
+msgid "Fridays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#836"
+msgid "Saturdays"
+msgstr ""
+
+#. Weekday representation
+#: xbmc/dialogs/GUIDialogPVRTimerWeekdaysSettings.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#837"
+msgid "Sundays"
+msgstr ""
+
+#empty strings from id 838 to 839
+
+#. Message in a dialog when a user wants to delete a repeating timer
+#: xbmc/pvr/windows/GUIWindowPVRBase.cpp
+#: xbmc/pvr/dialogs/GUIDialogPVRGuideInfo.cpp
+msgctxt "#840"
+msgid "You are about to delete a repeating timer. Do you also want to delete all timers currently scheduled by this timer?"
+msgstr ""
+
+#. Label of a context menu entry to create a new recording timer with advanced configuration options
+#: xbmc/pvr/windows/GUIWindowPVRGuide.cpp
+#: xbmc/pvr/windows/GUIWindowPVRSearch.cpp
+msgctxt "#841"
+msgid "Add custom timer"
+msgstr ""
+
+#. Label of the option to switch between hierarchical and flat timer view (in confluence sideblade).
+#: skin.confluence
+msgctxt "#842"
+msgid "Group timers"
+msgstr ""
+
+#. Label of a context menu entry to activate a currently inactive timer
+#: xbmc/pvr/windows/GUIWindowPVRTimers.cpp
+msgctxt "#843"
+msgid "Activate"
+msgstr ""
+
+#. Label of a context menu entry to deactivate a currently active timer
+#: xbmc/pvr/windows/GUIWindowPVRTimers.cpp
+msgctxt "#844"
+msgid "Deactivate"
+msgstr ""
+
+#empty strings from id 845 to 849
 
 msgctxt "#850"
 msgid "Invalid port number entered"
@@ -3356,17 +3607,17 @@ msgstr ""
 
 #: xbmc/windows/GUIMediaWindow.cpp
 msgctxt "#997"
-msgid "Add Pictures..."
+msgid "Add pictures..."
 msgstr ""
 
 #: xbmc/windows/GUIMediaWindow.cpp
 msgctxt "#998"
-msgid "Add Music..."
+msgid "Add music..."
 msgstr ""
 
 #: xbmc/windows/GUIMediaWindow.cpp
 msgctxt "#999"
-msgid "Add Videos..."
+msgid "Add videos..."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -3379,21 +3630,12 @@ msgctxt "#1001"
 msgid "Unable to connect"
 msgstr ""
 
+#: xbmc/dialogs/GUIDialogMediaSource.cpp
 msgctxt "#1002"
-msgid "The connection to the network location could not be established."
+msgid "The connection to the network location couldn't be established. This could be due to the network not being connected. Would you like to add it anyway?"
 msgstr ""
 
-#: xbmc/dialogs/GUIDialogMediaSource.cpp
-msgctxt "#1003"
-msgid "This could be due to the network not being connected."
-msgstr ""
-
-#: xbmc/dialogs/GUIDialogMediaSource.cpp
-msgctxt "#1004"
-msgid "Would you like to add it anyway?"
-msgstr ""
-
-#empty string with id 1005
+#empty strings from id 1003 to 1005
 
 msgctxt "#1006"
 msgid "IP address"
@@ -3472,7 +3714,7 @@ msgstr ""
 
 #: xbmc/dialogs/GUIDialogMediaSource.cpp
 msgctxt "#1022"
-msgid "Enter a name for this media Source."
+msgid "Enter a name for this media source."
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
@@ -3486,7 +3728,7 @@ msgstr ""
 
 #: xbmc/dialogs/GUIDialogMediaSource.cpp
 msgctxt "#1025"
-msgid "Could not retrieve directory information."
+msgid "Couldn't retrieve directory information. This could be due to the network not being connected. Would you like to add it anyway?"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
@@ -3544,17 +3786,17 @@ msgstr ""
 
 #: xbmc/addons/Addon.cpp
 msgctxt "#1037"
-msgid "Video Add-ons"
+msgid "Video add-ons"
 msgstr ""
 
 #: xbmc/addons/Addon.cpp
 msgctxt "#1038"
-msgid "Music Add-ons"
+msgid "Music add-ons"
 msgstr ""
 
 #: xbmc/addons/Addon.cpp
 msgctxt "#1039"
-msgid "Picture Add-ons"
+msgid "Picture add-ons"
 msgstr ""
 
 #: xbmc/windows/GUIMediaWindow.cpp
@@ -3572,7 +3814,7 @@ msgstr ""
 
 #: xbmc/addons/Addon.cpp
 msgctxt "#1043"
-msgid "Program Add-ons"
+msgid "Program add-ons"
 msgstr ""
 
 msgctxt "#1044"
@@ -3640,7 +3882,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#1185"
-msgid "SOCKS5 with remote dns resolving"
+msgid "SOCKS5 with remote DNS resolving"
 msgstr ""
 
 #empty strings from id 1186 to 1199
@@ -3816,10 +4058,12 @@ msgid "Use password protection"
 msgstr ""
 
 #: system/settings/settings.xml
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#1273"
 msgid "AirPlay"
 msgstr ""
 
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#1274"
 msgid "AirTunes"
 msgstr ""
@@ -3885,7 +4129,7 @@ msgstr ""
 
 #. Weather token
 msgctxt "#1383"
-msgid "Sky Is Clear"
+msgid "Sky is clear"
 msgstr ""
 
 #. Weather token
@@ -4075,7 +4319,7 @@ msgstr ""
 
 #. Weather token
 msgctxt "#1421"
-msgid "Very High"
+msgid "Very high"
 msgstr ""
 
 #. Weather token
@@ -4205,7 +4449,7 @@ msgstr ""
 
 #. Weather token
 msgctxt "#1447"
-msgid "Squals"
+msgid "Squalls"
 msgstr ""
 
 #. Weather token
@@ -4247,7 +4491,7 @@ msgstr ""
 #empty strings from id 2082 to 2100
 
 msgctxt "#2101"
-msgid "Newer version needed - See log"
+msgid "Newer version needed. Check the log for more information about this message."
 msgstr ""
 
 #. Notification message indicating an add-on error. "<Add-on name> error".
@@ -4258,6 +4502,7 @@ msgstr ""
 
 #. Fallback message indicating an add-on error.
 #: xbmc/interfaces/python/PythonInvoker.cpp
+#: xbmc/pvr/dialogs/GUIDialogPVRChannelManager.cpp
 msgctxt "#2103"
 msgid "Add-on error"
 msgstr ""
@@ -4265,7 +4510,7 @@ msgstr ""
 #. Used for add-on error kaitoast.
 #: xbmc/interfaces/python/PythonInvoker.cpp
 msgctxt "#2104"
-msgid "See log for more info."
+msgid "Check the log for more information."
 msgstr ""
 
 #empty strings from id 2105 to 9999
@@ -4321,12 +4566,12 @@ msgid "Settings - Screen"
 msgstr ""
 
 msgctxt "#10010"
-msgid "Settings - Appearance - GUI Calibration"
+msgid "Settings - Appearance - GUI calibration"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10011"
-msgid "Settings - Videos - Screen Calibration"
+msgid "Settings - Videos - Screen calibration"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4389,7 +4634,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10028"
-msgid "Videos/Playlist"
+msgid "Videos / Playlist"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4465,7 +4710,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10100"
-msgid "Yes/No dialogue"
+msgid "Yes / No dialogue"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4516,7 +4761,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10135"
-msgid "Songs/Info"
+msgid "Songs / Info"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4533,7 +4778,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10139"
-msgid "Pictures/Info"
+msgid "Pictures / Info"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4545,7 +4790,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10146"
-msgid "Add-ons/Info"
+msgid "Add-ons / Info"
 msgstr ""
 
 #empty strings from id 10147 to 10209
@@ -4574,17 +4819,17 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10500"
-msgid "Music/Playlist"
+msgid "Music / Playlist"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10501"
-msgid "Music/Files"
+msgid "Music / Files"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#10502"
-msgid "Music/Library"
+msgid "Music / Library"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4633,21 +4878,21 @@ msgid "Music - Library"
 msgstr ""
 
 msgctxt "#10517"
-msgid "Now Playing - Music"
+msgid "Now playing - Music"
 msgstr ""
 
 #empty strings from id 10518 to 10521
 
 msgctxt "#10522"
-msgid "Now Playing - Videos"
+msgid "Now playing - Videos"
 msgstr ""
 
 msgctxt "#10523"
-msgid "Album info"
+msgid "Album information"
 msgstr ""
 
 msgctxt "#10524"
-msgid "Movie info"
+msgid "Movie information"
 msgstr ""
 
 #empty strings from id 10525 to 11999
@@ -4659,7 +4904,7 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#12001"
-msgid "Music/Info"
+msgid "Music / Info"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4669,11 +4914,11 @@ msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
 msgctxt "#12003"
-msgid "Videos/Info"
+msgid "Videos / Info"
 msgstr ""
 
 msgctxt "#12004"
-msgid "Scripts/Info"
+msgid "Scripts / Info"
 msgstr ""
 
 #: xbmc/guilib/WindowIDs.h
@@ -4793,7 +5038,7 @@ msgstr ""
 
 #: skin.confluence
 msgctxt "#12321"
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogGamepad.cpp
@@ -4825,7 +5070,7 @@ msgstr ""
 
 #: unknown
 msgctxt "#12329"
-msgid "or press C to cancel"
+msgid "or press \"C\" to cancel"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogGamepad.cpp
@@ -4835,7 +5080,7 @@ msgstr ""
 
 #: xbmc/dialogs/GUIDialogGamepad.cpp
 msgctxt "#12331"
-msgid "press OK, or Back to cancel"
+msgid "press \"OK\", or \"Back\" to cancel"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
@@ -4881,8 +5126,9 @@ msgid "Enter new password"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogNumeric.cpp
+#: xbmc/guilib/GUIKeyboardFactory.cpp
 msgctxt "#12341"
-msgid "Re-Enter new password"
+msgid "Re-enter new password"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogGamepad.cpp
@@ -4899,6 +5145,7 @@ msgstr ""
 
 #: xbmc/dialogs/GUIDialogGamepad.cpp
 #: xbmc/dialogs/GUIDialogNumeric.cpp
+#: xbmc/guilib/GUIKeyboardFactory.cpp
 msgctxt "#12344"
 msgid "Passwords entered did not match."
 msgstr ""
@@ -4923,14 +5170,14 @@ msgctxt "#12348"
 msgid "Item locked"
 msgstr ""
 
-#empty strings with id 12349 to 12352
+#empty strings from id 12349 to 12352
 
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
 msgctxt "#12353"
 msgid "Reactivate lock"
 msgstr ""
 
-#empty strings with id 12354 to 12355
+#empty strings from id 12354 to 12355
 
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
 msgctxt "#12356"
@@ -4961,22 +5208,17 @@ msgstr ""
 
 #: unknown
 msgctxt "#12362"
-msgid "Shutdown system if Master Lock retries exceeded"
+msgid "Shutdown system if number of master lock retries is exceeded"
 msgstr ""
 
 #empty strings from id 12363 to 12366
 
 #: xbmc\GUIPassword.cpp
 msgctxt "#12367"
-msgid "Master code is not valid"
+msgid "Master code is not valid. Please enter a valid master code."
 msgstr ""
 
-#: xbmc\GUIPassword.cpp
-msgctxt "#12368"
-msgid "Please enter a valid master code"
-msgstr ""
-
-#empty strings from id 12369 to 12372
+#empty strings from id 12368 to 12372
 
 #: unknown
 msgctxt "#12373"
@@ -4994,7 +5236,7 @@ msgstr ""
 #: xbmc\video\dialogs\GUIDialogAudioSubtitleSettings.cpp
 #: xbmc\video\dialogs\GUIDialogVideoSettings.cpp
 msgctxt "#12377"
-msgid "This will reset any previously saved values"
+msgid "This will reset any previously saved values. Are you sure?"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -5027,12 +5269,12 @@ msgstr ""
 
 #: unknown
 msgctxt "#12385"
-msgid "Day/Month"
+msgid "Day / Month"
 msgstr ""
 
 #: unknown
 msgctxt "#12386"
-msgid "Month/Day"
+msgid "Month / Day"
 msgstr ""
 
 #empty strings from id 12387 to 12389
@@ -5117,7 +5359,7 @@ msgstr ""
 
 #: unknown
 msgctxt "#13001"
-msgid "Immediate HD spindown"
+msgid "Immediate HDD spindown"
 msgstr ""
 
 #: unknown
@@ -5189,7 +5431,7 @@ msgstr ""
 #: skin.confluence
 #: skin.retouched
 msgctxt "#13016"
-msgid "Power off System"
+msgid "Power off system"
 msgstr ""
 
 #: skin.confluence
@@ -5211,7 +5453,7 @@ msgstr ""
 
 #: xbmc\storage\MediaManager.cpp
 msgctxt "#13021"
-msgid "Mounted removable harddrive"
+msgid "Mounted removable hard drive"
 msgstr ""
 
 #: xbmc\storage\MediaManager.cpp
@@ -5234,12 +5476,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13026"
-msgid "Try to wake remote servers on access"
+msgid "Try to wakeup remote servers on access"
 msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
 msgctxt "#13027"
-msgid "Wake on Lan (%s)"
+msgid "Wake-on-LAN (%s)"
 msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
@@ -5249,7 +5491,7 @@ msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
 msgctxt "#13029"
-msgid "Failed to execute Wake on Lan!"
+msgid "Failed to execute Wake-on-LAN!"
 msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
@@ -5269,7 +5511,7 @@ msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
 msgctxt "#13033"
-msgid "MAC Discovery"
+msgid "MAC discovery"
 msgstr ""
 
 #: xbmc/network/WakeOnAccess.cpp
@@ -5330,12 +5572,12 @@ msgstr ""
 
 #: unknown
 msgctxt "#13109"
-msgid "Test & apply resolution"
+msgid "Test & apply the resolution"
 msgstr ""
 
 #: xbmc\settings\DisplaySettings.cpp
 msgctxt "#13110"
-msgid "Save resolution?"
+msgid "Save this resolution?"
 msgstr ""
 
 #: xbmc\settings\DisplaySettings.cpp
@@ -5384,7 +5626,7 @@ msgctxt "#13120"
 msgid "VDPAU"
 msgstr ""
 
-#empty string with ids 13121, 13122
+#empty strings from id 13121 to 13122
 
 msgctxt "#13123"
 msgid "Keep skin?"
@@ -5416,15 +5658,10 @@ msgstr ""
 
 #: xbmc\network\NetworkServices.cpp
 msgctxt "#13141"
-msgid "If you proceed, you might not be able to control this application"
+msgid "If you proceed, you might not be able to control this application any longer. Are you sure you want to stop the event server?"
 msgstr ""
 
-#: xbmc\network\NetworkServices.cpp
-msgctxt "#13142"
-msgid "any longer. Are you sure you want to stop the Event server?"
-msgstr ""
-
-#empty string with id 13143
+#empty strings from id 13142 to 13143
 
 #: xbmc\osx\XBMCHelper.cpp
 msgctxt "#13144"
@@ -5433,20 +5670,10 @@ msgstr ""
 
 #: xbmc\osx\XBMCHelper.cpp
 msgctxt "#13145"
-msgid "If you are currently using the Apple Remote to control"
+msgid "If you are currently using the Apple Remote to control this application, changing this setting might affect your ability to continue controlling it. Do you want to proceed?"
 msgstr ""
 
-#: xbmc\osx\XBMCHelper.cpp
-msgctxt "#13146"
-msgid "this application, changing this setting might affect your ability"
-msgstr ""
-
-#: xbmc\osx\XBMCHelper.cpp
-msgctxt "#13147"
-msgid "to continue controlling it. Do you want to proceed?"
-msgstr ""
-
-#empty strings from id 13148 to 13158
+#empty strings from id 13146 to 13158
 
 #: xbmc/windows/GUIWindowSystemInfo.cpp
 msgctxt "#13159"
@@ -5588,7 +5815,7 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowSystemInfo.cpp
 msgctxt "#13271"
-msgid "CPU Usage:"
+msgid "CPU usage:"
 msgstr ""
 
 #empty strings from id 13272 to 13273
@@ -5598,7 +5825,7 @@ msgid "Connected, but no DNS is available."
 msgstr ""
 
 msgctxt "#13275"
-msgid "Hard Disk"
+msgid "Hard disk"
 msgstr ""
 
 msgctxt "#13276"
@@ -5715,13 +5942,12 @@ msgctxt "#13307"
 msgid "Track naming template"
 msgstr ""
 
+#: unused
 msgctxt "#13308"
-msgid "Do you wish to reboot your system"
+msgid "Do you wish to reboot your system instead of just this application?"
 msgstr ""
 
-msgctxt "#13309"
-msgid "instead of just this application?"
-msgstr ""
+#empty string with id 13309
 
 msgctxt "#13310"
 msgid "Zoom effect"
@@ -5864,6 +6090,7 @@ msgctxt "#13345"
 msgid "Switch LED off on playback"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#13346"
 msgid "Movie information"
 msgstr ""
@@ -5999,7 +6226,7 @@ msgstr ""
 #: xbmc/dialogs/GUIDialogContextMenu.cpp
 #: xbmc/dialogs/GUIDialogPlayEject.cpp
 msgctxt "#13391"
-msgid "Eject/Load"
+msgid "Eject / Load"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6156,43 +6383,43 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13425"
-msgid "Allow hardware acceleration (VDPAU)"
+msgid "Allow hardware acceleration - VDPAU"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13426"
-msgid "Allow hardware acceleration (VAAPI)"
+msgid "Allow hardware acceleration - VAAPI"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13427"
-msgid "Allow hardware acceleration (DXVA2)"
+msgid "Allow hardware acceleration - DXVA2"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13428"
-msgid "Allow hardware acceleration (CrystalHD)"
+msgid "Allow hardware acceleration - CrystalHD"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13429"
-msgid "Allow hardware acceleration (VDADecoder)"
+msgid "Allow hardware acceleration - VDADecoder"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13430"
-msgid "Allow hardware acceleration (OpenMax)"
+msgid "Allow hardware acceleration - OpenMax"
 msgstr ""
 
 #: system/settings/settings.xml
 #: xbmc/cores/VideoRenderers/BaseRenderer.cpp
 msgctxt "#13431"
-msgid "Pixel Shaders"
+msgid "Pixel shaders"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13432"
-msgid "Allow hardware acceleration (VideoToolbox)"
+msgid "Allow hardware acceleration - VideoToolbox"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6208,27 +6435,27 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13435"
-msgid "Enable HQ Scalers for scalings above"
+msgid "Enable HQ scalers for scaling above"
 msgstr ""
 
 #: xbmc/settings/GUISettings.cpp
 msgctxt "#13436"
-msgid "Allow hardware acceleration (libstagefright)"
+msgid "Allow hardware acceleration - libstagefright"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13437"
-msgid "Prefer VDPAU Video Mixer"
+msgid "Prefer VDPAU video mixer"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13438"
-msgid "Allow hardware acceleration (amcodec)"
+msgid "Allow hardware acceleration - amcodec"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13439"
-msgid "Allow hardware acceleration (MediaCodec)"
+msgid "Allow hardware acceleration - MediaCodec"
 msgstr ""
 
 #empty string with id 13440
@@ -6241,7 +6468,7 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Use MPEG-2 VDPAU" with label #13441
 #: system/settings/settings.xml
 msgctxt "#13442"
-msgid "Enable this option to use hardware acceleration for MPEG-(1/2) codecs. If disabled the CPU will be used instead. Older Radeon Cards tend to segfault with this enabled."
+msgid "Enable this option to use hardware acceleration for MPEG-(1 / 2) codecs. If disabled the CPU will be used instead. Older Radeon Cards tend to segfault with this enabled."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6252,7 +6479,7 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Use MPEG-4 VDPAU" with label #13443
 #: system/settings/settings.xml
 msgctxt "#13444"
-msgid "Enable this option to use hardware acceleration for the MPEG-4 codec. If disabled the CPU will be used instead. Some ION Hardware has problems with this being enabled by default."
+msgid "Enable this option to use hardware acceleration for the MPEG-4 codec. If disabled the CPU will be used instead. Some ION hardware has problems with this being enabled by default."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6263,7 +6490,7 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Use VC-1 VDPAU" with label #13445
 #: system/settings/settings.xml
 msgctxt "#13446"
-msgid "Enable this option to use hardware acceleration for VC-1 based codecs. If disabled the CPU will be used instead. AMD Hardware with VDPAU cannot decode VC-1 Simple."
+msgid "Enable this option to use hardware acceleration for VC-1 based codecs. If disabled the CPU will be used instead. AMD hardware with VDPAU can't decode VC-1 Simple."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6274,7 +6501,7 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Use MPEG-2 VAAPI" with label #13447
 #: system/settings/settings.xml
 msgctxt "#13448"
-msgid "Enable this option to use hardware acceleration for MPEG-(1/2) codecs. If disabled the CPU will be used instead. Some MPEG-2 Videos might have green artifacts."
+msgid "Enable this option to use hardware acceleration for MPEG-(1 / 2) codecs. If disabled the CPU will be used instead. Some MPEG-2 videos might have green artifacts."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6296,28 +6523,10 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Use VC-1 VAAPI" with label #13451
 #: system/settings/settings.xml
 msgctxt "#13452"
-msgid "Enable this option to use hardware acceleration for VC-1 based codecs. If disabled the CPU will be used instead. Especially VC-1 Interlaced fails hard on Intel hardware."
+msgid "Enable this option to use hardware acceleration for VC-1 based codecs. If disabled the CPU will be used instead. Especially VC-1 interlaced fails hard on Intel hardware."
 msgstr ""
 
-#empty string with id 13453
-
-#. Label for a setting to configure the video decoding method
-#: system/settings/settings.xml
-msgctxt "#13454"
-msgid "Decoding method"
-msgstr ""
-
-#. Option for video related setting #13454: Decoding method
-#: system/settings/settings.xml
-msgctxt "#13455"
-msgid "Software"
-msgstr ""
-
-#. Option for video related setting #13454: Decoding method
-#: system/settings/settings.xml
-msgctxt "#13456"
-msgid "Hardware accelerated"
-msgstr ""
+#empty strings from id 13453 to 13456
 
 #. Option for video related setting #13454: sw filter
 #: system/settings/settings.xml
@@ -6327,7 +6536,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13458"
-msgid "Allow hardware acceleration (OMXPlayer)"
+msgid "Allow hardware acceleration - OMXPlayer"
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Allow hardware acceleration (OMXPlayer)" with label #13457
@@ -6345,7 +6554,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13506"
-msgid "Low(fast)"
+msgid "Low (fast)"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6360,7 +6569,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#13509"
-msgid "Really high(slow!)"
+msgid "Really high (slow)"
 msgstr ""
 
 msgctxt "#13510"
@@ -6409,11 +6618,11 @@ msgid "Off"
 msgstr ""
 
 msgctxt "#13552"
-msgid "%.1f Second"
+msgid "%.1f second"
 msgstr ""
 
 msgctxt "#13553"
-msgid "%.1f Seconds"
+msgid "%.1f seconds"
 msgstr ""
 
 msgctxt "#13554"
@@ -6436,11 +6645,11 @@ msgctxt "#13557"
 msgid "Skip delay"
 msgstr ""
 
-#empty strings from id 13557 to 13599
+#empty strings from id 13558 to 13599
 
 #: system/settings/darwin.xml
 msgctxt "#13600"
-msgid "Apple remote"
+msgid "Apple Remote"
 msgstr ""
 
 #empty string with id 13601
@@ -6469,22 +6678,24 @@ msgstr ""
 
 #: system/settings/darwin.xml
 msgctxt "#13612"
-msgid "Universal Remote"
+msgid "Universal remote"
 msgstr ""
 
 #: system/settings/darwin.xml
 msgctxt "#13613"
-msgid "Multi Remote (Harmony)"
+msgid "Harmony remote"
 msgstr ""
 
 #empty strings from id 13614 to 13619
 
+#: xbmc/osx/XBMCHelper.cpp
 msgctxt "#13620"
-msgid "Apple Remote Error"
+msgid "Apple Remote error"
 msgstr ""
 
+#: xbmc/osx/XBMCHelper.cpp
 msgctxt "#13621"
-msgid "Apple Remote support could not be enabled."
+msgid "Apple Remote support couldn't be enabled."
 msgstr ""
 
 #empty strings from id 13622 to 13999
@@ -6601,7 +6812,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14027"
-msgid "Video cache - Local Network"
+msgid "Video cache - Local network"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6618,7 +6829,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14031"
-msgid "Audio cache - Local Network"
+msgid "Audio cache - Local network"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6635,7 +6846,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14035"
-msgid "Local Network"
+msgid "Local network"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6645,20 +6856,20 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14037"
-msgid "DVD cache - Local Network"
+msgid "DVD cache - Local network"
 msgstr ""
 
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#14038"
 msgid "Network settings changed"
 msgstr ""
 
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#14039"
-msgid "A restart is required to change your"
+msgid "A restart is required to change your network setup. Would you like to restart now?"
 msgstr ""
 
-msgctxt "#14040"
-msgid "network setup.  Would you like to restart now?"
-msgstr ""
+#empty string with id 14040
 
 #: system/settings/settings.xml
 msgctxt "#14041"
@@ -6733,8 +6944,12 @@ msgctxt "#14056"
 msgid "Stop scan"
 msgstr ""
 
+#: xbmc/music/MusicDatabase.cpp
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#14057"
-msgid "Not possible while scanning for media info"
+msgid "Not possible while scanning for media information"
 msgstr ""
 
 msgctxt "#14058"
@@ -6772,7 +6987,7 @@ msgid "Set time"
 msgstr ""
 
 msgctxt "#14066"
-msgid "Enter the time in 24 hour HH:MM format"
+msgid "Enter the time in 24-hour HH:MM format"
 msgstr ""
 
 msgctxt "#14067"
@@ -6910,7 +7125,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14097"
-msgid "Audio CD Insert Action"
+msgid "Audio CD insert action"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6920,7 +7135,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14099"
-msgid "Eject disc when CD ripping is complete"
+msgid "Eject disc when the CD ripping is complete"
 msgstr ""
 
 #: xbmc/music/windows/GUIWindowMusicSongs.cpp
@@ -6969,7 +7184,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#14108"
-msgid "Use 12/24-hour format"
+msgid "Use 12 / 24-hour format"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -6984,6 +7199,7 @@ msgstr ""
 
 #empty strings from id 14111 to 15010
 
+#: xbmc/music/MusicDatabase.cpp
 #: xbmc/video/VideoDatabase.cpp
 msgctxt "#15011"
 msgid "%i Items failed to export"
@@ -7062,7 +7278,10 @@ msgctxt "#15105"
 msgid "* All genres"
 msgstr ""
 
-#empty string with id 15106
+#: xbmc/addons/Skin.cpp
+msgctxt "#15106"
+msgid "Skin built-in"
+msgstr ""
 
 msgctxt "#15107"
 msgid "Buffering..."
@@ -7139,7 +7358,7 @@ msgstr ""
 #: xbmc/windows/GUIMediaWindow.cpp
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#15301"
-msgid "Could not connect to network server"
+msgid "Couldn't connect to network server"
 msgstr ""
 
 msgctxt "#15302"
@@ -7243,7 +7462,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16020"
-msgid "De-interlace"
+msgid "Deinterlace"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -7253,7 +7472,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16022"
-msgid "Bob (inverted)"
+msgid "Bob - Inverted"
 msgstr ""
 
 #empty string with id 16023
@@ -7271,16 +7490,18 @@ msgctxt "#16026"
 msgid "Playback failed"
 msgstr ""
 
+#: xbmc/PlaylistPlayer.cpp
 msgctxt "#16027"
-msgid "One or more items failed to play."
+msgid "One or more items failed to play. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#16028"
 msgid "Enter value"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRChannelManager.cpp
 msgctxt "#16029"
-msgid "Check the log file for details."
+msgid "Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#16030"
@@ -7292,15 +7513,15 @@ msgid "No matching songs in the library."
 msgstr ""
 
 msgctxt "#16032"
-msgid "Could not initialise database."
+msgid "Couldn't initialise database."
 msgstr ""
 
 msgctxt "#16033"
-msgid "Could not open database."
+msgid "Couldn't open database."
 msgstr ""
 
 msgctxt "#16034"
-msgid "Could not get songs from database."
+msgid "Couldn't get songs from database."
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogSmartPlaylistEditor.cpp
@@ -7310,7 +7531,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16036"
-msgid "De-interlace (Half)"
+msgid "Deinterlace (half)"
 msgstr ""
 
 msgctxt "#16037"
@@ -7339,8 +7560,9 @@ msgstr ""
 
 #empty strings from id 16042 to 16099
 
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#16100"
-msgid "All Videos"
+msgid "All videos"
 msgstr ""
 
 msgctxt "#16101"
@@ -7351,22 +7573,35 @@ msgctxt "#16102"
 msgid "Watched"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicNav.cpp
+#: xbmc/pvr/windows/GUIWindowPVRRecordings.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#16103"
 msgid "Mark as watched"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicNav.cpp
+#: xbmc/pvr/windows/GUIWindowPVRRecordings.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#16104"
 msgid "Mark as unwatched"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicNav.cpp
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
 msgctxt "#16105"
 msgid "Edit title"
 msgstr ""
 
+#: xbmc/pvr/windows/GUIWindowPVRChannels.cpp
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#16106"
 msgid "Manage..."
 msgstr ""
 
+#: xbmc/video/dialogs/GUIDialogVideoInfo.cpp
 msgctxt "#16107"
 msgid "Edit sort title"
 msgstr ""
@@ -7385,7 +7620,7 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#16202"
-msgid "Failed to copy at least one file"
+msgid "Failed to copy at least one file. Check the log for more information about this message."
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
@@ -7395,7 +7630,7 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#16204"
-msgid "Failed to move at least one file"
+msgid "Failed to move at least one file. Check the log for more information about this message."
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
@@ -7405,7 +7640,7 @@ msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
 msgctxt "#16206"
-msgid "Failed to delete at least one file"
+msgid "Failed to delete at least one file. Check the log for more information about this message."
 msgstr ""
 
 #empty strings from id 16207 to 16299
@@ -7467,27 +7702,27 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16311"
-msgid "Temporal/Spatial"
+msgid "Temporal / Spatial"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16312"
-msgid "(VDPAU)Noise Reduction"
+msgid "VDPAU - Noise reduction"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16313"
-msgid "(VDPAU)Sharpness"
+msgid "VDPAU - Sharpness"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16314"
-msgid "Inverse Telecine"
+msgid "Inverse telecine"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16315"
-msgid "Lanczos3 optimised"
+msgid "Lanczos3 - Optimised"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -7497,12 +7732,12 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16317"
-msgid "Temporal (Half)"
+msgid "Temporal (half)"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16318"
-msgid "Temporal/Spatial (Half)"
+msgid "Temporal / Spatial (half)"
 msgstr ""
 
 #: xbmc/cores/VideoRenderers/BaseRenderer.cpp
@@ -7512,12 +7747,12 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16320"
-msgid "DXVA Bob"
+msgid "DXVA - Bob"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16321"
-msgid "DXVA Best"
+msgid "DXVA - Best"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -7527,12 +7762,12 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16323"
-msgid "Spline36 optimised"
+msgid "Spline36 - Optimised"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16324"
-msgid "Software Blend"
+msgid "Software - Blend"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -7547,17 +7782,17 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16327"
-msgid "VAAPI Bob"
+msgid "VAAPI - Bob"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16328"
-msgid "VAAPI Motion Adaptive"
+msgid "VAAPI - Motion adaptive"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16329"
-msgid "VAAPI Motion Compensated"
+msgid "VAAPI - Motion compensated"
 msgstr ""
 
 #. Description of OSD video settings for deinterlace method with label #16330
@@ -7569,7 +7804,7 @@ msgstr ""
 #. Description of OSD video settings for deinterlace method with label #16331
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16331"
-msgid "MMAL - Advanced (Half)"
+msgid "MMAL - Advanced (half)"
 msgstr ""
 
 #. Description of OSD video settings for deinterlace method with label #16332
@@ -7581,7 +7816,7 @@ msgstr ""
 #. Description of OSD video settings for deinterlace method with label #16333
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16333"
-msgid "MMAL - Bob (Half)"
+msgid "MMAL - Bob (half)"
 msgstr ""
 
 #. Description of OSD video settings for deinterlace method with label #16334
@@ -7593,7 +7828,7 @@ msgstr ""
 #. Description of OSD video settings for deinterlace method with label #16335
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#16335"
-msgid "IMX - Fast motion (Double)"
+msgid "IMX - Fast motion (double)"
 msgstr ""
 
 #empty strings from id 16336 to 16399
@@ -7632,10 +7867,12 @@ msgctxt "#19000"
 msgid "Switch to channel"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19001"
-msgid "Separate the search words by using AND, OR and/or NOT."
+msgid "Separate the search words by using AND, OR and / or NOT."
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19002"
 msgid "or use phrases to find an exact match, like \"The wizard of Oz\"."
 msgstr ""
@@ -7655,53 +7892,64 @@ msgctxt "#19004"
 msgid "Importing guide from clients"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19005"
 msgid "PVR stream information"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19006"
 msgid "Receiving device"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19007"
 msgid "Device status"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19008"
 msgid "Signal quality"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19009"
 msgid "SNR"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19010"
 msgid "BER"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19011"
 msgid "UNC"
 msgstr ""
 
 #: xbmc/windows/GUIWindowSystemInfo.cpp
 msgctxt "#19012"
-msgid "PVR Backend"
+msgid "PVR backend"
 msgstr ""
 
+#: xbmc/pvr/channels/PVRChannel.cpp
 msgctxt "#19013"
 msgid "Free to air"
 msgstr ""
 
+#: xbmc/pvr/channels/PVRChannel.cpp
 msgctxt "#19014"
 msgid "Fixed"
 msgstr ""
 
+#: skin.confluence
 msgctxt "#19015"
 msgid "Encryption"
 msgstr ""
 
+#: unused
 msgctxt "#19016"
-msgid "PVR Backend %i - %s"
+msgid "PVR backend %i - %s"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogMediaSource.cpp
@@ -7721,22 +7969,34 @@ msgctxt "#19019"
 msgid "Channels"
 msgstr ""
 
+#: xbmc/pvr/channels/PVRChannelGroupsContainer.cpp
+#: xbmc/pvr/PVRManager.cpp
+#: skin.confluence
 msgctxt "#19020"
 msgid "TV"
 msgstr ""
 
+#: xbmc/pvr/channels/PVRChannelGroupsContainer.cpp
+#: xbmc/pvr/PVRManager.cpp
+#: skin.confluence
 msgctxt "#19021"
 msgid "Radio"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRGroupManager.cpp
+#: xbmc/pvr/windows/GUIWindowPVRChannels.cpp
 msgctxt "#19022"
 msgid "Hidden"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRGroupManager.cpp
+#: skin.confluence
 msgctxt "#19023"
 msgid "TV channels"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRGroupManager.cpp
+#: skin.confluence
 msgctxt "#19024"
 msgid "Radio channels"
 msgstr ""
@@ -7775,20 +8035,30 @@ msgctxt "#19032"
 msgid "Timeline"
 msgstr ""
 
+#: xbmc/pvr/addons/PVRClients.cpp
+#: xbmc/pvr/dialogs/GUIDialogPVRGuideInfo.cpp
+#: xbmc/pvr/PVRManager.cpp
+#: xbmc/pvr/timers/PVRTimers.cpp
+#: xbmc/pvr/windows/GUIWindowPVRBase.cpp
+#: xbmc/pvr/windows/GUIWindowPVRChannels.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#19033"
 msgid "Information"
 msgstr ""
 
+#: xbmc/pvr/windows/GUIWindowPVRBase.cpp
 msgctxt "#19034"
 msgid "Already started recording on this channel"
 msgstr ""
 
 msgctxt "#19035"
-msgid "%s could not be played. Check the log for details."
+msgid "%s couldn't be played. Check the log for more information about this message."
 msgstr ""
 
+#: xbmc/pvr/windows/GUIWindowPVRBase.cpp
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#19036"
-msgid "This recording cannot be played. Check the log for details."
+msgid "This recording can't be played. Check the log for more information about this message."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -7796,6 +8066,8 @@ msgctxt "#19037"
 msgid "Show signal quality"
 msgstr ""
 
+#: xbmc/pvr/addons/PVRClients.cpp
+#: xbmc/pvr/windows/GUIWindowPVRChannels.cpp
 msgctxt "#19038"
 msgid "Not supported by the PVR backend."
 msgstr ""
@@ -7822,11 +8094,11 @@ msgid "Recording"
 msgstr ""
 
 msgctxt "#19044"
-msgid "Please check your configuration or check the log for details."
+msgid "Please check your configuration. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19045"
-msgid "No PVR clients have been started yet. Wait for the PVR clients to start up or check the log for details."
+msgid "No PVR clients have been started yet. Wait for the PVR clients to start up. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19046"
@@ -7834,7 +8106,7 @@ msgid "New channel"
 msgstr ""
 
 msgctxt "#19047"
-msgid "Programme info"
+msgid "Programme information"
 msgstr ""
 
 msgctxt "#19048"
@@ -7866,6 +8138,7 @@ msgid "Hide channel"
 msgstr ""
 
 #: xbmc/epg/EpgInfoTag.cpp
+#: xbmc/pvr/windows/GUIWindowPVRBase.cpp
 msgctxt "#19055"
 msgid "No information available"
 msgstr ""
@@ -7899,7 +8172,7 @@ msgid "Sort by: Channel"
 msgstr ""
 
 msgctxt "#19063"
-msgid "Go to begin"
+msgid "Go to beginning"
 msgstr ""
 
 msgctxt "#19064"
@@ -7917,12 +8190,15 @@ msgctxt "#19066"
 msgid "Channel icons"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRGuideInfo.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
 msgctxt "#19067"
 msgid "This event is already being recorded."
 msgstr ""
 
+#: xbmc/pvr/recording/PVRRecording.cpp
 msgctxt "#19068"
-msgid "This recording could not be deleted. Check the log for details."
+msgid "This recording couldn't be deleted. Check the log for more information about this message."
 msgstr ""
 
 #. Electronic program guide. used by ?
@@ -7940,7 +8216,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19072"
-msgid "Do not cache in local database"
+msgid "Don't cache in local database"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -7948,46 +8224,64 @@ msgctxt "#19073"
 msgid "Delay channel switch"
 msgstr ""
 
+#. Label of active/inactive radiobutton in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19074"
-msgid "Active:"
+msgid "Active"
 msgstr ""
 
+#. Label of name edit in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19075"
-msgid "Name:"
+msgid "Name"
 msgstr ""
 
+#. Label of recording folder edit in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19076"
-msgid "Folder:"
+msgid "Folder"
 msgstr ""
 
 #empty string with id 19077
 
+#. Label of channel selector list in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19078"
-msgid "Channel:"
+msgid "Channel"
 msgstr ""
 
+#. heading for PVR timer days of week settings dialog
+#: skin.confluence
+#. Label of days of week button in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19079"
-msgid "Day:"
+msgid "Days of week"
 msgstr ""
 
 msgctxt "#19080"
-msgid "Begin:"
+msgid "Begin"
 msgstr ""
 
 msgctxt "#19081"
-msgid "End:"
+msgid "End"
 msgstr ""
 
+#. Label of priority spinner in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19082"
-msgid "Priority:"
+msgid "Priority"
 msgstr ""
 
+#. Label of lifetime spinner in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19083"
-msgid "Lifetime (days):"
+msgid "Lifetime"
 msgstr ""
 
+#. Label of first day (dd mm yy) button in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19084"
-msgid "First day:"
+msgid "First day"
 msgstr ""
 
 msgctxt "#19085"
@@ -8061,6 +8355,7 @@ msgctxt "#19101"
 msgid "Provider"
 msgstr ""
 
+#: xbmc/pvr/channels/PVRChannelGroupInternal.cpp
 msgctxt "#19102"
 msgid "Please switch to another channel."
 msgstr ""
@@ -8089,19 +8384,25 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19108"
-msgid "Framerate (fallback)"
+msgid "Fallback framerate"
 msgstr ""
 
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+#: xbmc/pvr/timers/PVRTimers.cpp
 msgctxt "#19109"
-msgid "Couldn't save timer. Check the log for details."
+msgid "Couldn't save timer. Check the log for more information about this message."
 msgstr ""
 
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
 msgctxt "#19110"
-msgid "An unexpected error occurred. Try again later or check the log for details."
+msgid "An unexpected error occurred. Try again later or check the log for more information."
 msgstr ""
 
+#: xbmc/pvr/addons/PVRClients.cpp
+#: xbmc/pvr/recording/PVRRecording.cpp
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
 msgctxt "#19111"
-msgid "PVR backend error. Check the log for details."
+msgid "PVR backend error. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19112"
@@ -8133,7 +8434,7 @@ msgid "Search for channels"
 msgstr ""
 
 msgctxt "#19118"
-msgid "Cannot use PVR functions while searching."
+msgid "Can't use PVR functions while searching."
 msgstr ""
 
 msgctxt "#19119"
@@ -8165,18 +8466,26 @@ msgctxt "#19125"
 msgid "Ignore present recordings"
 msgstr ""
 
+#. Label of "Start time" spinner in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19126"
 msgid "Start time"
 msgstr ""
 
+#. Label of "End time" edit field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19127"
 msgid "End time"
 msgstr ""
 
+#. Label of "Start date" spinner field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19128"
 msgid "Start date"
 msgstr ""
 
+#. Label of "End date" edit field in PVR timer settings dialog
+#: xbmc/pvr/dialogs/GUIDialogPVRTimerSettings.cpp
 msgctxt "#19129"
 msgid "End date"
 msgstr ""
@@ -8209,13 +8518,12 @@ msgctxt "#19136"
 msgid "Channel unavailable"
 msgstr ""
 
+#: xbmc/pvr/dialogs/GUIDialogPVRGroupManager.cpp
 msgctxt "#19137"
-msgid "No groups defined"
+msgid "No groups defined. Please create a group first"
 msgstr ""
 
-msgctxt "#19138"
-msgid "Please create a group first"
-msgstr ""
+#empty string with id 19138
 
 msgctxt "#19139"
 msgid "Name of the new group"
@@ -8250,8 +8558,9 @@ msgctxt "#19146"
 msgid "Groups"
 msgstr ""
 
+#: xbmc/pvr/recording/PVRRecording.cpp
 msgctxt "#19147"
-msgid "The PVR backend does not support this action. Check the log for details."
+msgid "The PVR backend does not support this action. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19148"
@@ -8306,7 +8615,11 @@ msgctxt "#19160"
 msgid "to"
 msgstr ""
 
-#empty string with id 19161
+#. timer schedule presentation string. <start-day-date|days-of-week> "from" <start-day-time|"any time"> "to" <end-day-time|"any time">
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp
+msgctxt "#19161"
+msgid "any time"
+msgstr ""
 
 msgctxt "#19162"
 msgid "Recording active"
@@ -8317,8 +8630,9 @@ msgctxt "#19163"
 msgid "Recordings"
 msgstr ""
 
+#: xbmc/pvr/PVRManager.cpp
 msgctxt "#19164"
-msgid "Cannot start recording. Check the log for details."
+msgid "Can't start recording. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19165"
@@ -8372,12 +8686,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19175"
-msgid "Start padding time"
+msgid "Default start padding time"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19176"
-msgid "End padding time"
+msgid "Default end padding time"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -8403,7 +8717,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19181"
-msgid "Menu/OSD"
+msgid "Menu / OSD"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -8424,20 +8738,17 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19185"
-msgid "Reset PVR database"
+msgid "Clear data"
 msgstr ""
 
 msgctxt "#19186"
-msgid "All data in the PVR database is being erased"
+msgid "All your TV related data (channels, groups, guide) will be cleared. Are you sure?"
 msgstr ""
 
-#: system/settings/settings.xml
-msgctxt "#19187"
-msgid "Reset guide database"
-msgstr ""
+#empty string with id 19187
 
 msgctxt "#19188"
-msgid "Guide is being reset"
+msgid "All your guide data will be cleared. Are you sure?"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -8454,12 +8765,14 @@ msgctxt "#19191"
 msgid "PVR service"
 msgstr ""
 
+#: xbmc/pvr/addons/PVRClients.cpp
 msgctxt "#19192"
 msgid "None of the connected PVR backends supports scanning for channels."
 msgstr ""
 
+#: xbmc/pvr/addons/PVRClients.cpp
 msgctxt "#19193"
-msgid "The channel scan cannot be started. Check the log for details."
+msgid "The channel scan can't be started. Check the log for more information about this message."
 msgstr ""
 
 msgctxt "#19194"
@@ -8549,6 +8862,7 @@ msgctxt "#19214"
 msgid "Enter a valid URL for the new channel"
 msgstr ""
 
+#: xbmc/pvr/timers/PVRTimers.cpp
 msgctxt "#19215"
 msgid "The PVR backend does not support timers."
 msgstr ""
@@ -8583,7 +8897,7 @@ msgid "Guide"
 msgstr ""
 
 msgctxt "#19223"
-msgid "No PVR Add-on could be enabled. Check your settings or the log for more info."
+msgid "No PVR add-on could be enabled. Check your settings or the log for more information."
 msgstr ""
 
 msgctxt "#19224"
@@ -8602,8 +8916,9 @@ msgctxt "#19227"
 msgid "Recording completed"
 msgstr ""
 
+#: xbmc/pvr/timers/PVRTimerInfoTag.cpp, displayed when a timer is deleted
 msgctxt "#19228"
-msgid "Recording deleted"
+msgid "Timer deleted"
 msgstr ""
 
 msgctxt "#19229"
@@ -8654,21 +8969,17 @@ msgctxt "#19239"
 msgid "Starting background threads"
 msgstr ""
 
+#: xbmc/pvr/windows/PVRClients.cpp
 msgctxt "#19240"
-msgid "No PVR Add-on enabled"
+msgid "No PVR add-on enabled"
 msgstr ""
 
+#: xbmc/pvr/windows/PVRClients.cpp
 msgctxt "#19241"
-msgid "The PVR manager has been enabled without any"
+msgid "The PVR manager has been enabled without any enabled PVR add-on. Enable at least one add-on in order to use the PVR functionality."
 msgstr ""
 
-msgctxt "#19242"
-msgid "enabled PVR Add-on. Enable at least one Add-on"
-msgstr ""
-
-msgctxt "#19243"
-msgid "in order to use the PVR functionality."
-msgstr ""
+#empty strings from id 19242 to 19243
 
 #: system/settings/settings.xml
 msgctxt "#19244"
@@ -8759,10 +9070,12 @@ msgctxt "#19263"
 msgid "Locked channel. Enter PIN:"
 msgstr ""
 
+#: xbmc/pvr/PVRManager.cpp
 msgctxt "#19264"
 msgid "Incorrect PIN"
 msgstr ""
 
+#: xbmc/pvr/PVRManager.cpp
 msgctxt "#19265"
 msgid "The entered PIN number was incorrect."
 msgstr ""
@@ -8778,12 +9091,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19268"
-msgid "Hide 'no information available' labels"
+msgid "Hide \"No information available\" labels"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19269"
-msgid "Disable 'connection lost' warnings"
+msgid "Disable \"Connection lost\" warnings"
 msgstr ""
 
 #. Label of the option to switch between a grouped recordings list and a non-grouped recordings list.
@@ -8793,20 +9106,14 @@ msgid "Group Items"
 msgstr ""
 
 msgctxt "#19271"
-msgid "No PVR Add-ons could be found"
+msgid "No PVR add-ons could be found"
 msgstr ""
 
 msgctxt "#19272"
-msgid "You need a tuner, backend software, and an"
+msgid "You need a tuner, backend software, and an add-on for the backend to be able to use PVR. Please visit http://kodi.wiki/view/PVR to learn more."
 msgstr ""
 
-msgctxt "#19273"
-msgid "Add-on for the backend to be able to use PVR."
-msgstr ""
-
-msgctxt "#19274"
-msgid "Please visit http://kodi.wiki/view/PVR to learn more."
-msgstr ""
+#empty strings from id 19273 to 19274
 
 #: xbmc/pvr/timers/PVRTimerInfoTag.cpp
 msgctxt "#19275"
@@ -8840,7 +9147,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#19281"
-msgid "Confirm channel switches by pressing OK"
+msgid "Confirm channel switches by pressing \"OK\""
 msgstr ""
 
 #. Label for a select option or list item, representing an icon graphic (like a TV channel icon)
@@ -8928,27 +9235,27 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19499"
-msgid "Other/Unknown"
+msgid "Other / Unknown"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19500"
-msgid "Movie/Drama"
+msgid "Movie / Drama"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19501"
-msgid "Detective/Thriller"
+msgid "Detective / Thriller"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19502"
-msgid "Adventure/Western/War"
+msgid "Adventure / Western / War"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19503"
-msgid "Science Fiction/Fantasy/Horror"
+msgid "Science fiction / Fantasy / Horror"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -8958,7 +9265,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19505"
-msgid "Soap/Melodrama/Folkloric"
+msgid "Soap / Melodrama / Folkloric"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -8968,29 +9275,29 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19507"
-msgid "Serious/Classical/Religious/Historical Movie/Drama"
+msgid "Serious / Classical / Religious / Historical movie / drama"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19508"
-msgid "Adult Movie/Drama"
+msgid "Adult movie / drama"
 msgstr ""
 
 #empty strings from id 19509 to 19515
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19516"
-msgid "News/Current Affairs"
+msgid "News / Current affairs"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19517"
-msgid "News/Weather Report"
+msgid "News / Weather report"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19518"
-msgid "News Magazine"
+msgid "News magazine"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9000,29 +9307,29 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19520"
-msgid "Discussion/Interview/Debate"
+msgid "Discussion / Interview / Debate"
 msgstr ""
 
 #empty strings from id 19521 to 19531
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19532"
-msgid "Show/Game Show"
+msgid "Show / Game show"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19533"
-msgid "Game Show/Quiz/Contest"
+msgid "Game show / Quiz / Contest"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19534"
-msgid "Variety Show"
+msgid "Variety show"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19535"
-msgid "Talk Show"
+msgid "Talk show"
 msgstr ""
 
 #empty strings from id 19536 to 19547
@@ -9034,12 +9341,12 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19549"
-msgid "Special Event"
+msgid "Special event"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19550"
-msgid "Sport Magazine"
+msgid "Sport magazine"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9049,12 +9356,12 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19552"
-msgid "Tennis/Squash"
+msgid "Tennis / Squash"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19553"
-msgid "Team Sports"
+msgid "Team sports"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9064,17 +9371,17 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19555"
-msgid "Motor Sport"
+msgid "Motor sport"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19556"
-msgid "Water Sport"
+msgid "Water sport"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19557"
-msgid "Winter Sports"
+msgid "Winter sports"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9084,65 +9391,65 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19559"
-msgid "Martial Sports"
+msgid "Martial sports"
 msgstr ""
 
 #empty strings from id 19560 to 19563
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19564"
-msgid "Children's/Youth Programmes"
+msgid "Children's / Youth programmes"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19565"
-msgid "Pre-school Children's Programmes"
+msgid "Pre-school children's programmes"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19566"
-msgid "Entertainment Programmes for 6 to 14"
+msgid "Entertainment programmes for 6 to 14"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19567"
-msgid "Entertainment Programmes for 10 to 16"
+msgid "Entertainment programmes for 10 to 16"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19568"
-msgid "Informational/Educational/School Programme"
+msgid "Informational / Educational / School programme"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19569"
-msgid "Cartoons/Puppets"
+msgid "Cartoons / Puppets"
 msgstr ""
 
 #empty strings from id 19570 to 19579
 
 msgctxt "#19580"
-msgid "Music/Ballet/Dance"
+msgid "Music / Ballet / Dance"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19581"
-msgid "Rock/Pop"
+msgid "Rock / Pop"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19582"
-msgid "Serious/Classical Music"
+msgid "Serious / Classical music"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19583"
-msgid "Folk/Traditional Music"
+msgid "Folk / Traditional music"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19584"
-msgid "Musical/Opera"
+msgid "Musical / Opera"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9154,17 +9461,17 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19596"
-msgid "Arts/Culture"
+msgid "Arts / Culture"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19597"
-msgid "Performing Arts"
+msgid "Performing arts"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19598"
-msgid "Fine Arts"
+msgid "Fine arts"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9174,7 +9481,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19600"
-msgid "Popular Culture/Traditional Arts"
+msgid "Popular culture / Traditional arts"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9184,27 +9491,27 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19602"
-msgid "Film/Cinema"
+msgid "Film / Cinema"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19603"
-msgid "Experimental Film/Video"
+msgid "Experimental film / video"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19604"
-msgid "Broadcasting/Press"
+msgid "Broadcasting / Press"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19605"
-msgid "New Media"
+msgid "New media"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19606"
-msgid "Arts/Culture Magazines"
+msgid "Arts / Culture magazines"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9216,59 +9523,59 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19612"
-msgid "Social/Political/Economics"
+msgid "Social / Political / Economics"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19613"
-msgid "Magazines/Reports/Documentary"
+msgid "Magazines / Reports / Documentary"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19614"
-msgid "Economics/Social Advisory"
+msgid "Economics / Social advisory"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19615"
-msgid "Remarkable People"
+msgid "Remarkable people"
 msgstr ""
 
 #empty strings from id 19616 to 19627
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19628"
-msgid "Education/Science/Factual"
+msgid "Education / Science / Factual"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19629"
-msgid "Nature/Animals/Environment"
+msgid "Nature / Animals / Environment"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19630"
-msgid "Technology/Natural Sciences"
+msgid "Technology / Natural sciences"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19631"
-msgid "Medicine/Physiology/Psychology"
+msgid "Medicine / Physiology / Psychology"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19632"
-msgid "Foreign Countries/Expeditions"
+msgid "Foreign countries / Expeditions"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19633"
-msgid "Social/Spiritual Sciences"
+msgid "Social / Spiritual sciences"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19634"
-msgid "Further Education"
+msgid "Further education"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9280,12 +9587,12 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19644"
-msgid "Leisure/Hobbies"
+msgid "Leisure / Hobbies"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19645"
-msgid "Tourism/Travel"
+msgid "Tourism / Travel"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9300,7 +9607,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19648"
-msgid "Fitness & Health"
+msgid "Fitness & health"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9310,7 +9617,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19650"
-msgid "Advertisement/Shopping"
+msgid "Advertisement / Shopping"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9322,17 +9629,17 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19660"
-msgid "Special Characteristics"
+msgid "Special characteristics"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19661"
-msgid "Original Language"
+msgid "Original language"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19662"
-msgid "Black & White"
+msgid "Black & white"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9342,7 +9649,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19664"
-msgid "Live Broadcast"
+msgid "Live broadcast"
 msgstr ""
 
 #empty strings from id 19665 to 19675
@@ -9354,17 +9661,17 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19677"
-msgid "Detective/Thriller"
+msgid "Detective / Thriller"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19678"
-msgid "Adventure/Western/War"
+msgid "Adventure / Western / War"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19679"
-msgid "Science Fiction/Fantasy/Horror"
+msgid "Science fiction / Fantasy / Horror"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9374,7 +9681,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19681"
-msgid "Soap/Melodrama/Folkloric"
+msgid "Soap / Melodrama / Folkloric"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9384,7 +9691,7 @@ msgstr ""
 
 #: xbmc/epg/Epg.cpp
 msgctxt "#19683"
-msgid "Serious/ClassicalReligion/Historical"
+msgid "Serious / Classical / Religion / Historical"
 msgstr ""
 
 #: xbmc/epg/Epg.cpp
@@ -9572,7 +9879,7 @@ msgctxt "#20026"
 msgid "Region"
 msgstr ""
 
-#empty strings from id 20027 to 20036
+#empty strings from id 20027 to 20034
 #string id's 20027 thru 20034 are reserved for temperature strings (LocalizeStrings.cpp)
 
 #: xbmc/LangInfo.cpp
@@ -9630,8 +9937,9 @@ msgctxt "#20047"
 msgid "Create profile '%s'?"
 msgstr ""
 
+#: xbmc/profiles/dialogs/GUIDialogProfileSettings.cpp
 msgctxt "#20048"
-msgid "Start with fresh settings"
+msgid "Start with fresh settings or copy from default?"
 msgstr ""
 
 msgctxt "#20049"
@@ -9672,6 +9980,7 @@ msgctxt "#20058"
 msgid "Add profile..."
 msgstr ""
 
+#. Context menu entry
 msgctxt "#20059"
 msgid "Query info for all albums"
 msgstr ""
@@ -9716,7 +10025,7 @@ msgstr ""
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
 msgctxt "#20069"
-msgid "Could not create folder"
+msgid "Couldn't create folder"
 msgstr ""
 
 #: xbmc/windows/GUIWindowFileManager.cpp
@@ -9724,19 +10033,17 @@ msgctxt "#20070"
 msgid "Profile directory"
 msgstr ""
 
+#: xbmc/dialogs/GUIDialogFileBrowser.cpp
 msgctxt "#20071"
-msgid "Start with fresh media sources"
+msgid "Start with fresh media sources or copy from default?"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
 msgctxt "#20072"
-msgid "Make sure the selected folder is writable"
+msgid "Make sure the selected folder is writable and that the new folder name is valid"
 msgstr ""
 
-#: xbmc/dialogs/GUIDialogFileBrowser.cpp
-msgctxt "#20073"
-msgid "and that the new folder name is valid"
-msgstr ""
+#empty string with id 20073
 
 #: xbmc/playlists/SmartPlaylist.cpp
 msgctxt "#20074"
@@ -9778,15 +10085,15 @@ msgid "Show programs in main menu"
 msgstr ""
 
 msgctxt "#20083"
-msgid "Show music info"
+msgid "Show music information"
 msgstr ""
 
 msgctxt "#20084"
-msgid "Show weather info"
+msgid "Show weather information"
 msgstr ""
 
 msgctxt "#20085"
-msgid "Show system info"
+msgid "Show system information"
 msgstr ""
 
 msgctxt "#20086"
@@ -9798,7 +10105,7 @@ msgid "Show available disk space E: F: G:"
 msgstr ""
 
 msgctxt "#20088"
-msgid "Weather info"
+msgid "Weather information"
 msgstr ""
 
 msgctxt "#20089"
@@ -9834,15 +10141,16 @@ msgid "Login screen"
 msgstr ""
 
 msgctxt "#20097"
-msgid "Fetching album info"
+msgid "Fetching album information"
 msgstr ""
 
 msgctxt "#20098"
-msgid "Fetching info for album"
+msgid "Fetching information for album"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#20099"
-msgid "Can't rip CD or track while playing from CD"
+msgid "A CD or track can't be ripped while being played"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -9854,24 +10162,20 @@ msgctxt "#20101"
 msgid "Entering master lock code always enables master mode"
 msgstr ""
 
-msgctxt "#20102"
-msgid "or copy from default?"
-msgstr ""
+#empty string with id 20102
 
 msgctxt "#20103"
 msgid "Save changes to profile?"
 msgstr ""
 
 msgctxt "#20104"
-msgid "Old settings found."
+msgid "Old settings found. Do you want to use them?"
 msgstr ""
 
-msgctxt "#20105"
-msgid "Do you want to use them?"
-msgstr ""
+#empty string with id 20105
 
 msgctxt "#20106"
-msgid "Old media sources found."
+msgid "Old media sources found. Do you want to use them?"
 msgstr ""
 
 msgctxt "#20107"
@@ -9926,12 +10230,10 @@ msgid "Invalid lock code."
 msgstr ""
 
 msgctxt "#20118"
-msgid "This requires the master lock to be set."
+msgid "This requires the master lock to be set. Would you like to set it now?"
 msgstr ""
 
-msgctxt "#20119"
-msgid "Would you like to set it now?"
-msgstr ""
+#empty string with id 20119
 
 msgctxt "#20120"
 msgid "Loading program information"
@@ -9976,7 +10278,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#20130"
-msgid "Weave (inverted)"
+msgid "Weave - Inverted"
 msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
@@ -10171,7 +10473,7 @@ msgid "UPnP server"
 msgstr ""
 
 msgctxt "#20176"
-msgid "Show video info"
+msgid "Show video information"
 msgstr ""
 
 msgctxt "#20177"
@@ -10217,7 +10519,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#20187"
-msgid "UPnP/DLNA"
+msgid "UPnP / DLNA"
 msgstr ""
 
 #: xbmc/network/upnp/UPnPServer.cpp
@@ -10259,6 +10561,7 @@ msgid "Change information provider"
 msgstr ""
 
 #: system/settings/settings.xml
+#: xbmc/music/MusicDatabase.cpp
 msgctxt "#20196"
 msgid "Export music library"
 msgstr ""
@@ -10272,8 +10575,9 @@ msgctxt "#20198"
 msgid "No artist found!"
 msgstr ""
 
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#20199"
-msgid "Downloading artist info failed"
+msgid "Downloading artist information failed"
 msgstr ""
 
 #empty strings from id 20200 to 20219
@@ -10290,7 +10594,12 @@ msgctxt "#20221"
 msgid "With this enabled, any information that is downloaded for albums and artists will override anything you have set in your song tags, such as genres, year, song artists etc. Useful if you have MusicBrainz identifiers in your song tags."
 msgstr ""
 
-#empty strings from id 20222 to 20239
+#: system/settings/settings.xml
+msgctxt "#20222"
+msgid "Look for external subtitles"
+msgstr ""
+
+#empty strings from id 20223 to 20239
 
 #: xbmc/dialogs/GUIDialogMediaSource.cpp
 msgctxt "#20240"
@@ -10313,7 +10622,7 @@ msgid "Android photos"
 msgstr ""
 
 msgctxt "#20244"
-msgid "Android Apps"
+msgid "Android apps"
 msgstr ""
 
 #empty strings from id 20245 to 20249
@@ -10344,25 +10653,23 @@ msgctxt "#20255"
 msgid "First logon, edit your profile"
 msgstr ""
 
-#empty string with id 20256
-
-#empty strings from id 20257 to 20258
+#empty strings from id 20256 to 20258
 
 #: xbmc/network/GUIDialogNetworkSetup.cpp
 msgctxt "#20259"
-msgid "Network Filesystem (NFS)"
+msgid "Network File System (NFS)"
 msgstr ""
 
 #: xbmc/network/GUIDialogNetworkSetup.cpp
 msgctxt "#20260"
-msgid "Secure Shell (SSH/SFTP)"
+msgid "Secure Shell (SSH / SFTP)"
 msgstr ""
 
 #empty string with id 20261
 
 #: xbmc/storage/MediaManager.cpp
 msgctxt "#20262"
-msgid "Zeroconf Browser"
+msgid "Zeroconf browser"
 msgstr ""
 
 #empty strings from id 20263 to 20299
@@ -10381,9 +10688,7 @@ msgctxt "#20302"
 msgid "Unable to write to folder:"
 msgstr ""
 
-msgctxt "#20303"
-msgid ""
-msgstr ""
+#empty string with id 20303
 
 #: xbmc/network/GUIDialogNetworkSetup.cpp
 msgctxt "#20304"
@@ -10433,7 +10738,7 @@ msgid "Scanning music videos using %s"
 msgstr ""
 
 msgctxt "#20319"
-msgid "Scanning tvshows using %s"
+msgid "Scanning TV shows using %s"
 msgstr ""
 
 msgctxt "#20320"
@@ -10522,13 +10827,14 @@ msgctxt "#20339"
 msgid "Director"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
+#: xbmc/music/windows/GUIWindowMusicSongs.cpp
 msgctxt "#20340"
-msgid "Do you want to remove all items within"
+msgid "Do you want to remove all items within this path from your library?"
 msgstr ""
 
-msgctxt "#20341"
-msgid "this path from your library?"
-msgstr ""
+#empty string with id 20341
 
 #: xbmc/dialogs/GUIDialogMediaFilter.cpp
 #: xbmc/dialogs/GUIDialogSmartPlaylistEditor.cpp
@@ -10568,6 +10874,7 @@ msgctxt "#20348"
 msgid "Directors"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#20349"
 msgid "No video files found in this path!"
 msgstr ""
@@ -10593,7 +10900,7 @@ msgid "Fetching episode guide"
 msgstr ""
 
 msgctxt "#20355"
-msgid "Loading info for episodes in directory"
+msgid "Loading information for episodes in directory"
 msgstr ""
 
 msgctxt "#20356"
@@ -10686,6 +10993,8 @@ msgctxt "#20374"
 msgid "Downloading movie information"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
+#: xbmc/video/windows/GUIWindowVideoNav.cpp
 msgctxt "#20375"
 msgid "Unassign content"
 msgstr ""
@@ -10699,7 +11008,7 @@ msgid "Refresh TV show information"
 msgstr ""
 
 msgctxt "#20378"
-msgid "Refresh info for all episodes?"
+msgid "Refresh information for all episodes?"
 msgstr ""
 
 msgctxt "#20379"
@@ -10918,12 +11227,10 @@ msgid "Fanart slideshow"
 msgstr ""
 
 msgctxt "#20426"
-msgid "Export to a single file or separate"
+msgid "Export to a single file or separate files per entry?"
 msgstr ""
 
-msgctxt "#20427"
-msgid "files per entry?"
-msgstr ""
+#empty string with id 20427
 
 msgctxt "#20428"
 msgid "Single file"
@@ -10991,17 +11298,17 @@ msgctxt "#20441"
 msgid "Remote fanart"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#20442"
 msgid "Change content"
 msgstr ""
 
+#: xbmc/video/windows/GUIWindowVideoBase.cpp
 msgctxt "#20443"
-msgid "Do you want to refresh info for all"
+msgid "Do you want to refresh information for all items within this path?"
 msgstr ""
 
-msgctxt "#20444"
-msgid "items within this path?"
-msgstr ""
+#empty string with id 20444
 
 #: xbmc/music/dialogs/GUIDialogMusicInfo.cpp
 msgctxt "#20445"
@@ -11009,23 +11316,24 @@ msgid "Fanart"
 msgstr ""
 
 msgctxt "#20446"
-msgid "Locally stored information found."
+msgid "Locally stored information found. Ignore and refresh from Internet?"
 msgstr ""
 
-msgctxt "#20447"
-msgid "Ignore and refresh from internet?"
-msgstr ""
+#empty string with id 20447
 
+#: xbmc/video/VideoInfoScanner.cpp
 msgctxt "#20448"
-msgid "Could not download information"
+msgid "Couldn't download information"
 msgstr ""
 
+#: xbmc/video/VideoInfoScanner.cpp
 msgctxt "#20449"
 msgid "Unable to connect to remote server"
 msgstr ""
 
+#: xbmc/video/VideoInfoScanner.cpp
 msgctxt "#20450"
-msgid "Would you like to continue scanning?"
+msgid "Unable to connect to remote server. Would you like to continue scanning?"
 msgstr ""
 
 #: xbmc/filesystem/VideoDatabaseDirectory/DirectoryNodeMoviesOverview.cpp
@@ -11105,7 +11413,7 @@ msgid "Select movie set"
 msgstr ""
 
 msgctxt "#20467"
-msgid "No set (Remove from %s)"
+msgid "No set (remove from %s)"
 msgstr ""
 
 msgctxt "#20468"
@@ -11131,7 +11439,7 @@ msgctxt "#21336"
 msgid "Connecting to: %s"
 msgstr ""
 
-#empty strings from id 2133i7 to 21358
+#empty strings from id 21337 to 21358
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
 msgctxt "#21359"
@@ -11154,7 +11462,7 @@ msgstr ""
 
 #: xbmc/video/dialogs/GUIDialogVideoBookmarks.cpp
 msgctxt "#21363"
-msgid "Episode Bookmark created"
+msgid "Episode bookmark created"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogFileBrowser.cpp
@@ -11178,7 +11486,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#21368"
-msgid "Override ASS/SSA subtitles fonts"
+msgid "Override ASS / SSA subtitles fonts"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -11380,7 +11688,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#21414"
-msgid "Default provider for tvshow information"
+msgid "Default provider for TV show information"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -11390,7 +11698,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#21416"
-msgid "Select first unwatched TV show season/episode"
+msgid "Select first unwatched TV show season / episode"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -11551,7 +11859,7 @@ msgstr ""
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#21452"
-msgid "Get More..."
+msgid "Get more..."
 msgstr ""
 
 msgctxt "#21453"
@@ -11563,7 +11871,7 @@ msgid "Cache full"
 msgstr ""
 
 msgctxt "#21455"
-msgid "Cache filled before reaching required amount for continous playback"
+msgid "Cache filled before reaching required amount for continuous playback"
 msgstr ""
 
 #: xbmc/playlists/SmartPlaylist.cpp
@@ -11617,7 +11925,7 @@ msgstr ""
 #. Description of setting "Videos -> Library -> Select first unwatched TV show season/episode" with label #21416
 #: system/settings/settings.xml
 msgctxt "#21466"
-msgid "When entering a TV show season or episode view automatically select the first unwatched season or episode. [On first entry] the first unwatched item will be selected only when a view is entered for the first time. [Always] the first unwatched item will be selected every time a view is entered."
+msgid "When entering a TV show season or episode view automatically select the first unwatched season or episode.[CR][On first entry] The first unwatched item will be selected only when a view is entered for the first time.[CR][Always] The first unwatched item will be selected every time a view is entered."
 msgstr ""
 
 #. Filter (media data) from float value to float value
@@ -11645,7 +11953,7 @@ msgctxt "#21470"
 msgid "%s [%d]"
 msgstr ""
 
-#. One of the values valid for "Videos -> Library -> Select first unwatched TV show season/episode" with label #21416
+#. One of the values valid for "Videos -> Library -> Select first unwatched TV show season / episode" with label #21416
 #: system/settings/settings.xml
 msgctxt "#21471"
 msgid "On first entry"
@@ -11653,13 +11961,13 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#21472"
-msgid "Include All Seasons and Specials"
+msgid "Include \"All seasons\" and \"Specials\""
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Include All Seasons and Specials" with label #21472
 #: system/settings/settings.xml
 msgctxt "#21473"
-msgid "Whether or not to consider All Seasons and Special items in the unwatched item selection."
+msgid "Whether or not to consider the items from \"All seasons\" and \"Specials\" in the unwatched item selection."
 msgstr ""
 
 #. One of the values valid for "Videos -> Library -> Include All Seasons and Specials" with label #21472
@@ -11677,13 +11985,13 @@ msgstr ""
 #. One of the values valid for "Videos -> Library -> Include All Seasons and Specials" with label #21472
 #: system/settings/settings.xml
 msgctxt "#21476"
-msgid "Just All Seasons"
+msgid "Just \"All seasons\""
 msgstr ""
 
 #. One of the values valid for "Videos -> Library -> Include All Seasons and Specials" with label #21472
 #: system/settings/settings.xml
 msgctxt "#21477"
-msgid "Just Specials"
+msgid "Just \"Specials\""
 msgstr ""
 
 #empty strings from id 21478 to 21601
@@ -11708,7 +12016,7 @@ msgid "File size"
 msgstr ""
 
 msgctxt "#21803"
-msgid "File date/time"
+msgid "File date / time"
 msgstr ""
 
 msgctxt "#21804"
@@ -11724,7 +12032,7 @@ msgid "Comment"
 msgstr ""
 
 msgctxt "#21807"
-msgid "Colour/B&W"
+msgid "Colour / B&W"
 msgstr ""
 
 msgctxt "#21808"
@@ -11734,7 +12042,7 @@ msgstr ""
 #empty strings from id 21809 to 21819
 
 msgctxt "#21820"
-msgid "Date/Time"
+msgid "Date / Time"
 msgstr ""
 
 msgctxt "#21821"
@@ -11908,7 +12216,7 @@ msgid "Country"
 msgstr ""
 
 msgctxt "#21876"
-msgid "Original Tx Reference"
+msgid "Original TX reference"
 msgstr ""
 
 msgctxt "#21877"
@@ -11966,6 +12274,7 @@ msgid "Discography"
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogMediaFilter.cpp
+#: xbmc/music/windows/GUIWindowMusicBase.cpp
 msgctxt "#21889"
 msgid "Searching artist"
 msgstr ""
@@ -12018,7 +12327,7 @@ msgid "Label"
 msgstr ""
 
 msgctxt "#21900"
-msgid "Born/Formed"
+msgid "Born / Formed"
 msgstr ""
 
 #empty strings from id 21901 to 21999
@@ -12191,19 +12500,19 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#22040"
-msgid "white/green"
+msgid "white / green"
 msgstr ""
 
 msgctxt "#22041"
-msgid "white/red"
+msgid "white / red"
 msgstr ""
 
 msgctxt "#22042"
-msgid "white/blue"
+msgid "white / blue"
 msgstr ""
 
 msgctxt "#22043"
-msgid "black/white"
+msgid "black / white"
 msgstr ""
 
 #empty strings from id 22044 to 22078
@@ -12220,7 +12529,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#22081"
-msgid "Show Information"
+msgid "Show information"
 msgstr ""
 
 msgctxt "#22082"
@@ -12239,7 +12548,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#23050"
-msgid "Activate Teletext"
+msgid "Activate teletext"
 msgstr ""
 
 msgctxt "#23051"
@@ -12260,29 +12569,30 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#23055"
-msgid "Scale Teletext to 4:3"
+msgid "Scale teletext to 4:3"
 msgstr ""
 
 #empty strings from id 23056 to 23099
 #strings 23100 thru 23150 reserved for external player
 
 msgctxt "#23100"
-msgid "External Player Active"
+msgid "External player active"
 msgstr ""
 
 msgctxt "#23101"
-msgid "Click OK to terminate the player"
+msgid "Click \"OK\" to terminate the player"
 msgstr ""
 
 #empty strings from id 23102 to 23103
 
 msgctxt "#23104"
-msgid "Click OK when playback has ended"
+msgid "Click \"OK\" when playback has ended"
 msgstr ""
 
 #empty strings from id 23105 to 23999
 #strings 24000 thru 24299 reserved for the Add-ons framework
 
+#: xbmc/addons/GUIDialogAddonSettings.cpp
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 msgctxt "#24000"
 msgid "Add-on"
@@ -12298,7 +12608,7 @@ msgid "Add-on options"
 msgstr ""
 
 msgctxt "#24003"
-msgid "Add-on Information"
+msgid "Add-on information"
 msgstr ""
 
 #empty string with id 24004
@@ -12311,7 +12621,7 @@ msgstr ""
 #. Name of an add-on type
 #: xbmc/addons/Addon.cpp
 msgctxt "#24006"
-msgid "GUI Sounds"
+msgid "GUI sounds"
 msgstr ""
 
 #: xbmc/addons/Addon.cpp
@@ -12406,7 +12716,7 @@ msgstr ""
 #. Used as the type name for context item addons
 #: xbmc/addons/Addons.cpp
 msgctxt "#24025"
-msgid "Context Items"
+msgid "Context items"
 msgstr ""
 
 #: xbmc/addons/Addon.cpp
@@ -12428,8 +12738,9 @@ msgctxt "#24029"
 msgid "Service for weather information"
 msgstr ""
 
+#: xbmc/addons/GUIDialogAddonSettings.cpp
 msgctxt "#24030"
-msgid "This Add-on can not be configured"
+msgid "This add-on can't be configured"
 msgstr ""
 
 msgctxt "#24031"
@@ -12438,7 +12749,7 @@ msgstr ""
 
 #: xbmc/pvr/addons/PVRClients.cpp
 msgctxt "#24032"
-msgid "All Add-ons"
+msgid "All add-ons"
 msgstr ""
 
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
@@ -12447,14 +12758,15 @@ msgctxt "#24033"
 msgid "Install from repository"
 msgstr ""
 
+#: xbmc/addons/GUIViewStateAddonBrowser.cpp
 msgctxt "#24034"
 msgid "Check for updates"
 msgstr ""
 
-#empty string id 24035
+#empty string with id 24035
 
 msgctxt "#24036"
-msgid "Change log"
+msgid "Changelog"
 msgstr ""
 
 msgctxt "#24037"
@@ -12468,7 +12780,7 @@ msgstr ""
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#24039"
-msgid "Disabled Add-ons"
+msgid "Disabled add-ons"
 msgstr ""
 
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
@@ -12489,13 +12801,13 @@ msgstr ""
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#24043"
-msgid "Available Updates"
+msgid "Available updates"
 msgstr ""
 
 #: xbmc/addons/AddonInstaller.cpp
 #: xbmc/addons/AddonsDatabase.cpp
 msgctxt "#24044"
-msgid "Dependencies not met. Please contact Add-on author."
+msgid "Dependencies not met. Please contact add-on author."
 msgstr ""
 
 #: xbmc/addons/AddonInstaller.cpp
@@ -12505,12 +12817,12 @@ msgstr ""
 
 #: xbmc/addons/GUIDialogAddonInfo.cpp
 msgctxt "#24046"
-msgid "%s is used by the following installed Add-on(s)"
+msgid "%s is used by the following installed add-on(s)"
 msgstr ""
 
 #: xbmc\addons\GUIDialogAddonInfo.cpp
 msgctxt "#24047"
-msgid "This Add-on cannot be uninstalled"
+msgid "This add-on can't be uninstalled"
 msgstr ""
 
 #: skin.confluence
@@ -12525,7 +12837,7 @@ msgstr ""
 
 #: unknown
 msgctxt "#24050"
-msgid "Available Add-ons"
+msgid "Available add-ons"
 msgstr ""
 
 #: xbmc/addons/AddonVersion.cpp
@@ -12574,11 +12886,11 @@ msgid "Checking dependencies..."
 msgstr ""
 
 msgctxt "#24059"
-msgid "Would you like to enable this Add-on?"
+msgid "Would you like to enable this add-on?"
 msgstr ""
 
 msgctxt "#24060"
-msgid "Would you like to disable this Add-on?"
+msgid "Would you like to disable this add-on?"
 msgstr ""
 
 #: xbmc/addons/Repository.cpp
@@ -12590,7 +12902,7 @@ msgstr ""
 #: xbmc/filesystem/AddonsDirectory.cpp
 #: xbmc/filesystem/AndroidAppDirectory.cpp
 msgctxt "#24062"
-msgid "Enabled Add-ons"
+msgid "Enabled add-ons"
 msgstr ""
 
 msgctxt "#24063"
@@ -12609,12 +12921,12 @@ msgstr ""
 
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 msgctxt "#24066"
-msgid "Cancel Add-on download?"
+msgid "Cancel add-on download?"
 msgstr ""
 
 #: xbmc/addons/GUIViewStateAddonBrowser.cpp
 msgctxt "#24067"
-msgid "Currently downloading Add-ons"
+msgid "Currently downloading add-ons"
 msgstr ""
 
 #: xbmc/filesystem/AddonsDirectory.cpp
@@ -12627,7 +12939,7 @@ msgid "Update"
 msgstr ""
 
 msgctxt "#24070"
-msgid "Add-on could not be loaded."
+msgid "Add-on couldn't be loaded."
 msgstr ""
 
 msgctxt "#24071"
@@ -12639,7 +12951,7 @@ msgid "Settings required"
 msgstr ""
 
 msgctxt "#24073"
-msgid "Could not connect"
+msgid "Couldn't connect"
 msgstr ""
 
 msgctxt "#24074"
@@ -12652,7 +12964,7 @@ msgstr ""
 
 #: xbmc/addons/AddonInstaller.cpp
 msgctxt "#24076"
-msgid "Add-on Required"
+msgid "Add-on required"
 msgstr ""
 
 #. Used as a text in the progress dialog when installing an add-on
@@ -12680,7 +12992,7 @@ msgstr ""
 #. The label in the add-ons manager for helper add-ons
 #: xbmc/addons/Addon.cpp
 msgctxt "#24081"
-msgid "Helper Add-ons"
+msgid "Helper add-ons"
 msgstr ""
 
 #. The label in the add-ons manager for add-on libraries
@@ -12719,22 +13031,32 @@ msgctxt "#24087"
 msgid "All repositories"
 msgstr ""
 
-#empty strings id 24088
+#empty string with id 24088
 
 msgctxt "#24089"
 msgid "Add-on restarts"
 msgstr ""
 
 msgctxt "#24090"
-msgid "Lock Add-on manager"
+msgid "Lock add-on manager"
 msgstr ""
 
 #: xbmc\addons\GUIDialogAddonInfo.cpp
 msgctxt "#24091"
-msgid "This Add-on cannot be disabled"
+msgid "This add-on can't be disabled"
 msgstr ""
 
-#empty strings from id 24092 to 24093
+#. Used as title of the progress dialog when checking for add-on updates in add-on browser
+#: xbmc/addons/AddonInstaller.cpp
+msgctxt "#24092"
+msgid "Checking for add-on updates"
+msgstr ""
+
+#. Used as a text in the progress dialog when checking for add-on updates. %s contains repository name
+#: xbmc/addons/Repository.cpp
+msgctxt "#24093"
+msgid "Checking %s..."
+msgstr ""
 
 #: xbmc/addons/guidialogaddoninfo.cpp
 msgctxt "#24094"
@@ -12768,12 +13090,12 @@ msgstr ""
 
 #: xbmc/addons/AddonInstaller.cpp
 msgctxt "#24100"
-msgid "To use this feature you must download an Add-on:"
+msgid "To use this feature you must download an add-on:"
 msgstr ""
 
 #: xbmc/addons/AddonInstaller.cpp
 msgctxt "#24101"
-msgid "Would you like to download this Add-on?"
+msgid "Would you like to download this add-on?"
 msgstr ""
 
 #: xbmc/Application.cpp
@@ -12830,7 +13152,7 @@ msgstr ""
 #. Description of setting "Videos -> Subtitles -> Languages to download subtitles for" with label #24111
 #: system/settings/settings.xml
 msgctxt "#24112"
-msgid "Set languages to use when searching for subtitles. Not all subtitle services will use all languages."
+msgid "Set languages to use when searching for subtitles.[CR]Note: Not all subtitle services will use all languages."
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogSubtitles.cpp
@@ -12850,24 +13172,24 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#24116"
-msgid "Default TV Service"
+msgid "Default TV show service"
 msgstr ""
 
 #. Description of setting "Videos -> Subtitles -> Default TV Service" with label #24116
 #: system/settings/settings.xml
 msgctxt "#24117"
-msgid "Select service that will be used as default to search for TV Show subtitles."
+msgid "Select the service that will be used as default to search for TV show subtitles."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#24118"
-msgid "Default Movie Service"
+msgid "Default movie service"
 msgstr ""
 
 #. Description of setting "Videos -> Subtitles -> Default Movie Service" with label #24118
 #: system/settings/settings.xml
 msgctxt "#24119"
-msgid "Select service that will be used as default to search for Movie subtitles."
+msgid "Select the service that will be used as default to search for movie subtitles."
 msgstr ""
 
 #: xbmc/dialogs/GUIDialogSubtitles.cpp
@@ -12961,7 +13283,7 @@ msgstr ""
 #: xbmc/addons/CGUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#24993"
-msgid "Information Providers"
+msgid "Information providers"
 msgstr ""
 
 #: xbmc/addons/CGUIViewStateAddonBrowser.cpp
@@ -12973,7 +13295,7 @@ msgstr ""
 #: xbmc/addons/CGUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#24995"
-msgid "Orphaned Dependencies"
+msgid "Orphaned dependencies"
 msgstr ""
 
 #: xbmc/addons/CGUIViewStateAddonBrowser.cpp
@@ -12982,12 +13304,12 @@ msgctxt "#24996"
 msgid "Dependencies"
 msgstr ""
 
-#empty string id 24997
+#empty string with id 24997
 
 #: xbmc/addons/CGUIViewStateAddonBrowser.cpp
 #: xbmc/filesystem/AddonsDirectory.cpp
 msgctxt "#24998"
-msgid "My Add-ons"
+msgid "My add-ons"
 msgstr ""
 
 #. Used in add-on browser
@@ -13058,7 +13380,7 @@ msgstr ""
 #: skin.confluence
 #: skin.retouched
 msgctxt "#29800"
-msgid "Library Mode"
+msgid "Library mode"
 msgstr ""
 
 #: unused
@@ -13068,7 +13390,7 @@ msgstr ""
 
 #: skin.confluence
 msgctxt "#29802"
-msgid "Passthrough Audio in use"
+msgid "Passthrough audio in use"
 msgstr ""
 
 #empty strings from id 29803 to 33000
@@ -13151,7 +13473,7 @@ msgid "Tonight"
 msgstr ""
 
 msgctxt "#33019"
-msgid "Tomorrow Night"
+msgid "Tomorrow night"
 msgstr ""
 
 msgctxt "#33020"
@@ -13211,7 +13533,7 @@ msgid "Map list %s category"
 msgstr ""
 
 msgctxt "#33034"
-msgid "36 Hour"
+msgid "36-hour"
 msgstr ""
 
 msgctxt "#33035"
@@ -13233,13 +13555,13 @@ msgstr ""
 #. Used in the media source dialog. Will result in "SAP Streams"
 #: dialogs/GUIDialogMediaSource.cpp
 msgctxt "#33039"
-msgid "%s Streams"
+msgid "%s streams"
 msgstr ""
 
 #. Used in the media source dialog. Will result in "HDHomerun Devices"
 #: dialogs/GUIDialogMediaSource.cpp
 msgctxt "#33040"
-msgid "%s Devices"
+msgid "%s devices"
 msgstr ""
 
 #empty strings from id 33041 to 33048
@@ -13256,7 +13578,7 @@ msgstr ""
 
 #: Unknown
 msgctxt "#33051"
-msgid "Choose Your"
+msgid "Choose your"
 msgstr ""
 
 #: Unknown
@@ -13361,28 +13683,15 @@ msgstr ""
 
 #: Unknown
 msgctxt "#33072"
-msgid "View Readme"
+msgid "View readme"
 msgstr ""
 
 #: Unknown
 msgctxt "#33073"
-msgid "View Changelog"
+msgid "View changelog"
 msgstr ""
 
-#: Unknown
-msgctxt "#33074"
-msgid "This version of %s requires an"
-msgstr ""
-
-#: Unknown
-msgctxt "#33075"
-msgid "Kodi revision of %s or greater to run."
-msgstr ""
-
-#: Unknown
-msgctxt "#33076"
-msgid "Please update Kodi."
-msgstr ""
+#empty strings from id 33074 to 33076
 
 #: Unknown
 msgctxt "#33077"
@@ -13427,31 +13736,35 @@ msgstr ""
 #empty strings from id 33085 to 33099
 
 #: xbmc/network/network.cpp
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#33100"
 msgid "Failed to start"
 msgstr ""
 
 #: xbmc/network/network.cpp
+#: xbmc/network/NetworkServices.cpp
 #: system/settings/settings.xml
 msgctxt "#33101"
-msgid "Webserver"
+msgid "Web server"
 msgstr ""
 
 #: xbmc/network/network.cpp
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#33102"
-msgid "Event Server"
+msgid "Event server"
 msgstr ""
 
 #: xbmc/network/network.cpp
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#33103"
 msgid "Remote communication server"
 msgstr ""
 
 #empty strings from id 33104 to 33199
 
-#: xbmc\network\eventclient.cpp
+#: xbmc/network/eventclient.cpp
 msgctxt "#33200"
-msgid "Detected New Connection"
+msgid "Detected new connection"
 msgstr ""
 
 #empty strings from id 33201 to 33999
@@ -13484,17 +13797,17 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#34005"
-msgid "Flac"
+msgid "FLAC"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#34006"
-msgid "MPEG-4 Audio (FFmpeg M4A AAC)"
+msgid "MPEG-4 audio (FFmpeg M4A AAC)"
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#34007"
-msgid "Windows Media Audio 2 (FFmpeg wmav2)"
+msgid "Windows media audio 2 (FFmpeg wmav2)"
 msgstr ""
 
 #empty strings from id 34008 to 34099
@@ -13504,51 +13817,61 @@ msgctxt "#34100"
 msgid "Number of channels"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34101"
 msgid "2.0"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34102"
 msgid "2.1"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34103"
 msgid "3.0"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34104"
 msgid "3.1"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34105"
 msgid "4.0"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34106"
 msgid "4.1"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34107"
 msgid "5.0"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34108"
 msgid "5.1"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34109"
 msgid "7.0"
 msgstr ""
 
+#. Indicates the number of audio channels in settings
 #: system/settings/settings.xml
 msgctxt "#34110"
 msgid "7.1"
@@ -13557,7 +13880,7 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Keep audio device alive" with label #421
 #: system/settings/settings.xml
 msgctxt "#34111"
-msgid "Select the behaviour when no sound is required for either playback or GUI sounds. [Always] - continuous inaudible signal is output, this keeps the receiving audio device alive for any new sounds, however this might also block sound from other applications. [1- 10 Minutes] - same as Always except that after the selected period of time audio enters a suspended state [Off] - audio output enters a suspended state. Note - sounds can be missed if audio enters suspended state."
+msgid "Select the behaviour when no sound is required for either playback or GUI sounds.[CR][Always] Continuous inaudible signal is output, this keeps the receiving audio device alive for any new sounds, however this might also block sound from other applications.[CR][1-10 Minutes] Same as [Always] except that after the selected period of time audio enters a suspended state.[CR][Off] Audio output enters a suspended state. Note: Sounds can be missed if audio enters suspended state."
 msgstr ""
 
 #empty strings from id 34112 to 34119
@@ -13638,31 +13961,29 @@ msgstr ""
 
 #: xbmc\network\windows\ZeroconfWIN.cpp
 msgctxt "#34301"
-msgid "Is Apple's Bonjour Service installed? See log for more info."
+msgid "Is Apple's Bonjour service installed? Check the log for more information about this message."
 msgstr ""
 
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#34302"
-msgid "AirPlay requires Zeroconf to be enabled."
+msgid "Failed to start AirPlay as it requires Zeroconf to be enabled."
 msgstr ""
 
+#: xbmc/network/NetworkServices.cpp
 msgctxt "#34303"
-msgid "Unable to stop Zeroconf"
+msgid "Unable to stop Zeroconf. AirPlay and AirTunes depend on Zeroconf running."
 msgstr ""
 
-msgctxt "#34304"
-msgid "AirPlay and AirTunes depend on Zeroconf running."
-msgstr ""
-
-#empty strings from id 34305 to 34399
+#empty strings from id 34304 to 34399
 
 #: xbmc\cores\VideoRenderers\LinuxRendererGL.cpp
 msgctxt "#34400"
-msgid "Video Rendering"
+msgid "Video rendering"
 msgstr ""
 
 #: xbmc\cores\VideoRenderers\LinuxRendererGL.cpp
 msgctxt "#34401"
-msgid "Failed to init video filters/scalers, falling back to bilinear scaling"
+msgid "Failed to initialize video filters / scalers, falling back to bilinear scaling"
 msgstr ""
 
 #: xbmc/cores/audioengine/sinks/aesinknull.cpp
@@ -13672,7 +13993,7 @@ msgstr ""
 
 #: xbmc/cores/audioengine/sinks/aesinknull.cpp
 msgctxt "#34403"
-msgid "Check your audiosettings"
+msgid "Check your audio settings"
 msgstr ""
 
 #description for the touchscreen when using the tvout feature on iDevices
@@ -13684,22 +14005,22 @@ msgstr ""
 
 #: xbmc/osx/IOSExternalTouchController.mm
 msgctxt "#34405"
-msgid "1 finger swipe left,right,up,down for cursors"
+msgid "One finger swipe left,right,up,down for cursors"
 msgstr ""
 
 #: xbmc/osx/IOSExternalTouchController.mm
 msgctxt "#34406"
-msgid "2 finger swipe left for backspace"
+msgid "Two finger swipe left for backspace"
 msgstr ""
 
 #: xbmc/osx/IOSExternalTouchController.mm
 msgctxt "#34407"
-msgid "1 finger single tap for enter"
+msgid "One finger single tap for enter"
 msgstr ""
 
 #: xbmc/osx/IOSExternalTouchController.mm
 msgctxt "#34408"
-msgid "2 finger single tap or 1 finger long press for contextmenu"
+msgid "Two finger single tap or one finger long press for contextmenu"
 msgstr ""
 
 #empty strings from id 34409 to 34999
@@ -13710,18 +14031,18 @@ msgctxt "#35000"
 msgid "Peripherals"
 msgstr ""
 
-#: xbmc/pheripherals/devices/PeripheralHID.cpp
-#: xbmc/pheripherals/devices/Peripheralmon.cpp
+#: xbmc/peripherals/devices/PeripheralHID.cpp
+#: xbmc/peripherals/devices/Peripheralmon.cpp
 msgctxt "#35001"
 msgid "Generic HID device"
 msgstr ""
 
-#: xbmc/pheripherals/devices/PeripheralNIC.cpp
+#: xbmc/peripherals/devices/PeripheralNIC.cpp
 msgctxt "#35002"
-msgid "Generic network adaptor"
+msgid "Generic network adapter"
 msgstr ""
 
-#: xbmc/pheripherals/devices/PeripheralDisk.cpp
+#: xbmc/peripherals/devices/PeripheralDisk.cpp
 msgctxt "#35003"
 msgid "Generic disk"
 msgstr ""
@@ -13731,12 +14052,12 @@ msgctxt "#35004"
 msgid "There are no settings available\nfor this peripheral."
 msgstr ""
 
-#: xbmc/pheripherals/Peripherals.cpp
+#: xbmc/peripherals/Peripherals.cpp
 msgctxt "#35005"
 msgid "New device configured"
 msgstr ""
 
-#: xbmc/pheripherals/Peripherals.cpp
+#: xbmc/peripherals/Peripherals.cpp
 msgctxt "#35006"
 msgid "Device removed"
 msgstr ""
@@ -13753,7 +14074,7 @@ msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#35009"
-msgid "Do not use the custom keymap for this device"
+msgid "Don't use the custom keymap for this device"
 msgstr ""
 
 #empty strings from id 35010 to 35099
@@ -13801,7 +14122,7 @@ msgstr ""
 
 #: xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 msgctxt "#36000"
-msgid "Pulse-Eight CEC adaptor"
+msgid "Pulse-Eight CEC adapter"
 msgstr ""
 
 msgctxt "#36001"
@@ -13829,36 +14150,36 @@ msgid "Enable switch side commands"
 msgstr ""
 
 msgctxt "#36006"
-msgid "Could not open the adaptor"
+msgid "Couldn't open the adapter"
 msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#36007"
-msgid "Devices to power on on startup"
+msgid "Devices to power on during startup"
 msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#36008"
-msgid "Devices to power off on shutdown"
+msgid "Devices to power off during shutdown"
 msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#36009"
-msgid "Put devices in standby mode when activating screensaver"
+msgid "Put devices in standby mode when activating the screensaver"
 msgstr ""
 
 msgctxt "#36010"
-msgid "Wake devices when deactivating screensaver"
+msgid "Wake devices when deactivating the screensaver"
 msgstr ""
 
 #: xbmc/peripherals/devices/peripheralcecadapter.cpp
 msgctxt "#36011"
-msgid "Could not detect the CEC com port. Set it up manually."
+msgid "Couldn't detect the CEC com port. Please configure it manually."
 msgstr ""
 
 #: xbmc/peripherals/devices/peripheralcecadapter.cpp
 msgctxt "#36012"
-msgid "Could not initialise the CEC adaptor. Please check your settings."
+msgid "Couldn't initialise the CEC adapter. Please check your settings."
 msgstr ""
 
 #empty strings from id 36013 to 36014
@@ -13876,7 +14197,7 @@ msgstr ""
 
 #: xbmc/peripherals/devices/peripheralcecadapter.cpp
 msgctxt "#36017"
-msgid "Could not initialise the CEC adaptor: libCEC was not found on your system."
+msgid "Couldn't initialise the CEC adapter: libCEC was not found on your system."
 msgstr ""
 
 #: system/peripherals.xml
@@ -13916,7 +14237,7 @@ msgstr ""
 
 #: system/peripherals.xml
 msgctxt "#36025"
-msgid "Send 'inactive source' command on shutdown"
+msgid "Send \"Inactive source\" command on shutdown"
 msgstr ""
 
 #: system/peripherals.xml
@@ -13951,12 +14272,12 @@ msgstr ""
 
 #: xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 msgctxt "#36031"
-msgid "This user does not have permissions to open the CEC adaptor"
+msgid "This user does not have permissions to open the CEC adapter"
 msgstr ""
 
 #: xbmc/peripherals/devices/PeripheralCecAdapter.cpp
 msgctxt "#36032"
-msgid "The port is busy. Only one program can access the CEC adaptor"
+msgid "The port is busy. Only one program can access the CEC adapter"
 msgstr ""
 
 #: system/peripherals.xml
@@ -13975,7 +14296,7 @@ msgstr ""
 #. adjust refreshrate
 #: system/settings/settings.xml
 msgctxt "#36036"
-msgid "On start/stop"
+msgid "On start / stop"
 msgstr ""
 
 #: xbmc/peripherals/devices/PeripheralCecAdapter.cpp
@@ -14012,17 +14333,7 @@ msgctxt "#36042"
 msgid "Use limited colour range (16-235)"
 msgstr ""
 
-#: xbmc/peripherals/devices/peripheralcecadapter.cpp
-msgctxt "#36043"
-msgid "No CEC capable TV detected."
-msgstr ""
-
-#: xbmc/peripherals/devices/peripheralcecadapter.cpp
-msgctxt "#36044"
-msgid "Disable polling for CEC capable devices?"
-msgstr ""
-
-#empty strings from id 36045 to 36100
+#empty strings from id 36043 to 36100
 #strings from 36100 to 36999 are reserved for settings descriptions
 
 #. Description of settings section "Appearance"
@@ -14034,19 +14345,19 @@ msgstr ""
 #. Description of settings category "Appearance -> Skin" with label #166
 #: system/settings/settings.xml
 msgctxt "#36102"
-msgid "Category containing all Skin related settings."
+msgid "This category contains all skin related settings."
 msgstr ""
 
 #. Description of setting "Appearance -> Skin -> Skin" with label #166
 #: system/settings/settings.xml
 msgctxt "#36103"
-msgid "Select the skin for the user interface. This will define the look and feel of this application."
+msgid "Select the skin for the user interface. This will define the look and feel of the application."
 msgstr ""
 
 #. Description of setting "Appearance -> Skin -> Settings" with label #21417
 #: system/settings/settings.xml
 msgctxt "#36104"
-msgid "Change specific skin settings. The available options are dependent on the skin used."
+msgid "Select to change the skin specific settings. Which options are available for configuration depends on the features provided by the skin."
 msgstr ""
 
 #. Description of setting "Appearance -> Skin -> Theme" with label #15111
@@ -14100,7 +14411,7 @@ msgstr ""
 #. Description of settings category "Appearance -> International" with label #14090
 #: system/settings/settings.xml
 msgctxt "#36113"
-msgid "Category containing all locale/regional settings."
+msgid "This category contains all locale / regional settings."
 msgstr ""
 
 #. Description of setting "Appearance -> International -> Language" with label #248
@@ -14109,19 +14420,19 @@ msgctxt "#36114"
 msgid "Chooses the language of the user interface."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Region" with label #20026
+#. Description of setting "Appearance -> International -> Region" with label #20026
 #: system/settings/settings.xml
 msgctxt "#36115"
 msgid "Select the formats for temperature, time and date. The available options depend on the selected language."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Character set" with label #14091
+#. Description of setting "Appearance -> International -> Character set" with label #14091
 #: system/settings/settings.xml
 msgctxt "#36116"
 msgid "Choose which character set is used for displaying text in the user interface."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Timezone country" with label #14079
+#. Description of setting "Appearance -> International -> Timezone country" with label #14079
 #: system/settings/settings.xml
 msgctxt "#36117"
 msgid "Select country location."
@@ -14133,13 +14444,13 @@ msgctxt "#36118"
 msgid "Select your current timezone."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Preferred audio language" with label #285
+#. Description of setting "Appearance -> International -> Preferred audio language" with label #285
 #: system/settings/settings.xml
 msgctxt "#36119"
 msgid "Defaults to the selected audio language if more than one language is available."
 msgstr ""
 
-#.  Description of setting "Video -> Subtitles -> Preferred subtitle language" with label #286
+#. Description of setting "Video -> Subtitles -> Preferred subtitle language" with label #286
 #: system/settings/settings.xml
 msgctxt "#36120"
 msgid "Defaults to the selected subtitle language if more than one language is available."
@@ -14148,40 +14459,40 @@ msgstr ""
 #. Description of settings category "Appearance -> File lists" with label #14081
 #: system/settings/settings.xml
 msgctxt "#36121"
-msgid "Category containing settings related to how file lists are displayed."
+msgid "This category contains the settings for how file lists are displayed."
 msgstr ""
 
-#.  Description of setting "Appearance -> File lists -> Show parent folder items" with label #13306
+#. Description of setting "Appearance -> File lists -> Show parent folder items" with label #13306
 #: system/settings/settings.xml
 msgctxt "#36122"
 msgid "Display the (..) item in lists for visiting the parent folder."
 msgstr ""
 
-#.  Description of setting "Appearance -> File lists -> Show file extensions" with label #497
+#. Description of setting "Appearance -> File lists -> Show file extensions" with label #497
 #: system/settings/settings.xml
 msgctxt "#36123"
-msgid "Show file extensions on media files. For example, 'You Enjoy Myself.mp3' would be simply be shown as 'You Enjoy Myself'."
+msgid "Show file extensions on media files, for example \"You Enjoy Myself\" would be shown as \"You Enjoy Myself.mp3\"."
 msgstr ""
 
-#. #.  Description of setting "Appearance -> File lists -> Ignore articles when sorting with label #13399
+#. Description of setting "Appearance -> File lists -> Ignore articles when sorting with label #13399
 #: system/settings/settings.xml
 msgctxt "#36124"
-msgid "Ignore certain tokens (e.g. \"the\") during sort operations. For example, 'The Simpsons' would be sorted as 'Simpsons'."
+msgid "Ignore certain tokens, e.g. \"The\", during sort operations. \"The Simpsons\" would for example be sorted as \"Simpsons\"."
 msgstr ""
 
-#.  Description of setting "Appearance -> File lists -> Allow file renaming and deletion" with label #14071
+#. Description of setting "Appearance -> File lists -> Allow file renaming and deletion" with label #14071
 #: system/settings/settings.xml
 msgctxt "#36125"
-msgid "Allow files to be deleted and renamed through the user interface, via the contextual menu (press C on a keyboard, for example, to bring up this menu)."
+msgid "Allow files to be deleted and renamed through the user interface, via the context menu, e.g. press \"C\" on a keyboard to bring up this menu."
 msgstr ""
 
-#.  Description of setting "Appearance -> File lists -> Show "Add source" buttons in files lists" with label #21382
+#. Description of setting "Appearance -> File lists -> Show "Add source" buttons in files lists" with label #21382
 #: system/settings/settings.xml
 msgctxt "#36126"
 msgid "Show the add source button in root sections of the user interface."
 msgstr ""
 
-#.  Description of setting "Appearance -> File lists -> Show hidden files and directories" with label #21330
+#. Description of setting "Appearance -> File lists -> Show hidden files and directories" with label #21330
 #: system/settings/settings.xml
 msgctxt "#36127"
 msgid "Show hidden files and directories when listing files."
@@ -14190,7 +14501,7 @@ msgstr ""
 #. Description of settings category "Appearance -> Screensaver" with label #360
 #: system/settings/settings.xml
 msgctxt "#36128"
-msgid "Category containing all screensaver settings."
+msgid "This category contains the settings for how the screensaver add-ons are handled."
 msgstr ""
 
 #. Description of setting "Appearance -> Screensaver -> Wait time" with label #355
@@ -14202,13 +14513,13 @@ msgstr ""
 #. Description of setting "Appearance -> Screensaver -> Screensaver mode" with label #356
 #: system/settings/settings.xml
 msgctxt "#36130"
-msgid "Select the screensaver. The 'Dim' screensaver will be forced when fullscreen video playback is paused or a dialogue box is active."
+msgid "Select the screensaver. The \"Dim\" screensaver will be forced when fullscreen video playback is paused or a dialogue box is active."
 msgstr ""
 
 #. #. Description of setting "Appearance -> Screensaver -> Settings" with label #21417
 #: system/settings/settings.xml
 msgctxt "#36131"
-msgid "Change specific screensaver settings. The available options are dependent on the screensaver used."
+msgid "Select to change the screensaver specific settings. Which options are available for configuration depends on the features provided by the screensaver add-on."
 msgstr ""
 
 #. Description of setting "Appearance -> Screensaver -> Preview" with label #1000
@@ -14226,7 +14537,7 @@ msgstr ""
 #. Description of setting "Appearance -> Screensaver -> Use dim if paused during video playback" with label #22014
 #: system/settings/settings.xml
 msgctxt "#36134"
-msgid "Dim the display when media is paused. Not valid for the 'Dim' screensaver mode."
+msgid "Dim the display when media is paused. Not valid for the \"Dim\" screensaver mode."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14253,10 +14564,10 @@ msgstr ""
 #. Description of settings category "Videos -> Library" with label #14022
 #: system/settings/settings.xml
 msgctxt "#36139"
-msgid "Category containing the settings for how the video library is handled."
+msgid "This category contains the settings for how the video library is handled."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Temperature unit" with label #14105
+#. Description of setting "Appearance -> International -> Temperature unit" with label #14105
 #: system/settings/settings.xml
 msgctxt "#36140"
 msgid "Choose which temperature unit is used for displaying temperatures in the user interface."
@@ -14265,10 +14576,10 @@ msgstr ""
 #. Description of setting "Videos -> Library -> Show plot for unwatched items" with label #20369
 #: system/settings/settings.xml
 msgctxt "#36141"
-msgid "Show plot information for unwatched media in the Video Library."
+msgid "Show plot information for unwatched media in the video library."
 msgstr ""
 
-#.  Description of setting "Appearance -> International -> Speed unit" with label #14106
+#. Description of setting "Appearance -> International -> Speed unit" with label #14106
 #: system/settings/settings.xml
 msgctxt "#36142"
 msgid "Choose which speed unit is used for displaying speeds in the user interface."
@@ -14277,19 +14588,19 @@ msgstr ""
 #. Description of setting "Videos -> Library -> Download actor thumbnails" with label #20402
 #: system/settings/settings.xml
 msgctxt "#36143"
-msgid "Get thumbnails for actors when adding media to the library."
+msgid "Downloads thumbnails for actors from online databases when adding media to the library."
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Flatten TV show seasons" with label #20412
 #: system/settings/settings.xml
 msgctxt "#36144"
-msgid "Remove the TV show season node, toggles between 'If only one season' (default), 'Always' and 'Never'."
+msgid "Select in which cases you want to hide the season nodes of TV shows. If hidden, selecting a TV show will directly jump into the episodes view."
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Group movies in sets" with label #20458
 #: system/settings/settings.xml
 msgctxt "#36145"
-msgid "Group movies into 'Movie sets' when browsing the movie library."
+msgid "Group movies into \"Movie sets\" when browsing the movie library."
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Update library on startup" with label #22000
@@ -14315,19 +14626,19 @@ msgstr ""
 #. Description of setting "Videos -> Library -> Export video library" with label #647
 #: system/settings/settings.xml
 msgctxt "#36149"
-msgid "Export the Video Library database to XML files. This will optionally overwrite your current XML files."
+msgid "Export the video library database to XML files. This will optionally overwrite your current XML files."
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Import video library" with label #648
 #: system/settings/settings.xml
 msgctxt "#36150"
-msgid "Import a XML file into the Video Library database."
+msgid "Import a XML file into the video library database."
 msgstr ""
 
 #. Description of settings category "Videos -> Playback" with label #14086
 #: system/settings/settings.xml
 msgctxt "#36151"
-msgid "Category containing settings for how video playback is handled."
+msgid "This category contains the settings for how video playback is handled."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Play next video automatically" with label #13433
@@ -14342,7 +14653,7 @@ msgctxt "#36153"
 msgid "Adjust the method used to process and display video."
 msgstr ""
 
-#. Description of setting "Videos -> Playback -> Enable HQ Scalers for scalings above" with label #13435
+#. Description of setting "Videos -> Playback -> Enable HQ Scalers for scaling above" with label #13435
 #: system/settings/settings.xml
 msgctxt "#36154"
 msgid "Use high quality scalers when upscaling a video by at least this percentage."
@@ -14421,13 +14732,13 @@ msgstr ""
 #. Description of setting "Appearance -> International -> Use 12/24-hour format" with label #14108
 #: system/settings/settings.xml
 msgctxt "#36168"
-msgid "Choose whether to use 12-hour or 24-hour format for displaying the time in the user interface."
+msgid "Choose whether to use 12 or 24-hour format for displaying the time in the user interface."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Resample quality" with label #13505
 #: system/settings/settings.xml
 msgctxt "#36169"
-msgid "Select the quality of resampling for cases where the audio output needs to be at a different sampling rate from that used by the source. [Low] is fast and will have minimal impact on system resources such as the use of the CPU, [Medium] & [High] will use progressively more system resources."
+msgid "Select the quality of resampling for cases where the audio output needs to be at a different sampling rate from that used by the source.[CR][Low] Is fast and will have minimal impact on system resources such as the use of the CPU.[CR][Medium] & [High] Will use progressively more system resources."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Minimise black bars" with label #22021
@@ -14453,25 +14764,25 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Activate Teletext" with label #23050
 #: system/settings/settings.xml
 msgctxt "#36174"
-msgid "Enable Teletext when watching a live TV stream."
+msgid "Enable teletext when watching a live TV stream."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> "Scale Teletext to 4:3" with label #23055
 #: system/settings/settings.xml
 msgctxt "#36175"
-msgid "Scale Teletext to 4:3 ratio."
+msgid "Scale teletext to 4:3 ratio."
 msgstr ""
 
 #. Description of settings category "Videos -> File lists" with label #14081
 #: system/settings/settings.xml
 msgctxt "#36176"
-msgid "Category containing settings for how video file lists are handled."
+msgid "This category contains the settings for how video file lists are handled."
 msgstr ""
 
 #. Description of setting "Videos -> File lists -> Default select action" with label #22079
 #: system/settings/settings.xml
 msgctxt "#36177"
-msgid "Toggle between Choose, Play (default), Resume and Show Information. Choose will select an item, e.g. open a directory in files mode. Resume will automatically resume videos from the last position that you were viewing them, even after restarting the system."
+msgid "Toggle between [Choose], [Play] (default), [Resume] and [Show information].[CR][Choose] Will select an item, e.g. open a directory in files mode.[CR][Resume] Will automatically resume videos from the last position that you were viewing them, even after restarting the system."
 msgstr ""
 
 #. Description of setting "Videos -> File lists -> Extract thumbnails and video information" with label #20433
@@ -14489,7 +14800,7 @@ msgstr ""
 #. Description of setting "Videos -> File lists -> Extract thumbnails and video information" with label #20433
 #: system/settings/settings.xml
 msgctxt "#36180"
-msgid "Extract thumbnails and information, such as codecs and aspect ratio, to display in Library Mode."
+msgid "Extract thumbnails and information, such as codecs and aspect ratio, to display in library mode."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14500,19 +14811,19 @@ msgstr ""
 #. Description of setting "Videos -> File lists -> Combine split video items" with label #20435
 #: system/settings/settings.xml
 msgctxt "#36182"
-msgid "Combines multi-part video files, DVD folders, and movie folders down to a single item in non-library views."
+msgid "Combines multi-part video files, DVD folders or movie folders, down to a single item in non-library views."
 msgstr ""
 
 #. Description of setting "Videos -> File lists -> Flatten hierarchy" with label #20456
 #: system/settings/settings.xml
 msgctxt "#36183"
-msgid "Removes the title, genre etc nodes from the library view. Selecting a category takes you straight to the title view."
+msgid "Removes the title, genre, etc. nodes from the library view. Selecting a category takes you straight to the title view."
 msgstr ""
 
 #. Description of settings category "Videos -> Subtitles" with label #287
 #: system/settings/settings.xml
 msgctxt "#36184"
-msgid "Category containing settings for how subtitles are handled."
+msgid "This category contains the settings for how subtitles are handled."
 msgstr ""
 
 #. Description of setting "Videos -> Subtitles -> Font to use for text subtitles" with label #14089
@@ -14548,7 +14859,7 @@ msgstr ""
 #. Description of setting "Videos -> Subtitles -> Override ASS/SSA subtitles fonts" with label #21368
 #: system/settings/settings.xml
 msgctxt "#36190"
-msgid "Override ASS/SSA subtitles fonts."
+msgid "Override ASS / SSA subtitles fonts."
 msgstr ""
 
 #. Description of setting "Videos -> Subtitles -> Custom subtitle folder" with label #21366
@@ -14566,7 +14877,7 @@ msgstr ""
 #. Description of settings category "Videos -> DVDs" with label #14087
 #: system/settings/settings.xml
 msgctxt "#36193"
-msgid "Category containing settings for how DVDs are handled."
+msgid "This category contains the settings for how DVDs are handled."
 msgstr ""
 
 #. Description of setting "Videos -> DVDs -> Play DVDs automatically" with label #14088
@@ -14584,7 +14895,7 @@ msgstr ""
 #. Description of setting "Videos -> DVDs -> Attempt to skip introduction before DVD menu" with label #21882
 #: system/settings/settings.xml
 msgctxt "#36196"
-msgid "Attempt to skip 'unskippable' introductions before DVD menu."
+msgid "Attempt to skip \"unskippable\" introductions before DVD menu."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14594,32 +14905,32 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36198"
-msgid "Select the default movie information source. See the Add-ons Manager for options."
+msgid "Select the default movie information source. See the add-ons manager for options."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36199"
-msgid "Select the default TV show information source. See the Add-ons Manager for options."
+msgid "Select the default TV show information source. See the add-ons manager for options."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36200"
-msgid "Default provider for fetching information about music videos."
+msgid "Select the default music videos information source. See the add-ons manager for options."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36201"
-msgid "Settings for PVR/Live TV features."
+msgid "Settings for PVR / Live TV."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36202"
-msgid "Category for general settings for PVR/Live TV features."
+msgid "This category contains the general settings for the PVR / Live TV."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36203"
-msgid "Enables the Personal Video Recorder (PVR) features. This requires that at least one PVR Add-on is installed."
+msgid "Enables the \"Personal Video Recorder\" (PVR) features. This requires that at least one PVR add-on is installed."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14634,7 +14945,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36206"
-msgid "Use the channel numbering from the backend, instead of configuring them manually in the Channel manager. Only works with 1 enabled PVR Add-on!"
+msgid "Use the channel numbering from the backend, instead of configuring them manually in the channel manager. Only works with one enabled PVR add-on!"
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14654,12 +14965,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36210"
-msgid "Prevent the 'connection lost' notification window from displaying when the PVR backend server is not available."
+msgid "Prevent the \"Connection lost\" notification window from displaying when the PVR backend server is not available."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36211"
-msgid "Category for PVR menus and on-screen display settings, as well as channel info windows."
+msgid "This category contains the settings for PVR menus and on-screen display (OSD), as well as channel information windows."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14695,7 +15006,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36218"
-msgid "Category for electronic programming guide settings."
+msgid "This category contains the electronic programming guide (EPG) settings."
 msgstr ""
 
 #empty string with id 36219
@@ -14712,7 +15023,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36222"
-msgid "Do not import the guide data while playing TV to minimise CPU usage."
+msgid "Don't import the guide data while playing TV to minimise CPU usage."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14722,7 +15033,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36224"
-msgid "Hide \"no information available\" labels when no guide data is available for a channel."
+msgid "Hide \"No information available\" labels when no guide data is available for a channel."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14732,7 +15043,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36226"
-msgid "Category for PVR playback and channel switching settings."
+msgid "This category contains the PVR playback and channel switching settings."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14747,7 +15058,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36229"
-msgid "Display signal quality information in the codec information window (if supported by the Add-on and backend)."
+msgid "Display signal quality information in the codec information window (if supported by the add-on and backend)."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14767,7 +15078,7 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36233"
-msgid "Category for default recording duration settings."
+msgid "This category contains the default recording duration settings."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14777,22 +15088,22 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36235"
-msgid "Priority of the recording. Higher number means higher priority. Not supported by all Add-ons and backends."
+msgid "Priority of the recording. Higher number means higher priority. Not supported by all add-ons and backends."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36236"
-msgid "Delete recording after this time. Not supported by all Add-ons and backends."
+msgid "Delete recording after this time. Not supported by all add-ons and backends."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36237"
-msgid "Additional time to record before the scheduled start time to allow for minor broadcasting changes. Not supported by all Add-ons and backends."
+msgid "Additional time to record before the scheduled start time to allow for minor broadcasting changes. Not supported by all add-ons and backends."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36238"
-msgid "Additional time to record after the scheduled end time to allow for minor broadcasting changes. Not supported by all Add-ons and backends."
+msgid "Additional time to record after the scheduled end time to allow for minor broadcasting changes. Not supported by all add-ons and backends."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14802,12 +15113,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36240"
-msgid "Category for PVR power management settings, such as when to wake the PVR backend server."
+msgid "This category contains the PVR power management settings, such as when to wakeup the PVR backend server."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36241"
-msgid "Execute the \"wakeup command\" below when exiting this application or going into hibernation mode. The timestamp of the next scheduled recording is passed as parameter."
+msgid "Execute the wakeup command below when exiting this application or going into hibernation mode. The timestamp of the next scheduled recording is passed as parameter."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14837,12 +15148,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36247"
-msgid "Category for parental control settings if the PVR backend server supports parental controls."
+msgid "This category contains the parental control settings, if the PVR backend server supports parental controls."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36248"
-msgid "Asks for a pin code to access parental locked channels. Channels can be marked as locked in the channels editor on the general tab. Parental locked channels can not be played or recorded without entering a pin code, and the guide information is hidden for those channels."
+msgid "Asks for a pin code to access parental locked channels. Channels can be marked as locked in the channels editor on the general tab. Parental locked channels can't be played or recorded without entering a pin code, and the guide information is hidden for those channels."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -14857,12 +15168,12 @@ msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36251"
-msgid "Category for any specific settings for your PVR backend, if supported by the PVR Add-on and backend."
+msgid "This category contains the settings for your PVR backend specifically, if supported by the PVR add-on and backend."
 msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36252"
-msgid "This option will bring you to any specific settings for your PVR backend, if supported by the PVR Add-on and backend."
+msgid "This option will bring you to any specific settings for your PVR backend, if supported by the PVR add-on and backend."
 msgstr ""
 
 #. Description of settings section "Music" with label #2
@@ -14917,25 +15228,25 @@ msgstr ""
 #. Description of setting "Music -> Library -> Export music library" with label #20196
 #: system/settings/settings.xml
 msgctxt "#36262"
-msgid "Export the Music Library database to XML files. This will optionally overwrite your current XML files."
+msgid "Export the music library database to XML files. This will optionally overwrite your current XML files."
 msgstr ""
 
 #. Description of setting "Music -> Library -> Import music library" with label #20197
 #: system/settings/settings.xml
 msgctxt "#36263"
-msgid "Import a XML file into the Music Library database."
+msgid "Import a XML file into the music library database."
 msgstr ""
 
 #. Description of settings category "Music -> Playback" with label #14086
 #: system/settings/settings.xml
 msgctxt "#36264"
-msgid "Category containing settings for how music playback is handled."
+msgid "This category contains the settings for how music playback is handled."
 msgstr ""
 
 #. Description of setting "Music -> Playback -> Play next song automatically" with label #489
 #: system/settings/settings.xml
 msgctxt "#36265"
-msgid "Automatically plays the next item in the current folder. For example, in Files View: After a track has been played, the next track in the same folder would automatically play."
+msgid "Automatically plays the next item in the current folder, for example in \"Files\" view after a track has been played, the next track in the same folder will automatically play."
 msgstr ""
 
 #. Description of setting "Music -> Playback -> Queue songs on selection" with label #14084
@@ -14989,7 +15300,7 @@ msgstr ""
 #. Description of setting "Music -> File lists -> Enable tag reading" with label #258
 #: system/settings/settings.xml
 msgctxt "#36274"
-msgid "Read the tag information from song files. For large directories this can slow down read time, especially over a network."
+msgid "Read the tag information from song files. For large directories this can increase read time, especially over a network."
 msgstr ""
 
 #. Description of setting "Music -> File lists -> Track naming template" with label #13307
@@ -15037,7 +15348,7 @@ msgstr ""
 #. Description of settings category "Music -> Audio CDs" with label #620
 #: system/settings/settings.xml
 msgctxt "#36282"
-msgid "Category containing settings for how CDs are handled."
+msgid "This category contains the settings for how CDs are handled."
 msgstr ""
 
 #. Description of setting "Music -> Audio CDs -> Audio CD Insert Action" with label #14097
@@ -15049,7 +15360,7 @@ msgstr ""
 #. Description of setting "Music -> Audio CDs -> Load audio CD information from online service" with label #227
 #: system/settings/settings.xml
 msgctxt "#36284"
-msgid "Read the information belonging to an audio CD, like song title and artist, from the internet database freedb.org."
+msgid "Read the information belonging to an audio CD, like song title and artist, from the Internet database freedb.org."
 msgstr ""
 
 #. Description of setting "Music -> Audio CDs -> Saved music folder" label #20000
@@ -15097,7 +15408,7 @@ msgstr ""
 #. Description of settings category "Music -> Karaoke" with label #13327
 #: system/settings/settings.xml
 msgctxt "#36292"
-msgid "Category containing the settings for how karaoke is handled."
+msgid "This category contains the settings for how karaoke is handled."
 msgstr ""
 
 #. Description of setting "Music -> Karaoke -> Enable karaoke support" with label #13323
@@ -15109,7 +15420,7 @@ msgstr ""
 #. Description of setting "Music -> Karaoke -> Show song selector automatically" with label #22037
 #: system/settings/settings.xml
 msgctxt "#36294"
-msgid "Show song selection dialog once the last song in the queue has been played."
+msgid "Show song selection dialogue once the last song in the queue has been played."
 msgstr ""
 
 #. Description of setting "Music -> Karaoke -> Font" with label #22030
@@ -15172,7 +15483,7 @@ msgstr ""
 #. Description of settings category "Pictures -> File lists" with label #14081
 #: system/settings/settings.xml
 msgctxt "#36305"
-msgid "Category containing settings for how picture file lists are handled."
+msgid "This category contains the settings for how picture file lists are handled."
 msgstr ""
 
 #. Description of setting "Pictures -> Show EXIF picture information" with label #14082
@@ -15208,7 +15519,7 @@ msgstr ""
 #. Description of settings category "Pictures -> Slideshow" with label #108
 #: system/settings/settings.xml
 msgctxt "#36311"
-msgid "Category containing settings for how picture slideshows are handled."
+msgid "This category contains the settings for how the picture slideshow is handled."
 msgstr ""
 
 #. Description of setting "Pictures -> Slideshow -> Amount of time to display each image" with label #12378
@@ -15238,7 +15549,7 @@ msgstr ""
 #. Description of settings category "Weather -> General" with label #16000
 #: system/settings/settings.xml
 msgctxt "#36316"
-msgid "Category containing settings for how weather add-ons are handled."
+msgid "This category contains the settings for how weather add-ons are handled."
 msgstr ""
 
 #. Description of settings category "Weather -> General -> Locations with label #0
@@ -15250,7 +15561,7 @@ msgstr ""
 #. Description of settings category "Weather -> General -> Service for weather information" with label #24029
 #: system/settings/settings.xml
 msgctxt "#36318"
-msgid "Specify the default weather information source. See the Add-ons Manager for options."
+msgid "Specify the default weather information source. See the add-ons manager for options."
 msgstr ""
 
 #. Description of settings section "Services" with label #14036
@@ -15262,7 +15573,7 @@ msgstr ""
 #. Description of settings category "Services -> General" with label #16000
 #: system/settings/settings.xml
 msgctxt "#36320"
-msgid "Category containing settings used for all services."
+msgid "This category contains the settings used for all services."
 msgstr ""
 
 #. Description of settings category "Services -> General -> Device name" with label #1271
@@ -15274,7 +15585,7 @@ msgstr ""
 #. Description of settings category "Services -> UPnP/DLNA" with label #20187
 #: system/settings/settings.xml
 msgctxt "#36322"
-msgid "Category containing settings for how the UPnP service is handled. UPnP is also called \"DLNA\" on most consumer products."
+msgid "This category contains the settings for how the UPnP service is handled. UPnP is also called DLNA on most consumer electronics."
 msgstr ""
 
 #. Description of setting "Services -> UPnP -> Share my libraries" with label #21360
@@ -15286,7 +15597,7 @@ msgstr ""
 #. Description of setting "Services -> UPnP -> Announce library updates" with label #20188
 #: system/settings/settings.xml
 msgctxt "#36324"
-msgid "When a manual or automatical library update occurs, notify UPnP clients."
+msgid "When a manual or automatic library update occurs, notify UPnP clients."
 msgstr ""
 
 #. Description of setting "Services -> UPnP -> Allow playback control via UPnP" with label #21881
@@ -15304,49 +15615,49 @@ msgstr ""
 #. Description of settings category "Services -> Webserver" with label #20187
 #: system/settings/settings.xml
 msgctxt "#36327"
-msgid "Category containing settings for how the webserver service is handled."
+msgid "This category contains the settings for how the web server service is handled."
 msgstr ""
 
 #. Description of setting "Services -> Webserver -> Allow remote control via HTTP" with label #263
 #: system/settings/settings.xml
 msgctxt "#36328"
-msgid "Enable remote users to control this application through the built-in webserver."
+msgid "Enable remote users to control this application through the built-in web server."
 msgstr ""
 
 #. Description of setting "Services -> Webserver -> Port" with label #730
 #: system/settings/settings.xml
 msgctxt "#36329"
-msgid "Define the webserver port."
+msgid "Define the web server port."
 msgstr ""
 
 #. Description of setting "Services -> Webserver -> Username" with label #1048
 #: system/settings/settings.xml
 msgctxt "#36330"
-msgid "Define the webserver username. This only takes effect when both the username and the password are set."
+msgid "Define the web server username. This only takes effect when both the username and the password are set."
 msgstr ""
 
 #. Description of setting "Services -> Webserver -> Password" with label #1048
 #: system/settings/settings.xml
 msgctxt "#36331"
-msgid "Define the webserver password. This only takes effect when both the username and the password are set."
+msgid "Define the web server password. This only takes effect when both the username and the password are set."
 msgstr ""
 
 #. Description of setting "Services -> Webserver -> Web interface" with label #199
 #: system/settings/settings.xml
 msgctxt "#36332"
-msgid "Select between web interfaces installed via the Add-on Manager."
+msgid "Select between web interfaces installed via the add-on manager."
 msgstr ""
 
 #. Description of settings category "Services -> Remote Control" with label #790
 #: system/settings/settings.xml
 msgctxt "#36333"
-msgid "Category containing settings for how the remote control service is handled."
+msgid "This category contains the settings for how the remote control service is handled."
 msgstr ""
 
 #. Description of setting "Services -> Remote Control -> Allow remote control from programs on this system" with label #791
 #: system/settings/settings.xml
 msgctxt "#36334"
-msgid "Allow programs on this computer to control this application via the Web Interface or the JSON-RPC interface protocol."
+msgid "Allow programs on this computer to control this application via the web interface or the JSON-RPC interface protocol."
 msgstr ""
 
 #. Description of setting "Services -> Remote Control -> Port" with label #792
@@ -15388,7 +15699,7 @@ msgstr ""
 #. Description of settings category "Services -> Zeroconf" with label #1259
 #: system/settings/settings.xml
 msgctxt "#36341"
-msgid "Category containing settings for how the zeroconf network discovery service is handled, required for AirPlay."
+msgid "This category contains the settings for how the Zeroconf network discovery service is handled, required for AirPlay."
 msgstr ""
 
 #. Description of setting "Services -> Zeroconf -> Announce services to other systems"  with label #1260
@@ -15418,7 +15729,7 @@ msgstr ""
 #. Description of settings category "Services -> SMB Client" with label #1200
 #: system/settings/settings.xml
 msgctxt "#36346"
-msgid "Category containing settings for how the SMB Client (samba) service is handled."
+msgid "This category contains the settings for how the SMB client (Samba) service is handled."
 msgstr ""
 
 #. Description of setting "Services -> SMB Client -> WINS server" with label #1207
@@ -15436,13 +15747,13 @@ msgstr ""
 #. Description of settings section "System" with label #13000
 #: system/settings/settings.xml
 msgctxt "#36349"
-msgid "Section that contains the System related settings for the device this application is installed on."
+msgid "Section that contains the system related settings for the device this application is installed on."
 msgstr ""
 
 #. Description of setting "System -> Power saving -> Try to wake remote servers on access" with label #13026
 #: system/settings/settings.xml
 msgctxt "#36350"
-msgid "Automatically send 'Wake-On-Lan' to server(s) right before trying to access shared files or services."
+msgid "Automatically send Wake-on-LAN to server(s) right before trying to access shared files or services."
 msgstr ""
 
 #. Description of setting "System -> Video output -> Display Mode" with label #21373
@@ -15502,19 +15813,19 @@ msgstr ""
 #. Description of settings category "System -> Audio output" with label #772
 #: system/settings/settings.xml
 msgctxt "#36360"
-msgid "Category containing settings for how audio output is handled."
+msgid "This category contains the settings for how audio output is handled."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Output configuration" with label #337
 #: system/settings/settings.xml
 msgctxt "#36361"
-msgid "Select how the properties of the audio output are set: [Fixed] - output properties are set to the specified sampling rate & speaker configuration at all times; [Best Match] - output properties are set to always be as close a match to the source properties as possible; [Optimized] - output properties are set at the start of playback and will not change if the properties of the source changes."
+msgid "Select how the properties of the audio output are set: [Fixed] Output properties are set to the specified sampling rate & speaker configuration at all times; [Best Match] Output properties are set to always be as close a match to the source properties as possible; [Optimized] Output properties are set at the start of playback and will not change if the properties of the source change."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Number of channels" with label #34100
 #: system/settings/settings.xml
 msgctxt "#36362"
-msgid "Select the number of channels supported by the audio connection, or the number of speakers if connected by analog connections. This setting does not apply to passthrough audio. Note - SPDIF supports 2.0 channels only but can still output multichannel audio using a format supported by passthrough."
+msgid "Select the number of channels supported by the audio connection, or the number of speakers if connected by analogue connections. This setting does not apply to passthrough audio. Note: S/PDIF supports 2.0 channels only but can still output multichannel audio using a format supported by passthrough."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -15531,7 +15842,7 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Dolby Digital (AC3) capable receiver" with label #364
 #: system/settings/settings.xml
 msgctxt "#36365"
-msgid "Select this option if your receiver is capable of decoding AC3 streams."
+msgid "Select this option if your receiver is capable of decoding Dolby Digital (AC3) streams."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> DTS capable receiver" with label #254
@@ -15542,13 +15853,13 @@ msgstr ""
 
 #: system/settings/darwin_osx.xml
 msgctxt "#36367"
-msgid "Select the maximum number of audio channels/speakers available for audio decoded. If optical/coax digital outputs are used this must be set to 2.0"
+msgid "Select the maximum number of audio channels / speakers available for decoded audio. If optical / coax digital outputs are used, this must be set to 2.0"
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Enable passthrough" with label #348
 #: system/settings/settings.xml
 msgctxt "#36368"
-msgid "Select to enable the passthrough audio options for playback of encoded audio such as Dolby Digital."
+msgid "Select to enable the passthrough audio options for playback of encoded audio such as Dolby Digital (AC3), DTS, etc."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> TrueHD capable receiver" with label #349
@@ -15572,7 +15883,7 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Passthrough output device" with label #546
 #: system/settings/settings.xml
 msgctxt "#36372"
-msgid "Select the device to be used for playback of encoded formats, these are any of the formats below in the 'capable receiver' options."
+msgid "Select the device to be used for playback of encoded formats, these are any of the formats below in the capable receiver options."
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Play GUI sounds" with label #34120
@@ -15584,7 +15895,7 @@ msgstr ""
 #. Description of settings category "System -> Input devices" with label #14094
 #: system/settings/settings.xml
 msgctxt "#36374"
-msgid "Category containing settings for how input devices are handled."
+msgid "This category contains the settings for how input devices are handled."
 msgstr ""
 
 #. Description of setting "System -> Input devices -> Peripherals" with label #35000
@@ -15602,7 +15913,7 @@ msgstr ""
 #. Description of setting "System -> Input devices -> Enable mouse and Touch Screen support" with label #21369
 #: system/settings/settings.xml
 msgctxt "#36377"
-msgid "Use a mouse or touch screen device to control the interface. Note: disabling will cause you to lose control over this application when no keyboard or remote is present."
+msgid "Use a mouse or touch screen device to control the interface. Note: Disabling will cause you to lose control over this application when no keyboard or remote is present."
 msgstr ""
 
 #. Description of setting "System -> Input devices -> Enable joystick and gamepad support" with label #35100
@@ -15614,13 +15925,13 @@ msgstr ""
 #. Description of settings category "System -> Internet access" with label #798
 #: system/settings/settings.xml
 msgctxt "#36379"
-msgid "Category containing settings for internet access."
+msgid "This category contains the settings for how Internet access is handled. The default web interface can also be selected here."
 msgstr ""
 
 #. Description of setting "System -> Internet access -> Use proxy server" with label #708
 #: system/settings/settings.xml
 msgctxt "#36380"
-msgid "If your internet connection uses a proxy server, configure it here."
+msgid "If your Internet connection uses a proxy server, configure it here."
 msgstr ""
 
 #. Description of setting "System -> Internet access -> Proxy type" with label #1180
@@ -15656,13 +15967,13 @@ msgstr ""
 #. Description of setting "System -> Internet access -> Internet connection bandwidth limitation" with label #14041
 #: system/settings/settings.xml
 msgctxt "#36386"
-msgid "If your internet connection has limited bandwidth available, use this setting to keep bandwidth usage by this application within defined limits."
+msgid "If your Internet connection has limited bandwidth available, use this setting to keep bandwidth usage by this application within defined limits."
 msgstr ""
 
 #. Description of settings category "System -> Power saving" with label #14095
 #: system/settings/settings.xml
 msgctxt "#36387"
-msgid "Category containing settings for power saving."
+msgid "This category contains the settings for power saving."
 msgstr ""
 
 #. Description of setting "System -> Power saving -> Put display to sleep when idle" with label #1450
@@ -15686,7 +15997,7 @@ msgstr ""
 #. Description of settings category "System -> Debugging" with label #14092
 #: system/settings/settings.xml
 msgctxt "#36391"
-msgid "Category containing settings for debugging functions."
+msgid "This category contains the settings for enabling debug functions. You can also enable component-specific debug logging in order to help troubleshoot related issues in more detail."
 msgstr ""
 
 #. Description of setting "System -> Debugging -> Enable debug logging" with label #20191
@@ -15704,19 +16015,19 @@ msgstr ""
 #. Description of setting "System -> Debugging -> Enable component-specific logging" with label #666
 #: system/settings/settings.xml
 msgctxt "#36394"
-msgid "Enables log messages from additional libraries to be included in the log."
+msgid "Enables verbose messages from additional libraries to be included in the debug log."
 msgstr ""
 
 #. Description of settings category "System -> Master lock" with label #12360
 #: system/settings/settings.xml
 msgctxt "#36395"
-msgid "Category containing settings for the master lock function."
+msgid "This category contains the settings for how the master lock function is handled."
 msgstr ""
 
 #. Description of setting "System -> Master lock -> Master lock code and settings" with label #20100
 #: system/settings/settings.xml
 msgctxt "#36396"
-msgid "Define the PIN code used for the master lock."
+msgid "Here you can enable or disable master lock and define the PIN code used to unlock it. You can also specify which areas of the application would need a PIN to access them."
 msgstr ""
 
 #. Description of setting "System -> Master lock -> Ask for master lock code on startup" with label #20076
@@ -15734,49 +16045,49 @@ msgstr ""
 #. Description of settings category "System -> Cache" with label #439
 #: system/settings/settings.xml
 msgctxt "#36399"
-msgid "Category containing settings for the cache function."
+msgid "This category contains the settings for how the cache function is handled."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Video/Audio/DVD cache - Hard disk" with label #14025
 #: system/settings/settings.xml
 msgctxt "#36400"
-msgid "Enable cache for playback of Video, Audio or DVDs from hard disk."
+msgid "Enable cache for playback of video, audio or DVDs from hard disk."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Video cache - DVD-ROM" with label #14026
 #: system/settings/settings.xml
 msgctxt "#36401"
-msgid "Enable cache for playback of Video from DVD-ROM."
+msgid "Enable cache for playback of video from DVD-ROM."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Video cache - Local Network" with label #14027
 #: system/settings/settings.xml
 msgctxt "#36402"
-msgid "Enable cache for Video playback from Local Network."
+msgid "Enable cache for video playback from local network."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Video cache - Internet" with label #14028
 #: system/settings/settings.xml
 msgctxt "#36403"
-msgid "Enable cache for Video playback from Internet."
+msgid "Enable cache for video playback from Internet."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Audio cache - DVD-ROM" with label #14030
 #: system/settings/settings.xml
 msgctxt "#36404"
-msgid "Enable cache for playback of Audio from DVD-ROM."
+msgid "Enable cache for playback of audio from DVD-ROM."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Audio cache - Local Network" with label #14031
 #: system/settings/settings.xml
 msgctxt "#36405"
-msgid "Enable cache for Audio playback from Local Network."
+msgid "Enable cache for audio playback from local network."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Audio cache - Internet" with label #14032
 #: system/settings/settings.xml
 msgctxt "#36406"
-msgid "Enable cache for Audio playback from Internet."
+msgid "Enable cache for audio playback from Internet."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> DVD cache - DVD-ROM" with label #14034
@@ -15788,7 +16099,7 @@ msgstr ""
 #. Description of settings category "System -> Cache -> DVD cache - Local Network" with label #14037
 #: system/settings/settings.xml
 msgctxt "#36408"
-msgid "Enable cache for DVD playback from Local Network."
+msgid "Enable cache for DVD playback from local network."
 msgstr ""
 
 #. Description of settings category "System -> Cache -> Unknown type cache - Internet" with label #14060
@@ -15851,7 +16162,11 @@ msgctxt "#36419"
 msgid "Define locations used for retrieving weather information."
 msgstr ""
 
-#empty string with id 36420
+#. Description of setting "Services -> UPnP -> Look for external subtitles" with label #20222
+#: system/settings/settings.xml
+msgctxt "#36420"
+msgid "Look for external subtitles for videos provided by the UPnP server. This can cause extensive CPU, filesystem and network load."
+msgstr ""
 
 #. Description of setting "Videos -> Playback -> Prefer VDPAU Video Mixer" with label #13437
 #: system/settings/settings.xml
@@ -15862,14 +16177,18 @@ msgstr ""
 #. Description of setting "Videos -> Playback -> Allow hardware acceleration (amcodec)" with label #13438
 #: system/settings/settings.xml
 msgctxt "#36422"
-msgid "Enable hardware video decode using AMLogic decoder."
+msgid "Enable hardware video decode using Amlogic decoder."
 msgstr ""
 
-#empty string with id 36423
+#. Description of setting "TV -> Recording -> Prevent duplicate episodes" with label #812
+#: system/settings/settings.xml
+msgctxt "#36423"
+msgid "Repeating schedules shall only record new episodes. Not supported by all add-ons and backends."
+msgstr ""
 
 #: system/settings/settings.xml
 msgctxt "#36424"
-msgid "Select what will happen when an item is selected in the guide: [Show context menu] will trigger the contextual menu from where you can choose further actions; [Switch to channel] will instantly tune to the related channel; [Show information] will display a detailed information with plot and further options; [Record] will create a recording timer for the selected item."
+msgid "Select what will happen when an item is selected in the guide: [Show context menu] Will trigger the context menu from where you can choose further actions; [Switch to channel] Will instantly tune to the related channel; [Show information] Will display a detailed information with plot and further options; [Record] Will create a recording timer for the selected item."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -15895,7 +16214,7 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Enable Dolby Digital transcoding" with label #667
 #: system/settings/settings.xml
 msgctxt "#36429"
-msgid "Select this if the audio out connection only supports multichannel audio as Dolby Digital 5.1, such as an SPDIF connection.  If your system supports LPCM multichannel sound via HDMI, leave this disabled."
+msgid "Select this if the audio out connection only supports multichannel audio as Dolby Digital 5.1 (AC-3), such as a S/PDIF connection. If your system supports PCM multichannel audio via HDMI, leave this disabled."
 msgstr ""
 
 #. Description for setting category #14101: Video Acceleration
@@ -15904,11 +16223,7 @@ msgctxt "#36430"
 msgid "Configure how video processing will be accelerated. This includes things like decoding and scaling."
 msgstr ""
 
-#. Description for video related setting #13454: Decoding mode
-#: system/settings/settings.xml
-msgctxt "#36431"
-msgid "Defines whether video decoding should be performed in software (requires more CPU) or with hardware acceleration where possible."
-msgstr ""
+#empty string with id 36431
 
 #. Description for international setting #310: Keyboard layouts
 #: system/settings/settings.xml
@@ -15919,13 +16234,13 @@ msgstr ""
 #. Description for video related setting #13457: vaapi sw filter
 #: system/settings/settings.xml
 msgctxt "#36433"
-msgid "If enabled VAAPI render method is prefered. This puts less load on the CPU but driver may hang!"
+msgid "When enabled, VAAPI render method is preferred and the CPU has less load. If you experience hangs, disable this option."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Enable MMAL hardware decoding of video files"
 #: system/settings/settings.xml
 msgctxt "#36434"
-msgid "Allow hardware acceleration (MMAL)"
+msgid "Allow hardware acceleration - MMAL"
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Enable MMAL hardware decoding of video files"
@@ -15940,7 +16255,7 @@ msgstr ""
 #. label of a setting for the stereoscopic 3D mode of the GUI that is/should be applied
 #: system/settings/settings.xml
 msgctxt "#36500"
-msgid "Stereoscopic 3D mode (current)"
+msgid "Stereoscopic 3D mode / Current"
 msgstr ""
 
 #. headline of a dialog/info message showing the current stereoscopic 3D mode
@@ -15961,7 +16276,7 @@ msgstr ""
 #: system/settings/settings.xml
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#36503"
-msgid "Over/Under"
+msgid "Over / Under"
 msgstr ""
 
 #. name of a stereoscopic mode
@@ -15974,13 +16289,13 @@ msgstr ""
 #. name of a stereoscopic mode
 #: system/settings/settings.xml
 msgctxt "#36505"
-msgid "Anaglyph Red/Cyan"
+msgid "Anaglyph red / cyan"
 msgstr ""
 
 #. name of a stereoscopic mode
 #: system/settings/settings.xml
 msgctxt "#36506"
-msgid "Anaglyph Green/Magenta"
+msgid "Anaglyph green / magenta"
 msgstr ""
 
 #. name of a stereoscopic mode
@@ -15992,19 +16307,19 @@ msgstr ""
 #. name of a stereoscopic mode
 #: system/settings/settings.xml
 msgctxt "#36508"
-msgid "Hardware Based"
+msgid "Hardware based"
 msgstr ""
 
 #. name of a stereoscopic mode
 #: system/settings/settings.xml
 msgctxt "#36509"
-msgid "Monoscopic (2D)"
+msgid "Monoscopic / 2D"
 msgstr ""
 
 #. name of a stereoscopic mode
 #: system/settings/settings.xml
 msgctxt "#36510"
-msgid "Anaglyph Yellow/Blue"
+msgid "Anaglyph yellow / blue"
 msgstr ""
 
 #empty strings from id 36511 to 36519
@@ -16027,7 +16342,7 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Limit sampling rate (kHz)" with label #458
 #: system/settings/settings.xml
 msgctxt "#36523"
-msgid "Maximum sampling rate for spdif or sampling rate for fixed output configuration."
+msgid "Maximum sampling rate for S/PDIF or sampling rate for fixed output configuration."
 msgstr ""
 
 #. label for a setting to choose the preferred (playback) mode and the name of a selectable playback option
@@ -16055,7 +16370,7 @@ msgctxt "#36527"
 msgid "Select playback mode"
 msgstr ""
 
-#. label of a dialog box promting the user to selected the desired playback mode of the detected stereoscopic video
+#. label of a dialog box prompting the user to selected the desired playback mode of the detected stereoscopic video
 #: guilib/StereoscopicsManager.cpp
 msgctxt "#36528"
 msgid "Select stereoscopic 3D mode"
@@ -16078,13 +16393,13 @@ msgstr ""
 #. Description of setting "System -> Audio output -> Normalize levels on downmix" with label #346
 #: settings/DisplaySettings.cpp
 msgctxt "#36533"
-msgid "Select how audio is downmixed, for example from 5.1 to 2.0: [Enabled] maintains volume level of the original audio source however the dynamic range is compressed. [Disabled] maintains the dynamic range of the original audio source when downmixed however volume will be lower. Note - Dynamic range is the difference between the quietest and loudest sounds in an audio source. Enable this setting if movie dialogues are barely audible."
+msgid "Select how audio is downmixed, e.g. from 5.1 to 2.0.[CR][Enabled] Maintains volume level of the original audio source however the dynamic range is compressed.[CR][Disabled] Maintains the dynamic range of the original audio source when downmixed however volume will be lower. Note: Dynamic range is the difference between the quietest and loudest sounds in an audio source. Enable this setting if movie dialogues are barely audible."
 msgstr ""
 
 #. Description of setting "System -> Debugging -> Component-specific logging..." with label #668
 #: system/settings/settings.xml
 msgctxt "#36534"
-msgid "Specify additional libraries whose log messages are to be included in the log."
+msgid "Specify additional libraries whose verbose messages are to be included in the debug log."
 msgstr ""
 
 #. label of a setting, allowing to specify the stereoscopic 3D mode of a video
@@ -16098,19 +16413,19 @@ msgstr ""
 #: guilib/StereoscopicsManager.cpp
 #: xbmc/video/dialogs/GUIDialogVideoSettings.cpp
 msgctxt "#36536"
-msgid "Invert Stereoscopic 3D mode (flip eyes)"
+msgid "Invert stereoscopic 3D mode (flip eyes)"
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Playback mode of stereoscopic videos" with label #36520
 #: system/settings/settings.xml
 msgctxt "#36537"
-msgid "Select in which mode stereoscopic 3D videos will be played. [Ask me] will show a dialog to select the desired mode for each playback. [Preferred mode] will use of the preferred mode specified in the 'System -> Video Hardware' section of the settings. [Monoscopic (2D)] will play the video in mono/2D. [Ignore] disables any stereoscopic 3D processing and handling"
+msgid "Select in which mode stereoscopic 3D videos will be played.[CR][Ask me] Will show a dialogue to select the desired mode for each playback.[CR][Preferred mode] Will use the preferred mode specified in the \"System -> Video hardware\" section of the settings.[CR][Monoscopic / 2D] Will play the video in mono / 2D.[CR][Ignore] Disables any stereoscopic 3D processing and handling."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Disable stereoscopic mode when playback is stopped" with label #36526
 #: system/settings/settings.xml
 msgctxt "#36538"
-msgid "[Enabled] Switch GUI (and some TVs) back to 2D mode when playback ended - also between videos in a playlist if necessary. [Disabled] GUI and TV will stay in stereoscopic 3D mode. For video playlists the stereoscopic 3D mode won't change between videos, not even for non stereoscopic ones."
+msgid "[Enabled] Switch GUI (and some TVs) back to 2D mode, between videos in a playlist or when playback ended.[CR][Disabled] GUI and TV will stay in stereoscopic 3D mode. For video playlists with mixed stereoscopic 3D and 2D content, then the GUI will also stay in stereoscopic 3D mode even when a non-stereoscopic 2D video is playing."
 msgstr ""
 
 #. Description of setting "System -> Video output -> Stereoscopic mode (current)" with label #36500
@@ -16180,25 +16495,25 @@ msgstr ""
 #. Description of settings category "Music -> Library" with label #14022
 #: system/settings/settings.xml
 msgctxt "#36600"
-msgid "Category containing the settings for how the music library is handled."
+msgid "This category contains the settings for how the music library is handled."
 msgstr ""
 
 #. Description of settings category "Music -> File lists" with label #14081
 #: system/settings/settings.xml
 msgctxt "#36601"
-msgid "Category containing settings for how music file lists are handled."
+msgid "This category contains the settings for how music file lists are handled."
 msgstr ""
 
 #. Description of settings category "Services -> AirPlay" with label #1273
 #: system/settings/settings.xml
 msgctxt "#36602"
-msgid "Category containing settings for how the AirPlay service is handled."
+msgid "This category contains the settings for how the AirPlay service is handled."
 msgstr ""
 
 #. Description of settings category "System -> Video output" with label #21373
 #: system/settings/settings.xml
 msgctxt "#36603"
-msgid "Category containing settings for how video output is handled."
+msgid "This category contains the settings for how video output is handled."
 msgstr ""
 
 #empty strings from id 36604 to 36899
@@ -16245,12 +16560,12 @@ msgstr ""
 
 #: xbmc/media/MediaType.cpp
 msgctxt "#36908"
-msgid "musicvideo"
+msgid "music video"
 msgstr ""
 
 #: xbmc/media/MediaType.cpp
 msgctxt "#36909"
-msgid "musicvideos"
+msgid "music videos"
 msgstr ""
 
 #: xbmc/media/MediaType.cpp
@@ -16317,17 +16632,17 @@ msgstr ""
 
 #: xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamNavigator.cpp
 msgctxt "#37000"
-msgid "(Visually Impaired)"
+msgid "(Visually impaired)"
 msgstr ""
 
 #: xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamNavigator.cpp
 msgctxt "#37001"
-msgid "(Directors Comments)"
+msgid "(Director's comments)"
 msgstr ""
 
 #: xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamNavigator.cpp
 msgctxt "#37002"
-msgid "(Directors Comments 2)"
+msgid "(Director's comments 2)"
 msgstr ""
 
 #empty strings from id 37003 to 37010
@@ -16344,7 +16659,7 @@ msgstr ""
 
 #: xbmc/cores/dvdplayer/DVDInputStreams/DVDInputStreamNavigator.cpp
 msgctxt "#37013"
-msgid "(Directors Comments)"
+msgid "(Director's comments)"
 msgstr ""
 
 #: xbmc/GUIInfoManager.cpp
@@ -16354,13 +16669,13 @@ msgstr ""
 
 #: xbmc/Windows/GUIMediaWindow.cpp
 msgctxt "#37015"
-msgid "Browse Into"
+msgid "Browse into"
 msgstr ""
 
 #. Description of setting "System -> Audio output -> Dolby Digital Plus (E-AC3) capable receiver" with label #448
 #: system/settings/settings.xml
 msgctxt "#37016"
-msgid "Select this option if your receiver is capable of decoding E-AC3 streams."
+msgid "Select this option if your receiver is capable of decoding Dolby Digital Plus (E-AC3) streams."
 msgstr ""
 
 #: system/settings/rbp.xml
@@ -16387,7 +16702,7 @@ msgstr ""
 
 #: xbmc/network/upnp/UPnPPlayer.cpp
 msgctxt "#37022"
-msgid "UPnP Player"
+msgid "UPnP player"
 msgstr ""
 
 #: xbmc/network/upnp/UPnPPlayer.cpp
@@ -16397,7 +16712,7 @@ msgstr ""
 
 #: system/settings/rbp.xml
 msgctxt "#37024"
-msgid "Select this if the audio out connection only supports multichannel audio as Dolby Digital 5.1, this allows multichannel audio such as AAC5.1 or FLAC5.1 to be listened to in 5.1 surround sound. Note - Not recommended on Pi as this requires a lot of CPU."
+msgid "Select this if the audio out connection only supports multichannel audio as Dolby Digital 5.1 (AC3), this allows multichannel audio such as AAC 5.1 or FLAC 5.1 to be listened to in 5.1 surround sound. Note: Not recommended on Pi as this requires a lot of CPU."
 msgstr ""
 
 #: system/settings/settings.xml
@@ -16433,7 +16748,7 @@ msgstr ""
 #. Description of setting #14102 Settings -> Video -> Discs -> Blu-ray playback mode
 #: system/settings/settings.xml
 msgctxt "#37031"
-msgid "Specifies how Blu-rays should be opened/played back. Disc menus are not fully supported yet and may cause problems."
+msgid "Specifies how Blu-rays should be opened / played back. Note: Some disc menus are not fully supported and may cause problems."
 msgstr ""
 
 #. Title of category #37032 Settings -> Video -> Accessibility
@@ -16445,40 +16760,40 @@ msgstr ""
 #. Description of category #37032 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37033"
-msgid "Video playback related accessibility settings, e.g., \"Prefer subtitles for the hearing impaired\""
+msgid "Video playback related accessibility settings, e.g. \"Prefer subtitles for the hearing impaired\"."
 msgstr ""
 
-#. Setting #37034 Settings -> Video -> Accessibility 
+#. Setting #37034 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37034"
 msgid "Prefer audio stream for the visually impaired"
 msgstr ""
 
-#. Description of setting #37034 Settings -> Video -> Accessibility 
+#. Description of setting #37034 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37035"
 msgid "Prefer the audio stream for the visually impaired to other audio streams of the same language"
 msgstr ""
 
-#. Setting #37036 Settings -> Video -> Accessibility 
+#. Setting #37036 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37036"
 msgid "Prefer audio stream for the hearing impaired"
 msgstr ""
 
-#. Description of setting #37036 Settings -> Video -> Accessibility 
+#. Description of setting #37036 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37037"
 msgid "Prefer the audio stream for the hearing impaired to other audio streams of the same language"
 msgstr ""
 
-#. Setting #37038 Settings -> Video -> Accessibility 
+#. Setting #37038 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37038"
 msgid "Prefer subtitles for the hearing impaired"
 msgstr ""
 
-#. Description of setting #37038 Settings -> Video -> Accessibility 
+#. Description of setting #37038 Settings -> Video -> Accessibility
 #: system/settings/settings.xml
 msgctxt "#37039"
 msgid "Prefer the subtitle stream for the hearing impaired to other subtitle streams of the same language"
@@ -16493,7 +16808,7 @@ msgstr ""
 #. Description of setting #37040 Settings -> Video -> Playback
 #: system/settings/settings.xml
 msgctxt "#37041"
-msgid "If enabled, audio streams that are flagged as \"default\" (and match the preferred language) are preferred over audio streams with higher quality (number of channels, codec, ...)."
+msgid "If enabled, audio streams that are flagged as default (and match the preferred language) are preferred over audio streams with higher quality (number of channels, codec, ...)."
 msgstr ""
 
 #. Description of setting "Videos -> Playback -> Skip steps"
@@ -16517,7 +16832,7 @@ msgstr ""
 #. Description of setting #37044 "Video -> File lists -> Extract chapter thumbnails"
 #: system/settings/settings.xml
 msgctxt "#37045"
-msgid "Extract chapter thumbnails for presentation in the chapters/bookmarks dialog. This might increase CPU load."
+msgid "Extract chapter thumbnails for presentation in the chapters / bookmarks dialogue. This might increase CPU load."
 msgstr ""
 
 #empty strings from id 37046 to 38009
@@ -16530,13 +16845,13 @@ msgstr ""
 #. Setting #38011 "Videos -> Library -> Show All Items entry"
 #: system/settings/settings.xml
 msgctxt "#38011"
-msgid "Show \"All Items\" entry"
+msgid "Show \"All items\" entry"
 msgstr ""
 
 #. Description of setting "Videos -> Library -> Show All Items entry"
 #: system/settings/settings.xml
 msgctxt "#38012"
-msgid "Show \"All Items\" entry in directory (for example All Albums or All Seasons)"
+msgid "Show \"All items\" entry in directory, e.g. \"All albums\" or \"All seasons\"."
 msgstr ""
 
 #. Label of a setting to limit the number of fps used for updating the GUI while playing videos. This is useful for slow systems that have problems rendering GUI and video at the same time in full speed.
@@ -16551,7 +16866,7 @@ msgctxt "#38014"
 msgid "Limits the speed (fps) used to update the GUI while playing videos. This can reduce CPU load and fix playback issues while the GUI is shown."
 msgstr ""
 
-#. Label of a settings value to indicate the "disabled" state of an otherwise limiting setting (like fps limit, bandwidth limit, ...)
+#. Label of a settings value to indicate the "disabled" state of an otherwise limiting setting (like fps limit, bandwidth limit, etc.)
 #: system/settings/settings.xml
 msgctxt "#38015"
 msgid "Unlimited"

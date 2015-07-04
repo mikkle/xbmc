@@ -31,7 +31,6 @@
 #include "settings/Settings.h"
 #include "addons/Skin.h"
 #include "GUITexture.h"
-#include "windowing/WindowingFactory.h"
 #include "utils/Variant.h"
 #include "input/Key.h"
 #include "utils/StringUtils.h"
@@ -132,11 +131,8 @@
 #include "pvr/dialogs/GUIDialogPVRRecordingInfo.h"
 #include "pvr/dialogs/GUIDialogPVRTimerSettings.h"
 
-#include "video/dialogs/GUIDialogFullScreenInfo.h"
 #include "video/dialogs/GUIDialogTeletext.h"
 #include "dialogs/GUIDialogSlider.h"
-#include "guilib/GUIControlFactory.h"
-#include "dialogs/GUIDialogCache.h"
 #include "dialogs/GUIDialogPlayEject.h"
 #include "dialogs/GUIDialogMediaFilter.h"
 #include "video/dialogs/GUIDialogSubtitles.h"
@@ -707,22 +703,30 @@ void CGUIWindowManager::ActivateWindow(int iWindowID, const std::string& strPath
   ActivateWindow(iWindowID, params, false);
 }
 
-void CGUIWindowManager::ActivateWindow(int iWindowID, const vector<string>& params, bool swappingWindows)
+void CGUIWindowManager::ForceActivateWindow(int iWindowID, const std::string& strPath)
+{
+  vector<string> params;
+  if (!strPath.empty())
+    params.push_back(strPath);
+  ActivateWindow(iWindowID, params, false, true);
+}
+
+void CGUIWindowManager::ActivateWindow(int iWindowID, const vector<string>& params, bool swappingWindows /* = false */, bool force /* = false */)
 {
   if (!g_application.IsCurrentThread())
   {
     // make sure graphics lock is not held
     CSingleExit leaveIt(g_graphicsContext);
-    CApplicationMessenger::Get().ActivateWindow(iWindowID, params, swappingWindows);
+    CApplicationMessenger::Get().ActivateWindow(iWindowID, params, swappingWindows, force);
   }
   else
   {
     CSingleLock lock(g_graphicsContext);
-    ActivateWindow_Internal(iWindowID, params, swappingWindows);
+    ActivateWindow_Internal(iWindowID, params, swappingWindows, force);
   }
 }
 
-void CGUIWindowManager::ActivateWindow_Internal(int iWindowID, const vector<string>& params, bool swappingWindows)
+void CGUIWindowManager::ActivateWindow_Internal(int iWindowID, const vector<string>& params, bool swappingWindows, bool force /* = false */)
 {
   // translate virtual windows
   // virtual music window which returns the last open music window (aka the music start window)
@@ -775,10 +779,10 @@ void CGUIWindowManager::ActivateWindow_Internal(int iWindowID, const vector<stri
     return;
   }
 
-  // don't activate a window if there are active modal dialogs
-  if (HasModalDialog())
+  // don't activate a window if there are active modal dialogs of type NORMAL
+  if (!force && HasModalDialog({ DialogModalityType::MODAL }))
   {
-    CLog::Log(LOG_LEVEL_DEBUG, "Activate of window '%i' refused because there are active modal dialogs", iWindowID);
+    CLog::Log(LOGINFO, "Activate of window '%i' refused because there are active modal dialogs", iWindowID);
     g_audioManager.PlayActionSound(CAction(ACTION_ERROR));
     return;
   }
@@ -1128,15 +1132,25 @@ void CGUIWindowManager::RemoveDialog(int id)
   }
 }
 
-bool CGUIWindowManager::HasModalDialog() const
+bool CGUIWindowManager::HasModalDialog(const std::vector<DialogModalityType>& types) const
 {
   CSingleLock lock(g_graphicsContext);
   for (ciDialog it = m_activeDialogs.begin(); it != m_activeDialogs.end(); ++it)
   {
-    CGUIWindow *window = *it;
-    if (window->IsModalDialog())
-    { // have a modal window
-      if (!window->IsAnimating(ANIM_TYPE_WINDOW_CLOSE))
+    if ((*it)->IsDialog() &&
+        (*it)->IsModalDialog() &&
+        !(*it)->IsAnimating(ANIM_TYPE_WINDOW_CLOSE))
+    {
+      if (types.size() > 0)
+      {
+        CGUIDialog *dialog = static_cast<CGUIDialog*>(*it);
+        for (const auto &type : types)
+        {
+          if (dialog->GetModalityType() == type)
+            return true;
+        }
+      }
+      else
         return true;
     }
   }

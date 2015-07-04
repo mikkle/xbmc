@@ -1,5 +1,4 @@
 #pragma once
-
 /*
  *      Copyright (C) 2012-2013 Team XBMC
  *      http://xbmc.org
@@ -25,7 +24,6 @@
 #include "guilib/GUIControl.h"
 #include "guilib/GUIListItemLayout.h"
 #include "guilib/IGUIContainer.h"
-#include "pvr/channels/PVRChannel.h"
 
 namespace EPG
 {

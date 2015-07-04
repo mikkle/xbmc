@@ -22,12 +22,10 @@
 #include "DVDPlayerAudio.h"
 #include "DVDPlayer.h"
 #include "DVDCodecs/Audio/DVDAudioCodec.h"
-#include "DVDCodecs/DVDCodecs.h"
 #include "DVDCodecs/DVDFactoryCodec.h"
 #include "settings/Settings.h"
 #include "video/VideoReferenceClock.h"
 #include "utils/log.h"
-#include "utils/TimeUtils.h"
 #include "utils/MathUtils.h"
 #include "cores/AudioEngine/AEFactory.h"
 #include "cores/AudioEngine/Utils/AEUtil.h"
@@ -600,7 +598,7 @@ void CDVDPlayerAudio::Process()
     }
 
     // signal to our parent that we have initialized
-    if(m_started == false)
+    if(m_started == false && !(result & DECODE_FLAG_DROP))
     {
       m_started = true;
       m_messageParent.Put(new CDVDMsgInt(CDVDMsg::PLAYER_STARTED, DVDPLAYER_AUDIO));

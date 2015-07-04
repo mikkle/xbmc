@@ -29,11 +29,8 @@
 #include "cores/VideoRenderers/RenderManager.h"
 #include "guilib/GraphicContext.h"
 #include "Application.h"
-#include "guilib/GraphicContext.h"
-#include "windowing/WindowingFactory.h"
-#include "settings/DisplaySettings.h"
 #include "settings/Settings.h"
-#include "settings/DisplaySettings.h"
+#include "settings/AdvancedSettings.h"
 #include "threads/SingleLock.h"
 #include "utils/MathUtils.h"
 #include "OverlayRendererUtil.h"
@@ -191,12 +188,13 @@ void CRenderer::Render(int idx)
   }
 
   float total_height = 0.0f;
+  float cur_height = 0.0f;
+  int subalign = CSettings::Get().GetInt("subtitles.align");
   for (std::vector<COverlay*>::iterator it = render.begin(); it != render.end(); ++it)
   {
     COverlay* o = *it;
     o->PrepareRender();
-    if (o->m_align == COverlay::ALIGN_SUBTITLE)
-      total_height += o->m_height;
+    total_height += o->m_height;
   }
 
   for (std::vector<COverlay*>::iterator it = render.begin(); it != render.end(); ++it)
@@ -204,7 +202,14 @@ void CRenderer::Render(int idx)
     COverlay* o = *it;
 
     float adjust_height = 0.0f;
-    if (o->m_align == COverlay::ALIGN_SUBTITLE)
+
+    if(subalign == SUBTITLE_ALIGN_TOP_INSIDE ||
+       subalign == SUBTITLE_ALIGN_TOP_OUTSIDE)
+    {
+      adjust_height = cur_height;
+      cur_height += o->m_height;
+    }
+    else
     {
       total_height -= o->m_height;
       adjust_height = -total_height;
@@ -219,9 +224,7 @@ void CRenderer::Render(int idx)
 void CRenderer::Render(COverlay* o, float adjust_height)
 {
   CRect rs, rd, rv;
-  RESOLUTION_INFO res;
   g_renderManager.GetVideoRect(rs, rd, rv);
-  res = g_graphicsContext.GetResInfo(g_renderManager.GetResolution());
 
   SRenderState state;
   state.x       = o->m_x;
@@ -240,8 +243,8 @@ void CRenderer::Render(COverlay* o, float adjust_height)
     if(align == COverlay::ALIGN_SCREEN
     || align == COverlay::ALIGN_SUBTITLE)
     {
-      scale_x = (float)res.iWidth;
-      scale_y = (float)res.iHeight;
+      scale_x = (float)rv.Width();
+      scale_y = (float)rv.Height();
     }
 
     if(align == COverlay::ALIGN_VIDEO)
@@ -263,18 +266,11 @@ void CRenderer::Render(COverlay* o, float adjust_height)
     if(align == COverlay::ALIGN_SCREEN
     || align == COverlay::ALIGN_SUBTITLE)
     {
-      float scale_x = rv.Width() / res.iWidth;
-      float scale_y = rv.Height()  / res.iHeight;
-
-      state.x      *= scale_x;
-      state.y      *= scale_y;
-      state.width  *= scale_x;
-      state.height *= scale_y;
-
       if(align == COverlay::ALIGN_SUBTITLE)
       {
+        RESOLUTION_INFO res = g_graphicsContext.GetResInfo(g_renderManager.GetResolution());
         state.x += rv.x1 + rv.Width() * 0.5f;
-        state.y += rv.y1  + (res.iSubtitles - res.Overscan.top) * scale_y;
+        state.y += rv.y1  + (res.iSubtitles - res.Overscan.top);
       }
       else
       {
@@ -339,7 +335,7 @@ COverlay* CRenderer::Convert(CDVDOverlaySSA* o, double pts)
   int subalign = CSettings::Get().GetInt("subtitles.align");
   if(subalign == SUBTITLE_ALIGN_BOTTOM_OUTSIDE
   || subalign == SUBTITLE_ALIGN_TOP_OUTSIDE
-  || subalign == SUBTITLE_ALIGN_MANUAL)
+  ||(subalign == SUBTITLE_ALIGN_MANUAL && g_advancedSettings.m_videoAssFixedWorks))
     useMargin = 1;
   else
     useMargin = 0;
@@ -349,7 +345,7 @@ COverlay* CRenderer::Convert(CDVDOverlaySSA* o, double pts)
   if(subalign == SUBTITLE_ALIGN_TOP_INSIDE
   || subalign == SUBTITLE_ALIGN_TOP_OUTSIDE)
     position = 100.0;
-  else if (subalign == SUBTITLE_ALIGN_MANUAL)
+  else if (subalign == SUBTITLE_ALIGN_MANUAL && g_advancedSettings.m_videoAssFixedWorks)
   {
     RESOLUTION_INFO res;
     res = g_graphicsContext.GetResInfo(g_renderManager.GetResolution());

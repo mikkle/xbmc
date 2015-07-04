@@ -112,8 +112,6 @@ CGUIInfoManager::CGUIInfoManager(void) :
   m_fanSpeed = 0;
   m_AfterSeekTimeout = 0;
   m_seekOffset = 0;
-  m_playerSeeking = false;
-  m_performingSeek = false;
   m_nextWindowID = WINDOW_INVALID;
   m_prevWindowID = WINDOW_INVALID;
   m_stringParameters.push_back("__ZZZZ__");   // to offset the string parameters by 1 to assure that all entries are non-zero
@@ -592,6 +590,7 @@ const infomap listitem_labels[]= {{ "thumb",            LISTITEM_THUMB },
                                   { "channelgroup",     LISTITEM_CHANNEL_GROUP },
                                   { "hasepg",           LISTITEM_HAS_EPG },
                                   { "hastimer",         LISTITEM_HASTIMER },
+                                  { "hastimerschedule", LISTITEM_HASTIMERSCHEDULE },
                                   { "hasrecording",     LISTITEM_HASRECORDING },
                                   { "isrecording",      LISTITEM_ISRECORDING },
                                   { "inprogress",       LISTITEM_INPROGRESS },
@@ -603,7 +602,8 @@ const infomap listitem_labels[]= {{ "thumb",            LISTITEM_THUMB },
                                   { "stereoscopicmode", LISTITEM_STEREOSCOPIC_MODE },
                                   { "isstereoscopic",   LISTITEM_IS_STEREOSCOPIC },
                                   { "imdbnumber",       LISTITEM_IMDBNUMBER },
-                                  { "episodename",      LISTITEM_EPISODENAME }};
+                                  { "episodename",      LISTITEM_EPISODENAME },
+                                  { "timertype",        LISTITEM_TIMERTYPE }};
 
 const infomap visualisation[] =  {{ "locked",           VISUALISATION_LOCKED },
                                   { "preset",           VISUALISATION_PRESET },
@@ -2144,7 +2144,7 @@ bool CGUIInfoManager::GetInt(int &value, int info, int contextWindow, const CGUI
             value = (int)(g_application.GetCachePercentage());
             break;
           case PLAYER_SEEKBAR:
-            value = (int)CSeekHandler::Get().GetPercent();
+            value = (int)GetSeekPercent();
             break;
           case PLAYER_CACHELEVEL:
             value = (int)(g_application.m_pPlayer->GetCacheLevel());
@@ -2592,7 +2592,7 @@ bool CGUIInfoManager::GetBool(int condition1, int contextWindow, const CGUIListI
       }
     break;
     case PLAYER_SEEKING:
-      bReturn = m_playerSeeking;
+      bReturn = CSeekHandler::Get().InProgress();
     break;
     case PLAYER_SHOWTIME:
       bReturn = m_playerShowTime;
@@ -3276,11 +3276,12 @@ std::string CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextW
   }
   else if (info.m_info == PLAYER_SEEKSTEPSIZE)
   {
-    std::string seekOffset = StringUtils::SecondsToTimeString(abs(m_seekStepSize), (TIME_FORMAT)info.GetData1());
-    if (m_seekStepSize < 0)
-      return "-" + seekOffset;
-    if (m_seekStepSize > 0)
-      return "+" + seekOffset;
+    int seekSize = CSeekHandler::Get().GetSeekSize();
+    std::string strSeekSize = StringUtils::SecondsToTimeString(abs(seekSize), (TIME_FORMAT)info.GetData1());
+    if (seekSize < 0)
+      return "-" + strSeekSize;
+    if (seekSize > 0)
+      return "+" + strSeekSize;
   }
   else if (info.m_info == PLAYER_ITEM_ART)
   {
@@ -4110,8 +4111,7 @@ std::string CGUIInfoManager::GetCurrentSeekTime(TIME_FORMAT format) const
 {
   if (format == TIME_FORMAT_GUESS && GetTotalPlayTime() >= 3600)
     format = TIME_FORMAT_HH_MM_SS;
-  float time = GetTotalPlayTime() * CSeekHandler::Get().GetPercent() * 0.01f;
-  return StringUtils::SecondsToTimeString((int)time, format);
+  return StringUtils::SecondsToTimeString(g_application.GetTime() + CSeekHandler::Get().GetSeekSize(), format);
 }
 
 int CGUIInfoManager::GetTotalPlayTime() const
@@ -4124,6 +4124,23 @@ int CGUIInfoManager::GetPlayTimeRemaining() const
 {
   int iReverse = GetTotalPlayTime() - (int)g_application.GetTime();
   return iReverse > 0 ? iReverse : 0;
+}
+
+float CGUIInfoManager::GetSeekPercent() const
+{
+  if (g_infoManager.GetTotalPlayTime() == 0)
+    return 0.0f;
+
+  float percentPlayTime = static_cast<float>(GetPlayTime()) / GetTotalPlayTime() * 0.1f;
+  float percentPerSecond = 100.0f / static_cast<float>(GetTotalPlayTime());
+  float percent = percentPlayTime + percentPerSecond * CSeekHandler::Get().GetSeekSize();
+
+  if (percent > 100.0f)
+    percent = 100.0f;
+  if (percent < 0.0f)
+    percent = 0.0f;
+
+  return percent;
 }
 
 std::string CGUIInfoManager::GetCurrentPlayTimeRemaining(TIME_FORMAT format) const
@@ -4359,7 +4376,6 @@ std::string CGUIInfoManager::GetAppName()
 
 void CGUIInfoManager::SetDisplayAfterSeek(unsigned int timeOut, int seekOffset)
 {
-  g_infoManager.m_performingSeek = false;
   if (timeOut>0)
   {
     m_AfterSeekTimeout = CTimeUtils::GetFrameTime() +  timeOut;
@@ -4877,20 +4893,26 @@ std::string CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, std::
         CEpgInfoTagPtr tag(item->GetPVRChannelInfoTag()->GetEPGNow());
         if (tag)
         {
-          iSeason = tag->SeriesNumber();
-          iEpisode = tag->EpisodeNumber();
+          if (tag->SeriesNumber() > 0)
+            iSeason = tag->SeriesNumber();
+          if (tag->EpisodeNumber() > 0)
+            iEpisode = tag->EpisodeNumber();
         }
       }
       else if (item->HasEPGInfoTag())
       {
-        iSeason = item->GetEPGInfoTag()->SeriesNumber();
-        iEpisode = item->GetEPGInfoTag()->EpisodeNumber();
+        if (item->GetEPGInfoTag()->SeriesNumber() > 0)
+          iSeason = item->GetEPGInfoTag()->SeriesNumber();
+        if (item->GetEPGInfoTag()->EpisodeNumber() > 0)
+          iEpisode = item->GetEPGInfoTag()->EpisodeNumber();
       }
       else if (item->HasPVRTimerInfoTag() && item->GetPVRTimerInfoTag()->HasEpgInfoTag())
       {
         CEpgInfoTagPtr tag(item->GetPVRTimerInfoTag()->GetEpgInfoTag());
-        iSeason = tag->SeriesNumber();
-        iEpisode = tag->EpisodeNumber();
+        if (tag->SeriesNumber() > 0)
+          iSeason = tag->SeriesNumber();
+        if (tag->EpisodeNumber() > 0)
+          iEpisode = tag->EpisodeNumber();
       }
       else if (item->HasVideoInfoTag())
       {
@@ -4913,12 +4935,15 @@ std::string CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, std::
       if (item->HasPVRChannelInfoTag())
       {
         CEpgInfoTagPtr tag(item->GetPVRChannelInfoTag()->GetEPGNow());
-        if (tag)
+        if (tag && tag->SeriesNumber() > 0)
           iSeason = tag->SeriesNumber();
       }
-      else if (item->HasEPGInfoTag())
+      else if (item->HasEPGInfoTag() &&
+               item->GetEPGInfoTag()->SeriesNumber() > 0)
         iSeason = item->GetEPGInfoTag()->SeriesNumber();
-      else if (item->HasPVRTimerInfoTag() && item->GetPVRTimerInfoTag()->HasEpgInfoTag())
+      else if (item->HasPVRTimerInfoTag() &&
+               item->GetPVRTimerInfoTag()->HasEpgInfoTag() &&
+               item->GetPVRTimerInfoTag()->GetEpgInfoTag()->SeriesNumber() > 0)
         iSeason = item->GetPVRTimerInfoTag()->GetEpgInfoTag()->SeriesNumber();
       else if (item->HasVideoInfoTag())
         iSeason = item->GetVideoInfoTag()->m_iSeason;
@@ -5329,8 +5354,16 @@ std::string CGUIInfoManager::GetItemLabel(const CFileItem *item, int info, std::
       }
       if (item->HasEPGInfoTag())
         return item->GetEPGInfoTag()->EpisodeName();
+      if (item->HasPVRTimerInfoTag() && item->GetPVRTimerInfoTag()->HasEpgInfoTag())
+        return item->GetPVRTimerInfoTag()->GetEpgInfoTag()->EpisodeName();
       break;
     }
+  case LISTITEM_TIMERTYPE:
+    {
+      if (item->HasPVRTimerInfoTag())
+        return item->GetPVRTimerInfoTag()->GetTypeAsString();
+    }
+    break;
   }
   return "";
 }
@@ -5452,6 +5485,15 @@ bool CGUIInfoManager::GetItemBool(const CGUIListItem *item, int condition) const
         CFileItemPtr timer = g_PVRTimers->GetTimerForEpgTag(pItem);
         if (timer && timer->HasPVRTimerInfoTag())
           return timer->GetPVRTimerInfoTag()->IsActive();
+      }
+    }
+    else if (condition == LISTITEM_HASTIMERSCHEDULE)
+    {
+      if (pItem->HasEPGInfoTag())
+      {
+        CFileItemPtr timer = g_PVRTimers->GetTimerForEpgTag(pItem);
+        if (timer && timer->HasPVRTimerInfoTag())
+          return timer->GetPVRTimerInfoTag()->IsRepeating();
       }
     }
     else if (condition == LISTITEM_HASRECORDING)

@@ -6,10 +6,10 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
+/* Begin PBXNativeTarget section */
 		6E2FACBA0E26DF7A00DF79EA /* Kodi.app */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 6E2FACC10E26DFA300DF79EA /* Build configuration list for PBXAggregateTarget "Kodi.app" */;
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E2FACC10E26DFA300DF79EA /* Build configuration list for PBXNativeTarget "Kodi.app" */;
 			buildPhases = (
 				F5DEC3580E6DEBB2005A4E24 /* copy root files */,
 				6E2FACC70E26E22400DF79EA /* copy frameworks */,
@@ -21,6 +21,8 @@
 			);
 			name = Kodi.app;
 			productName = Kodi.app;
+			productReference = D6299ABB1AFC2A9F00E3059D /* Kodi.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXAggregateTarget section */
 
@@ -39,7 +41,6 @@
 		18968DC814155D7C005BA742 /* ApplicationOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18968DC614155D7C005BA742 /* ApplicationOperations.cpp */; };
 		18ACF84313596C9B00B67371 /* RecentlyAddedJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18ACF84113596C9B00B67371 /* RecentlyAddedJob.cpp */; };
 		18B4A0021152BFA5001AF8A6 /* Addon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FF11152BFA5001AF8A6 /* Addon.cpp */; };
-		18B4A0041152BFA5001AF8A6 /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FF91152BFA5001AF8A6 /* fft.cpp */; };
 		18B4A0051152BFA5001AF8A6 /* Scraper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FFC1152BFA5001AF8A6 /* Scraper.cpp */; };
 		18B4A0061152BFA5001AF8A6 /* ScreenSaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FFE1152BFA5001AF8A6 /* ScreenSaver.cpp */; };
 		18B4A0071152BFA5001AF8A6 /* Visualisation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B4A0001152BFA5001AF8A6 /* Visualisation.cpp */; };
@@ -892,6 +893,9 @@
 		DF56EF241A798A5E00CAAEFB /* HttpRangeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF56EF221A798A5E00CAAEFB /* HttpRangeUtils.cpp */; };
 		DF56EF251A798A5E00CAAEFB /* HttpRangeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF56EF221A798A5E00CAAEFB /* HttpRangeUtils.cpp */; };
 		DF56EF261A798A5E00CAAEFB /* HttpRangeUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF56EF221A798A5E00CAAEFB /* HttpRangeUtils.cpp */; };
+		DF5E699A1B28121E009A88C3 /* PVRTimerType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5E69981B28121E009A88C3 /* PVRTimerType.cpp */; };
+		DF5E699B1B28121E009A88C3 /* PVRTimerType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5E69981B28121E009A88C3 /* PVRTimerType.cpp */; };
+		DF5E699C1B28121E009A88C3 /* PVRTimerType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF5E69981B28121E009A88C3 /* PVRTimerType.cpp */; };
 		DF64FE3D16C07AAA00D028FB /* GUIViewControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF64FE3516C07AAA00D028FB /* GUIViewControl.cpp */; };
 		DF64FE3E16C07AAA00D028FB /* GUIViewState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF64FE3716C07AAA00D028FB /* GUIViewState.cpp */; };
 		DF64FE4016C07AAA00D028FB /* ViewDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF64FE3A16C07AAA00D028FB /* ViewDatabase.cpp */; };
@@ -986,6 +990,15 @@
 		DFBB431A178B5E6F006CC20A /* CompileInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4317178B5E6F006CC20A /* CompileInfo.cpp */; };
 		DFBB431B178B5E6F006CC20A /* CompileInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFBB4317178B5E6F006CC20A /* CompileInfo.cpp */; };
 		DFBE805115F7D75700D7D102 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFBE803D15F7D72100D7D102 /* SystemConfiguration.framework */; };
+		DFC6F4B61AFF7CB10039A7FA /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4AF1AFF7CB10039A7FA /* kiss_fft.c */; };
+		DFC6F4B71AFF7CB10039A7FA /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4AF1AFF7CB10039A7FA /* kiss_fft.c */; };
+		DFC6F4B81AFF7CB10039A7FA /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4AF1AFF7CB10039A7FA /* kiss_fft.c */; };
+		DFC6F4B91AFF7CB10039A7FA /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4B11AFF7CB10039A7FA /* kiss_fftr.c */; };
+		DFC6F4BA1AFF7CB10039A7FA /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4B11AFF7CB10039A7FA /* kiss_fftr.c */; };
+		DFC6F4BB1AFF7CB10039A7FA /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4B11AFF7CB10039A7FA /* kiss_fftr.c */; };
+		DFC6F4C11AFF7E300039A7FA /* rfft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4BF1AFF7E300039A7FA /* rfft.cpp */; };
+		DFC6F4C21AFF7E300039A7FA /* rfft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4BF1AFF7E300039A7FA /* rfft.cpp */; };
+		DFC6F4C31AFF7E300039A7FA /* rfft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC6F4BF1AFF7E300039A7FA /* rfft.cpp */; };
 		DFCA6AC7152245CD000BFAAE /* HTTPJsonRpcHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFCA6ABB152245CD000BFAAE /* HTTPJsonRpcHandler.cpp */; };
 		DFCA6AC8152245CD000BFAAE /* HTTPVfsHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFCA6ABD152245CD000BFAAE /* HTTPVfsHandler.cpp */; };
 		DFCA6AC9152245CD000BFAAE /* HTTPWebinterfaceAddonsHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFCA6ABF152245CD000BFAAE /* HTTPWebinterfaceAddonsHandler.cpp */; };
@@ -1685,7 +1698,6 @@
 		DFF0F3C717528350002DA3A4 /* DatabaseUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36A9443B15821E2800727135 /* DatabaseUtils.cpp */; };
 		DFF0F3CB17528350002DA3A4 /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF529BAC1741697B00523FB4 /* Environment.cpp */; };
 		DFF0F3CC17528350002DA3A4 /* Fanart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36C29E90DA72486001F0C9D /* Fanart.cpp */; };
-		DFF0F3CD17528350002DA3A4 /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FF91152BFA5001AF8A6 /* fft.cpp */; };
 		DFF0F3CE17528350002DA3A4 /* FileOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F244641110DC6B009126C6 /* FileOperationJob.cpp */; };
 		DFF0F3CF17528350002DA3A4 /* FileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F245EC1112C9AB009126C6 /* FileUtils.cpp */; };
 		DFF0F3D017528350002DA3A4 /* GLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C1D22B13033F6A00CFFE59 /* GLUtils.cpp */; };
@@ -2868,7 +2880,6 @@
 		E499144B174E605900741B6D /* DatabaseUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 36A9443B15821E2800727135 /* DatabaseUtils.cpp */; };
 		E499144F174E605900741B6D /* Environment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF529BAC1741697B00523FB4 /* Environment.cpp */; };
 		E4991450174E605900741B6D /* Fanart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E36C29E90DA72486001F0C9D /* Fanart.cpp */; };
-		E4991451174E605900741B6D /* fft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18B49FF91152BFA5001AF8A6 /* fft.cpp */; };
 		E4991452174E605900741B6D /* FileOperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F244641110DC6B009126C6 /* FileOperationJob.cpp */; };
 		E4991453174E605900741B6D /* FileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5F245EC1112C9AB009126C6 /* FileUtils.cpp */; };
 		E4991454174E605900741B6D /* GLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C1D22B13033F6A00CFFE59 /* GLUtils.cpp */; };
@@ -3184,7 +3195,6 @@
 		F5E55B5D10741272006E788A /* DVDPlayerTeletext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5E55B5B10741272006E788A /* DVDPlayerTeletext.cpp */; };
 		F5E55B66107412DE006E788A /* GUIDialogTeletext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5E55B65107412DE006E788A /* GUIDialogTeletext.cpp */; };
 		F5E55B7010741340006E788A /* Teletext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5E55B6E10741340006E788A /* Teletext.cpp */; };
-		F5E5697310803FC3006E788A /* fastmemcpy.c in Sources */ = {isa = PBXBuildFile; fileRef = F5E5697210803FC3006E788A /* fastmemcpy.c */; };
 		F5E56BA61082A675006E788A /* PosixMountProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5E56BA51082A675006E788A /* PosixMountProvider.cpp */; };
 		F5EA02260F6DA990005C2EC5 /* CocoaPowerSyscall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5EA02200F6DA85C005C2EC5 /* CocoaPowerSyscall.cpp */; };
 		F5EA02270F6DA9A5005C2EC5 /* PowerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5EA021A0F6DA7E8005C2EC5 /* PowerManager.cpp */; };
@@ -3246,8 +3256,6 @@
 		18B49FF41152BFA5001AF8A6 /* AddonManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddonManager.cpp; sourceTree = "<group>"; };
 		18B49FF51152BFA5001AF8A6 /* AddonManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddonManager.h; sourceTree = "<group>"; };
 		18B49FF61152BFA5001AF8A6 /* DllAddon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DllAddon.h; sourceTree = "<group>"; };
-		18B49FF91152BFA5001AF8A6 /* fft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fft.cpp; sourceTree = "<group>"; };
-		18B49FFA1152BFA5001AF8A6 /* fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fft.h; sourceTree = "<group>"; };
 		18B49FFB1152BFA5001AF8A6 /* IAddon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAddon.h; sourceTree = "<group>"; };
 		18B49FFC1152BFA5001AF8A6 /* Scraper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scraper.cpp; sourceTree = "<group>"; };
 		18B49FFD1152BFA5001AF8A6 /* Scraper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scraper.h; sourceTree = "<group>"; };
@@ -3626,7 +3634,6 @@
 		43348AAB1077486D00F859CF /* PlayerSelectionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlayerSelectionRule.h; path = playercorefactory/PlayerSelectionRule.h; sourceTree = "<group>"; };
 		436721A612D66A09002508E6 /* IAnnouncer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAnnouncer.h; sourceTree = "<group>"; };
 		436B38F3106628850049AB3B /* EndianSwap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EndianSwap.h; sourceTree = "<group>"; };
-		43BF09DD1080D39300E25290 /* fastmemcpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastmemcpy.h; sourceTree = "<group>"; };
 		43FAC87112D6349400F67914 /* IStorageProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IStorageProvider.h; sourceTree = "<group>"; };
 		551C3A43175A12010051AAAD /* VDA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VDA.cpp; sourceTree = "<group>"; };
 		551C3A44175A12010051AAAD /* VDA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VDA.h; sourceTree = "<group>"; };
@@ -4194,6 +4201,7 @@
 		889B4D8D0E0EF86C00FAD25E /* RSSDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSDirectory.h; sourceTree = "<group>"; };
 		88ECB6580DE013C4003396A7 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = /System/Library/Frameworks/DiskArbitration.framework; sourceTree = "<absolute>"; };
 		8DD76F7E0486A8DE00D96B5E /* Kodi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Kodi; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6299ABB1AFC2A9F00E3059D /* Kodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kodi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE4E87A517354C4A00D15206 /* XSLTUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUtils.cpp; sourceTree = "<group>"; };
 		AE4E87A617354C4A00D15206 /* XSLTUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUtils.h; sourceTree = "<group>"; };
 		AE84CB5915A5B8A600A3810E /* TagLibVFSStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagLibVFSStream.cpp; sourceTree = "<group>"; };
@@ -4483,6 +4491,8 @@
 		DF56EF1E1A798A3F00CAAEFB /* HTTPFileHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPFileHandler.h; sourceTree = "<group>"; };
 		DF56EF221A798A5E00CAAEFB /* HttpRangeUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HttpRangeUtils.cpp; sourceTree = "<group>"; };
 		DF56EF231A798A5E00CAAEFB /* HttpRangeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpRangeUtils.h; sourceTree = "<group>"; };
+		DF5E69981B28121E009A88C3 /* PVRTimerType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PVRTimerType.cpp; sourceTree = "<group>"; };
+		DF5E69991B28121E009A88C3 /* PVRTimerType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRTimerType.h; sourceTree = "<group>"; };
 		DF5EEEFB17CE977A003DEC49 /* AERingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AERingBuffer.h; sourceTree = "<group>"; };
 		DF64FE3516C07AAA00D028FB /* GUIViewControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GUIViewControl.cpp; sourceTree = "<group>"; };
 		DF64FE3616C07AAA00D028FB /* GUIViewControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIViewControl.h; sourceTree = "<group>"; };
@@ -4603,6 +4613,13 @@
 		DFBB4317178B5E6F006CC20A /* CompileInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompileInfo.cpp; sourceTree = "<group>"; };
 		DFBB4318178B5E6F006CC20A /* CompileInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompileInfo.h; sourceTree = "<group>"; };
 		DFBE803D15F7D72100D7D102 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		DFC6F4AD1AFF7CB10039A7FA /* _kiss_fft_guts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _kiss_fft_guts.h; sourceTree = "<group>"; };
+		DFC6F4AF1AFF7CB10039A7FA /* kiss_fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fft.c; sourceTree = "<group>"; };
+		DFC6F4B01AFF7CB10039A7FA /* kiss_fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fft.h; sourceTree = "<group>"; };
+		DFC6F4B11AFF7CB10039A7FA /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
+		DFC6F4B21AFF7CB10039A7FA /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
+		DFC6F4BF1AFF7E300039A7FA /* rfft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rfft.cpp; sourceTree = "<group>"; };
+		DFC6F4C01AFF7E300039A7FA /* rfft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rfft.h; sourceTree = "<group>"; };
 		DFC8B7CC199C1EC100424777 /* TopShelf.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TopShelf.png; sourceTree = "<group>"; };
 		DFC8B7CD199C2B3A00424777 /* KodiAppliance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KodiAppliance.h; sourceTree = "<group>"; };
 		DFC8B7CE199C2B3A00424777 /* KodiAppliance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KodiAppliance.mm; sourceTree = "<group>"; };
@@ -5417,7 +5434,7 @@
 		E46F7C2B0F77219700C25D29 /* ZeroconfOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZeroconfOSX.h; sourceTree = "<group>"; };
 		E46F7C2C0F77219700C25D29 /* ZeroconfOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZeroconfOSX.cpp; sourceTree = "<group>"; };
 		E47252BF175115F9001C1AAA /* Codesign.command */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = Codesign.command; sourceTree = "<group>"; };
-		E4991089174D0D2600741B6D /* Kodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kodi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4991089174D0D2600741B6D /* Kodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Kodi.app; path = .app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E499108B174D0D2600741B6D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		E499108D174D0D2600741B6D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		E499108F174D0D2600741B6D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -5721,7 +5738,6 @@
 		F5E55B6D10741340006E788A /* Teletext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Teletext.h; sourceTree = "<group>"; };
 		F5E55B6E10741340006E788A /* Teletext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Teletext.cpp; sourceTree = "<group>"; };
 		F5E55B6F10741340006E788A /* TeletextDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TeletextDefines.h; sourceTree = "<group>"; };
-		F5E5697210803FC3006E788A /* fastmemcpy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fastmemcpy.c; sourceTree = "<group>"; };
 		F5E56BA41082A675006E788A /* PosixMountProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PosixMountProvider.h; sourceTree = "<group>"; };
 		F5E56BA51082A675006E788A /* PosixMountProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixMountProvider.cpp; sourceTree = "<group>"; };
 		F5EA021A0F6DA7E8005C2EC5 /* PowerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerManager.cpp; sourceTree = "<group>"; };
@@ -6247,6 +6263,7 @@
 			isa = PBXGroup;
 			children = (
 				8DD76F7E0486A8DE00D96B5E /* Kodi */,
+				D6299ABB1AFC2A9F00E3059D /* Kodi.app */,
 				E4991089174D0D2600741B6D /* Kodi.app */,
 				DFFC52CB17527B3100C937AB /* Kodi.frappliance */,
 			);
@@ -7571,6 +7588,8 @@
 				C84828AA156CFCD8005A996F /* PVRTimerInfoTag.h */,
 				C84828AB156CFCD8005A996F /* PVRTimers.cpp */,
 				C84828AC156CFCD8005A996F /* PVRTimers.h */,
+				DF5E69981B28121E009A88C3 /* PVRTimerType.cpp */,
+				DF5E69991B28121E009A88C3 /* PVRTimerType.h */,
 			);
 			path = timers;
 			sourceTree = "<group>";
@@ -7926,6 +7945,26 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		DFC6F4AB1AFF7CB10039A7FA /* contrib */ = {
+			isa = PBXGroup;
+			children = (
+				DFC6F4AC1AFF7CB10039A7FA /* kissfft */,
+			);
+			path = contrib;
+			sourceTree = "<group>";
+		};
+		DFC6F4AC1AFF7CB10039A7FA /* kissfft */ = {
+			isa = PBXGroup;
+			children = (
+				DFC6F4AD1AFF7CB10039A7FA /* _kiss_fft_guts.h */,
+				DFC6F4AF1AFF7CB10039A7FA /* kiss_fft.c */,
+				DFC6F4B01AFF7CB10039A7FA /* kiss_fft.h */,
+				DFC6F4B11AFF7CB10039A7FA /* kiss_fftr.c */,
+				DFC6F4B21AFF7CB10039A7FA /* kiss_fftr.h */,
+			);
+			path = kissfft;
+			sourceTree = "<group>";
+		};
 		DFCA6AB8152245CD000BFAAE /* httprequesthandler */ = {
 			isa = PBXGroup;
 			children = (
@@ -8109,6 +8148,7 @@
 		E38E14610D25F9F900618676 /* xbmc */ = {
 			isa = PBXGroup;
 			children = (
+				DFC6F4AB1AFF7CB10039A7FA /* contrib */,
 				18B49FF01152BEEB001AF8A6 /* addons */,
 				E38E147F0D25F9F900618676 /* cdrip */,
 				EC720A91155091CA00FFD782 /* commons */,
@@ -9166,10 +9206,6 @@
 				DF529BAD1741697B00523FB4 /* Environment.h */,
 				E36C29E90DA72486001F0C9D /* Fanart.cpp */,
 				6E97BDC30DA2B620003A2A89 /* Fanart.h */,
-				F5E5697210803FC3006E788A /* fastmemcpy.c */,
-				43BF09DD1080D39300E25290 /* fastmemcpy.h */,
-				18B49FF91152BFA5001AF8A6 /* fft.cpp */,
-				18B49FFA1152BFA5001AF8A6 /* fft.h */,
 				F5F244641110DC6B009126C6 /* FileOperationJob.cpp */,
 				F5F244631110DC6B009126C6 /* FileOperationJob.h */,
 				F5F245EC1112C9AB009126C6 /* FileUtils.cpp */,
@@ -9232,6 +9268,8 @@
 				18ACF84213596C9B00B67371 /* RecentlyAddedJob.h */,
 				E38E1E730D25F9FD00618676 /* RegExp.cpp */,
 				E38E1E740D25F9FD00618676 /* RegExp.h */,
+				DFC6F4BF1AFF7E300039A7FA /* rfft.cpp */,
+				DFC6F4C01AFF7E300039A7FA /* rfft.h */,
 				F5DC87E1110A287400EE1B15 /* RingBuffer.cpp */,
 				F5DC87E0110A287400EE1B15 /* RingBuffer.h */,
 				DFAF6A4D16EBAE3800D6AE12 /* RssManager.cpp */,
@@ -10257,6 +10295,7 @@
 				E38E20B80D25F9FD00618676 /* GUIWindowMusicPlaylistEditor.cpp in Sources */,
 				E38E20B90D25F9FD00618676 /* GUIWindowMusicSongs.cpp in Sources */,
 				E38E20BB0D25F9FD00618676 /* GUIDialogVideoOSD.cpp in Sources */,
+				DFC6F4B91AFF7CB10039A7FA /* kiss_fftr.c in Sources */,
 				E38E20BC0D25F9FD00618676 /* GUIWindowPictures.cpp in Sources */,
 				E38E20BD0D25F9FD00618676 /* GUIWindowPointer.cpp in Sources */,
 				E38E20BE0D25F9FD00618676 /* GUIWindowPrograms.cpp in Sources */,
@@ -10482,7 +10521,6 @@
 				43348AAE1077486D00F859CF /* PlayerCoreFactory.cpp in Sources */,
 				43348AAF1077486D00F859CF /* PlayerSelectionRule.cpp in Sources */,
 				7CAA20511079C8160096DE39 /* BaseRenderer.cpp in Sources */,
-				F5E5697310803FC3006E788A /* fastmemcpy.c in Sources */,
 				55D3604E1826CAB900DA66D2 /* OverlayRendererGUI.cpp in Sources */,
 				F5E56BA61082A675006E788A /* PosixMountProvider.cpp in Sources */,
 				7CAA25351085963B0096DE39 /* PasswordManager.cpp in Sources */,
@@ -10502,7 +10540,6 @@
 				F5A7B37E113AFB900059D6AA /* SFTPDirectory.cpp in Sources */,
 				F5A7B42C113CBB950059D6AA /* AddonsDirectory.cpp in Sources */,
 				18B4A0021152BFA5001AF8A6 /* Addon.cpp in Sources */,
-				18B4A0041152BFA5001AF8A6 /* fft.cpp in Sources */,
 				18B4A0051152BFA5001AF8A6 /* Scraper.cpp in Sources */,
 				18B4A0061152BFA5001AF8A6 /* ScreenSaver.cpp in Sources */,
 				18B4A0071152BFA5001AF8A6 /* Visualisation.cpp in Sources */,
@@ -10797,6 +10834,7 @@
 				C84828FA156CFD5E005A996F /* GUIEPGGridContainer.cpp in Sources */,
 				C84828FE156CFDC3005A996F /* GUIDialogExtendedProgressBar.cpp in Sources */,
 				C8482901156CFE4B005A996F /* Observer.cpp in Sources */,
+				DFC6F4C11AFF7E300039A7FA /* rfft.cpp in Sources */,
 				C8482904156CFED9005A996F /* DVDDemuxPVRClient.cpp in Sources */,
 				C8482909156CFF24005A996F /* PVRDirectory.cpp in Sources */,
 				C848290A156CFF24005A996F /* PVRFile.cpp in Sources */,
@@ -10817,6 +10855,7 @@
 				36A9466315CF1FA600727135 /* DbUrl.cpp in Sources */,
 				3994427F1A8DD96F006C39E9 /* VideoLibraryQueue.cpp in Sources */,
 				36A9466715CF1FD200727135 /* MusicDbUrl.cpp in Sources */,
+				DFC6F4B61AFF7CB10039A7FA /* kiss_fft.c in Sources */,
 				36A9466A15CF1FED00727135 /* UrlOptions.cpp in Sources */,
 				36A9466D15CF201F00727135 /* VideoDbUrl.cpp in Sources */,
 				552A226915F7E14B0015C0D0 /* main.cpp in Sources */,
@@ -10983,6 +11022,7 @@
 				7C8AE84E189DE3CD00C33786 /* CoreAudioChannelLayout.cpp in Sources */,
 				7C8AE84F189DE3CD00C33786 /* CoreAudioDevice.cpp in Sources */,
 				7C8AE850189DE3CD00C33786 /* CoreAudioHardware.cpp in Sources */,
+				DF5E699A1B28121E009A88C3 /* PVRTimerType.cpp in Sources */,
 				7C8AE851189DE3CD00C33786 /* CoreAudioStream.cpp in Sources */,
 				7C8AE854189DE47F00C33786 /* CoreAudioHelpers.cpp in Sources */,
 				7CF0504B190A1D7200222135 /* FFmpeg.cpp in Sources */,
@@ -11757,6 +11797,7 @@
 				DFF0F39E17528350002DA3A4 /* MediaSourceSettings.cpp in Sources */,
 				DFF0F3A017528350002DA3A4 /* SettingAddon.cpp in Sources */,
 				DFF0F3A317528350002DA3A4 /* SettingControl.cpp in Sources */,
+				DF5E699C1B28121E009A88C3 /* PVRTimerType.cpp in Sources */,
 				DFF0F3A517528350002DA3A4 /* SettingPath.cpp in Sources */,
 				DFF0F3A617528350002DA3A4 /* Settings.cpp in Sources */,
 				DFF0F3AB17528350002DA3A4 /* SkinSettings.cpp in Sources */,
@@ -11790,7 +11831,6 @@
 				DFF0F3C717528350002DA3A4 /* DatabaseUtils.cpp in Sources */,
 				DFF0F3CB17528350002DA3A4 /* Environment.cpp in Sources */,
 				DFF0F3CC17528350002DA3A4 /* Fanart.cpp in Sources */,
-				DFF0F3CD17528350002DA3A4 /* fft.cpp in Sources */,
 				DFF0F3CE17528350002DA3A4 /* FileOperationJob.cpp in Sources */,
 				DFF0F3CF17528350002DA3A4 /* FileUtils.cpp in Sources */,
 				DFF0F3D017528350002DA3A4 /* GLUtils.cpp in Sources */,
@@ -11933,6 +11973,7 @@
 				DFF0F45C17528350002DA3A4 /* Dialog.cpp in Sources */,
 				DFF0F45D17528350002DA3A4 /* File.cpp in Sources */,
 				2F4564D71970129A00396109 /* GUIFontCache.cpp in Sources */,
+				DFC6F4B81AFF7CB10039A7FA /* kiss_fft.c in Sources */,
 				DFF0F45E17528350002DA3A4 /* InfoTagMusic.cpp in Sources */,
 				DFF0F45F17528350002DA3A4 /* InfoTagVideo.cpp in Sources */,
 				DFF0F46017528350002DA3A4 /* Keyboard.cpp in Sources */,
@@ -12104,11 +12145,13 @@
 				7CCDA850192756250074CF51 /* NptTls.cpp in Sources */,
 				7CCDA853192756250074CF51 /* NptUri.cpp in Sources */,
 				7CCDA85C192756250074CF51 /* NptUtils.cpp in Sources */,
+				DFC6F4C31AFF7E300039A7FA /* rfft.cpp in Sources */,
 				7CCDA865192756250074CF51 /* NptXml.cpp in Sources */,
 				7CCDA86E192756250074CF51 /* NptZip.cpp in Sources */,
 				7CCDAA84192756250074CF51 /* NptPosixDynamicLibraries.cpp in Sources */,
 				7CCDAA87192756250074CF51 /* NptPosixEnvironment.cpp in Sources */,
 				7CCDAA8D192756250074CF51 /* NptPosixNetwork.cpp in Sources */,
+				DFC6F4BB1AFF7CB10039A7FA /* kiss_fftr.c in Sources */,
 				7CCDAA90192756250074CF51 /* NptPosixQueue.cpp in Sources */,
 				7CCDAA99192756250074CF51 /* NptPosixSystem.cpp in Sources */,
 				7CCDAAA2192756250074CF51 /* NptPosixThreads.cpp in Sources */,
@@ -12233,6 +12276,7 @@
 				DF4BF0171A4EF31E0053AC56 /* cc_decoder.c in Sources */,
 				E49911BA174E5D0A00741B6D /* dll_tracker_library.cpp in Sources */,
 				E49911BB174E5D0A00741B6D /* dll_util.cpp in Sources */,
+				DFC6F4BA1AFF7CB10039A7FA /* kiss_fftr.c in Sources */,
 				E49911BC174E5D0A00741B6D /* DllLoader.cpp in Sources */,
 				E49911BD174E5D0A00741B6D /* DllLoaderContainer.cpp in Sources */,
 				E49911BE174E5D0A00741B6D /* LibraryLoader.cpp in Sources */,
@@ -12388,6 +12432,7 @@
 				E499126D174E5D8F00741B6D /* HDHomeRunFile.cpp in Sources */,
 				E4991270174E5D8F00741B6D /* HTTPDirectory.cpp in Sources */,
 				E4991271174E5D8F00741B6D /* HTTPFile.cpp in Sources */,
+				DFC6F4C21AFF7E300039A7FA /* rfft.cpp in Sources */,
 				E4991272174E5D8F00741B6D /* IDirectory.cpp in Sources */,
 				E4991273174E5D8F00741B6D /* IFile.cpp in Sources */,
 				E4991274174E5D8F00741B6D /* ImageFile.cpp in Sources */,
@@ -12582,6 +12627,7 @@
 				E499132E174E5DAD00741B6D /* TextureManager.cpp in Sources */,
 				E499132F174E5DAD00741B6D /* VisibleEffect.cpp in Sources */,
 				E4991330174E5DAD00741B6D /* XBTF.cpp in Sources */,
+				DFC6F4B71AFF7CB10039A7FA /* kiss_fft.c in Sources */,
 				E4991331174E5DAD00741B6D /* XBTFReader.cpp in Sources */,
 				E4991345174E5E5C00741B6D /* GenericTouchActionHandler.cpp in Sources */,
 				E499134B174E5E5C00741B6D /* ITouchInputHandling.cpp in Sources */,
@@ -12829,7 +12875,6 @@
 				E499144B174E605900741B6D /* DatabaseUtils.cpp in Sources */,
 				E499144F174E605900741B6D /* Environment.cpp in Sources */,
 				E4991450174E605900741B6D /* Fanart.cpp in Sources */,
-				E4991451174E605900741B6D /* fft.cpp in Sources */,
 				E4991452174E605900741B6D /* FileOperationJob.cpp in Sources */,
 				E4991453174E605900741B6D /* FileUtils.cpp in Sources */,
 				E4991454174E605900741B6D /* GLUtils.cpp in Sources */,
@@ -13061,6 +13106,7 @@
 				7CC7B6C1191869EA00DDB120 /* SettingCreator.cpp in Sources */,
 				7CC7B6C4191869EA00DDB120 /* SettingUtils.cpp in Sources */,
 				7CC7B6C919186A8800DDB120 /* SettingConditions.cpp in Sources */,
+				DF5E699B1B28121E009A88C3 /* PVRTimerType.cpp in Sources */,
 				7CCDA0DC192753E30074CF51 /* PltAction.cpp in Sources */,
 				7CCDA0E5192753E30074CF51 /* PltArgument.cpp in Sources */,
 				7CCDA0EE192753E30074CF51 /* PltConstants.cpp in Sources */,
@@ -13248,7 +13294,6 @@
 				PRODUCT_NAME = Kodi;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "";
-				XBMC_DEPENDS = "$(XBMC_DEPENDS_ROOT)/$(SDK_NAME)_$(CURRENT_ARCH)-target";
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -13309,7 +13354,6 @@
 				PRODUCT_NAME = Kodi;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "";
-				XBMC_DEPENDS = "$(XBMC_DEPENDS_ROOT)/$(SDK_NAME)_$(CURRENT_ARCH)-target";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -13337,6 +13381,7 @@
 		};
 		6E2FACBB0E26DF7A00DF79EA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E49910D1174E2E0000741B6D /* App-OSX.xcconfig */;
 			buildSettings = {
 				ARCHS = (
 					i386,
@@ -13345,23 +13390,22 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = Kodi.app;
+				PRODUCT_NAME = Kodi;
 				SDKROOT = macosx;
-				XBMC_DEPENDS = "$(XBMC_DEPENDS_ROOT)/$(SDK_NAME)_$(CURRENT_ARCH)-target";
 			};
 			name = Debug;
 		};
 		6E2FACBD0E26DF7A00DF79EA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E49910D1174E2E0000741B6D /* App-OSX.xcconfig */;
 			buildSettings = {
 				ARCHS = (
 					i386,
 					x86_64,
 				);
 				COPY_PHASE_STRIP = YES;
-				PRODUCT_NAME = Kodi.app;
+				PRODUCT_NAME = Kodi;
 				SDKROOT = macosx;
-				XBMC_DEPENDS = "$(XBMC_DEPENDS_ROOT)/$(SDK_NAME)_$(CURRENT_ARCH)-target";
 				ZERO_LINK = NO;
 			};
 			name = Release;

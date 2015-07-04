@@ -25,7 +25,6 @@
 #include "JSONRPCUtils.h"
 #include "XBDateTime.h"
 #include "utils/SortUtils.h"
-#include "interfaces/IAnnouncer.h"
 #include "playlists/SmartPlayList.h"
 #include "utils/JSONVariantWriter.h"
 #include "utils/JSONVariantParser.h"
@@ -516,7 +515,7 @@ namespace JSONRPC
         return;
 
       stringArray.clear();
-      for (CVariant::const_iterator_array it = jsonStringArray.begin_array(); it != jsonStringArray.end_array(); it++)
+      for (CVariant::const_iterator_array it = jsonStringArray.begin_array(); it != jsonStringArray.end_array(); ++it)
         stringArray.push_back(it->asString());
     }
 

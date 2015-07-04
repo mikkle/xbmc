@@ -247,6 +247,7 @@ typedef enum // this enum MUST match the offset struct further down!! and make s
   VIDEODB_ID_SEASON_TVSHOW_MPAA = 9,
   VIDEODB_ID_SEASON_EPISODES_TOTAL = 10,
   VIDEODB_ID_SEASON_EPISODES_WATCHED = 11,
+  VIDEODB_ID_SEASON_PREMIERED = 12,
   VIDEODB_ID_SEASON_MAX
 } VIDEODB_SEASON_IDS;
 
@@ -908,8 +909,6 @@ private:
   virtual int GetSchemaVersion() const;
   virtual int GetExportVersion() const { return 1; };
   const char *GetBaseDBName() const { return "MyVideos"; };
-
-  void CleanupActorLinkTablePre91(const std::string &linkTable, const std::string &linkTableIdActor, const std::string &linkTableIdMedia, int idActor, const std::string &strActor);
 
   void ConstructPath(std::string& strDest, const std::string& strPath, const std::string& strFileName);
   void SplitPath(const std::string& strFileNameAndPath, std::string& strPath, std::string& strFileName);

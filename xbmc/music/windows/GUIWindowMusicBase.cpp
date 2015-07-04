@@ -23,18 +23,15 @@
 #include "GUIUserMessages.h"
 #include "GUIWindowMusicBase.h"
 #include "music/dialogs/GUIDialogMusicInfo.h"
-#include "filesystem/ZipManager.h"
 #include "playlists/PlayListFactory.h"
 #include "Util.h"
 #include "playlists/PlayListM3U.h"
 #include "Application.h"
 #include "PlayListPlayer.h"
-#include "filesystem/DirectoryCache.h"
 #ifdef HAS_CDDA_RIPPER
 #include "cdrip/CDDARipper.h"
 #endif
 #include "GUIPassword.h"
-#include "dialogs/GUIDialogMediaSource.h"
 #include "PartyModeManager.h"
 #include "GUIInfoManager.h"
 #include "filesystem/MusicDatabaseDirectory.h"
@@ -46,7 +43,6 @@
 #include "input/Key.h"
 #include "dialogs/GUIDialogOK.h"
 #include "dialogs/GUIDialogYesNo.h"
-#include "guilib/GUIKeyboardFactory.h"
 #include "dialogs/GUIDialogProgress.h"
 #include "FileItem.h"
 #include "filesystem/File.h"
@@ -56,15 +52,11 @@
 #include "settings/MediaSettings.h"
 #include "settings/Settings.h"
 #include "guilib/LocalizeStrings.h"
-#include "utils/TimeUtils.h"
 #include "utils/log.h"
 #include "utils/URIUtils.h"
-#include "video/VideoInfoTag.h"
 #include "utils/StringUtils.h"
 #include "URL.h"
 #include "music/infoscanner/MusicInfoScanner.h"
-#include "cores/IPlayer.h"
-#include "CueDocument.h"
 
 
 using namespace std;
@@ -359,7 +351,7 @@ void CGUIWindowMusicBase::ShowArtistInfo(const CFileItem *pItem, bool bShowInfo 
 
       if (g_application.IsMusicScanning())
       {
-        CGUIDialogOK::ShowAndGetInput(189, 14057, 0, 0);
+        CGUIDialogOK::ShowAndGetInput(189, 14057);
         break;
       }
 
@@ -376,7 +368,7 @@ void CGUIWindowMusicBase::ShowArtistInfo(const CFileItem *pItem, bool bShowInfo 
       CMusicInfoScanner scanner;
       if (scanner.UpdateDatabaseArtistInfo(artist, scraper, bShowInfo, m_dlgProgress) != INFO_ADDED)
       {
-        CGUIDialogOK::ShowAndGetInput(21889, 0, 20199, 0);
+        CGUIDialogOK::ShowAndGetInput(21889, 20199);
         break;
       }
     }
@@ -434,7 +426,7 @@ bool CGUIWindowMusicBase::ShowAlbumInfo(const CFileItem *pItem, bool bShowInfo /
 
       if (g_application.IsMusicScanning())
       {
-        CGUIDialogOK::ShowAndGetInput(189, 14057, 0, 0);
+        CGUIDialogOK::ShowAndGetInput(189, 14057);
         if (m_dlgProgress)
           m_dlgProgress->Close();
         return false;
@@ -453,7 +445,7 @@ bool CGUIWindowMusicBase::ShowAlbumInfo(const CFileItem *pItem, bool bShowInfo /
       CMusicInfoScanner scanner;
       if (scanner.UpdateDatabaseAlbumInfo(album, scraper, bShowInfo, m_dlgProgress) != INFO_ADDED)
       {
-        CGUIDialogOK::ShowAndGetInput(185, 0, 500, 0);
+        CGUIDialogOK::ShowAndGetInput(185, 500);
         if (m_dlgProgress)
           m_dlgProgress->Close();
         return false;
@@ -663,7 +655,7 @@ void CGUIWindowMusicBase::AddItemToPlayList(const CFileItemPtr &pItem, CFileItem
         // load it
         if (!pPlayList->Load(pItem->GetPath()))
         {
-          CGUIDialogOK::ShowAndGetInput(6, 0, 477, 0);
+          CGUIDialogOK::ShowAndGetInput(6, 477);
           return; //hmmm unable to load playlist?
         }
 
@@ -684,7 +676,7 @@ void CGUIWindowMusicBase::AddItemToPlayList(const CFileItemPtr &pItem, CFileItem
       // python files can be played
       queuedItems.Add(pItem);
     }
-    else if (!pItem->IsNFO() && pItem->IsAudio())
+    else if (!pItem->IsNFO() && (pItem->IsAudio() || pItem->IsVideo()))
     {
       CFileItemPtr itemCheck = queuedItems.Get(pItem->GetPath());
       if (!itemCheck || itemCheck->m_lStartOffset != pItem->m_lStartOffset)
@@ -861,7 +853,7 @@ void CGUIWindowMusicBase::OnRipCD()
 #endif
     }
     else
-      CGUIDialogOK::ShowAndGetInput(257, 20099, 0, 0);
+      CGUIDialogOK::ShowAndGetInput(257, 20099);
   }
 }
 
@@ -877,7 +869,7 @@ void CGUIWindowMusicBase::OnRipTrack(int iItem)
 #endif
     }
     else
-      CGUIDialogOK::ShowAndGetInput(257, 20099, 0, 0);
+      CGUIDialogOK::ShowAndGetInput(257, 20099);
   }
 }
 
@@ -952,7 +944,7 @@ void CGUIWindowMusicBase::LoadPlayList(const std::string& strPlayList)
     // load it
     if (!pPlayList->Load(strPlayList))
     {
-      CGUIDialogOK::ShowAndGetInput(6, 0, 477, 0);
+      CGUIDialogOK::ShowAndGetInput(6, 477);
       return; //hmmm unable to load playlist?
     }
   }
@@ -1187,19 +1179,27 @@ bool CGUIWindowMusicBase::CanContainFilter(const std::string &strDirectory) cons
 void CGUIWindowMusicBase::OnInitWindow()
 {
   CGUIMediaWindow::OnInitWindow();
-  if (CMediaSettings::Get().GetMusicNeedsUpdate() == 35 && !g_application.IsMusicScanning() &&
-      g_infoManager.GetLibraryBool(LIBRARY_HAS_MUSIC))
+  if (CMediaSettings::Get().GetMusicNeedsUpdate() == 35)
   {
-    // rescan of music library required
-    if (CGUIDialogYesNo::ShowAndGetInput(799, 800, 801, -1))
+    if (g_infoManager.GetLibraryBool(LIBRARY_HAS_MUSIC) && !g_application.IsMusicScanning())
     {
-      int flags = CMusicInfoScanner::SCAN_RESCAN;
-      if (CSettings::Get().GetBool("musiclibrary.downloadinfo"))
-        flags |= CMusicInfoScanner::SCAN_ONLINE;
-      if (CSettings::Get().GetBool("musiclibrary.backgroundupdate"))
-        flags |= CMusicInfoScanner::SCAN_BACKGROUND;
-      g_application.StartMusicScan("", true, flags);
-      CMediaSettings::Get().SetMusicNeedsUpdate(0); // once is enough (user may interrupt, but that's up to them)
+      // rescan of music library required
+      if (CGUIDialogYesNo::ShowAndGetInput(799, 800))
+      {
+        int flags = CMusicInfoScanner::SCAN_RESCAN;
+        if (CSettings::Get().GetBool("musiclibrary.downloadinfo"))
+          flags |= CMusicInfoScanner::SCAN_ONLINE;
+        if (CSettings::Get().GetBool("musiclibrary.backgroundupdate"))
+          flags |= CMusicInfoScanner::SCAN_BACKGROUND;
+        g_application.StartMusicScan("", true, flags);
+        CMediaSettings::Get().SetMusicNeedsUpdate(0); // once is enough (user may interrupt, but that's up to them)
+        CSettings::Get().Save();
+      }
+    }
+    else
+    {
+      // no need to force a rescan if there's no music in the library or if a library scan is already active
+      CMediaSettings::Get().SetMusicNeedsUpdate(0);
       CSettings::Get().Save();
     }
   }

@@ -27,14 +27,12 @@
 #include "dialogs/GUIDialogOK.h"
 #include "dialogs/GUIDialogSelect.h"
 #include "pvr/PVRManager.h"
-#include "pvr/PVRDatabase.h"
 #include "guilib/GUIWindowManager.h"
 #include "settings/Settings.h"
 #include "pvr/channels/PVRChannelGroups.h"
 #include "pvr/channels/PVRChannelGroupInternal.h"
 #include "pvr/recordings/PVRRecordings.h"
 #include "pvr/timers/PVRTimers.h"
-#include "cores/IPlayer.h"
 
 #include <assert.h>
 
@@ -97,7 +95,7 @@ bool CPVRClients::IsConnectedClient(int iClientId) const
 bool CPVRClients::IsConnectedClient(const AddonPtr addon)
 {
   CSingleLock lock(m_critSection);
-  
+
   for (PVR_CLIENTMAP_CITR itr = m_clientMap.begin(); itr != m_clientMap.end(); itr++)
     if (itr->second->ID() == addon->ID())
       return itr->second->ReadyToUse();
@@ -211,7 +209,7 @@ bool CPVRClients::HasEnabledClients(void) const
 
 bool CPVRClients::StopClient(AddonPtr client, bool bRestart)
 {
-  CSingleLock lock(m_critSection);  
+  CSingleLock lock(m_critSection);
   int iId = GetClientId(client);
   PVR_CLIENT mappedClient;
   if (GetClient(iId, mappedClient))
@@ -258,6 +256,40 @@ bool CPVRClients::GetClientName(int iClientId, std::string &strName) const
     strName = client->GetFriendlyName();
 
   return bReturn;
+}
+
+std::vector<SBackend> CPVRClients::GetBackendProperties() const
+{
+  std::vector<SBackend> backendProperties;
+  CSingleLock lock(m_critSection);
+
+  for (const auto &entry : m_clientMap)
+  {
+    const auto &client = entry.second;
+    
+    if (!client->ReadyToUse())
+      continue;
+
+    SBackend properties;
+
+    if (client->GetDriveSpace(&properties.diskTotal, &properties.diskUsed) == PVR_ERROR_NO_ERROR)
+    {
+      properties.diskTotal *= 1024;  
+      properties.diskUsed *= 1024;
+    }
+
+    properties.numChannels = client->GetChannelsAmount();
+    properties.numTimers = client->GetTimersAmount();
+    properties.numRecordings = client->GetRecordingsAmount(false);
+    properties.numDeletedRecordings = client->GetRecordingsAmount(true);
+    properties.name = client->GetBackendName();
+    properties.version = client->GetBackendVersion();
+    properties.host = client->GetConnectionString();
+
+    backendProperties.push_back(properties);
+  }
+
+  return backendProperties;
 }
 
 std::string CPVRClients::GetClientAddonId(int iClientId) const
@@ -445,13 +477,13 @@ PVR_ERROR CPVRClients::UpdateTimer(const CPVRTimerInfoTag &timer)
   return error;
 }
 
-PVR_ERROR CPVRClients::DeleteTimer(const CPVRTimerInfoTag &timer, bool bForce)
+PVR_ERROR CPVRClients::DeleteTimer(const CPVRTimerInfoTag &timer, bool bForce, bool bDeleteSchedule)
 {
   PVR_ERROR error(PVR_ERROR_UNKNOWN);
   PVR_CLIENT client;
 
   if (GetConnectedClient(timer.m_iClientId, client))
-    error = client->DeleteTimer(timer, bForce);
+    error = client->DeleteTimer(timer, bForce, bDeleteSchedule);
 
   return error;
 }
@@ -466,6 +498,47 @@ PVR_ERROR CPVRClients::RenameTimer(const CPVRTimerInfoTag &timer, const std::str
 
   if (error != PVR_ERROR_NO_ERROR)
     CLog::Log(LOGERROR, "PVR - %s - cannot rename timer on client '%d': %s",__FUNCTION__, timer.m_iClientId, CPVRClient::ToString(error));
+
+  return error;
+}
+
+PVR_ERROR CPVRClients::GetTimerTypes(CPVRTimerTypes& results) const
+{
+  PVR_ERROR error(PVR_ERROR_NO_ERROR);
+
+  PVR_CLIENTMAP clients;
+  GetConnectedClients(clients);
+
+  for (const auto &clientEntry : clients)
+  {
+    CPVRTimerTypes types;
+    PVR_ERROR currentError = clientEntry.second->GetTimerTypes(types);
+    if (currentError != PVR_ERROR_NOT_IMPLEMENTED &&
+        currentError != PVR_ERROR_NO_ERROR)
+    {
+      CLog::Log(LOGERROR, "PVR - %s - cannot get timer types from client '%d': %s",__FUNCTION__, clientEntry.first, CPVRClient::ToString(currentError));
+      error = currentError;
+    }
+    else
+    {
+      for (const auto &typesEntry : types)
+        results.push_back(typesEntry);
+    }
+  }
+
+  return error;
+}
+
+PVR_ERROR CPVRClients::GetTimerTypes(CPVRTimerTypes& results, int iClientId) const
+{
+  PVR_ERROR error(PVR_ERROR_UNKNOWN);
+
+  PVR_CLIENT client;
+  if (GetConnectedClient(iClientId, client))
+    error = client->GetTimerTypes(results);
+
+  if (error != PVR_ERROR_NO_ERROR)
+    CLog::Log(LOGERROR, "PVR - %s - cannot get timer types from client '%d': %s",__FUNCTION__, iClientId, CPVRClient::ToString(error));
 
   return error;
 }
@@ -899,7 +972,7 @@ void CPVRClients::StartChannelScan(void)
   /* no clients found */
   else if (!scanClient)
   {
-    CGUIDialogOK::ShowAndGetInput(19033,0,19192,0);
+    CGUIDialogOK::ShowAndGetInput(19033, 19192);
     return;
   }
 
@@ -914,7 +987,7 @@ void CPVRClients::StartChannelScan(void)
   /* do the scan */
   if (scanClient->StartChannelScan() != PVR_ERROR_NO_ERROR)
     /* an error occured */
-    CGUIDialogOK::ShowAndGetInput(19111,0,19193,0);
+    CGUIDialogOK::ShowAndGetInput(19111, 19193);
 
   /* restart the supervisor thread */
   g_PVRManager.StartUpdateThreads();
@@ -953,7 +1026,7 @@ bool CPVRClients::OpenDialogChannelAdd(const CPVRChannelPtr &channel)
 
   if (error == PVR_ERROR_NOT_IMPLEMENTED)
   {
-    CGUIDialogOK::ShowAndGetInput(19033,19038,0,0);
+    CGUIDialogOK::ShowAndGetInput(19033, 19038);
     return true;
   }
 
@@ -972,7 +1045,7 @@ bool CPVRClients::OpenDialogChannelSettings(const CPVRChannelPtr &channel)
 
   if (error == PVR_ERROR_NOT_IMPLEMENTED)
   {
-    CGUIDialogOK::ShowAndGetInput(19033,19038,0,0);
+    CGUIDialogOK::ShowAndGetInput(19033, 19038);
     return true;
   }
 
@@ -991,7 +1064,7 @@ bool CPVRClients::DeleteChannel(const CPVRChannelPtr &channel)
 
   if (error == PVR_ERROR_NOT_IMPLEMENTED)
   {
-    CGUIDialogOK::ShowAndGetInput(19033,19038,0,0);
+    CGUIDialogOK::ShowAndGetInput(19033, 19038);
     return true;
   }
 
@@ -1139,7 +1212,7 @@ bool CPVRClients::UpdateAndInitialiseClients(bool bInitialiseAllClients /* = fal
       }
 
       if (bDisabled && (g_PVRManager.IsStarted() || g_PVRManager.IsInitialising()))
-        CGUIDialogOK::ShowAndGetInput(24070, 24071, 16029, 0);
+        CGUIDialogOK::ShowAndGetInput(24070, 16029);
     }
   }
 
@@ -1150,7 +1223,7 @@ bool CPVRClients::UpdateAndInitialiseClients(bool bInitialiseAllClients /* = fal
     for (VECADDONS::iterator it = disableAddons.begin(); it != disableAddons.end(); ++it)
     {
       // disable in the add-on db
-      CAddonMgr::Get().DisableAddon((*it)->ID(), true);
+      CAddonMgr::Get().DisableAddon((*it)->ID());
 
       // remove from the pvr add-on list
       VECADDONS::iterator addonPtr = std::find(m_addons.begin(), m_addons.end(), *it);
@@ -1245,7 +1318,7 @@ bool CPVRClients::AutoconfigureClients(void)
         progressHandle->MarkFinished();
 
         /** enable the add-on */
-        CAddonMgr::Get().DisableAddon((*it)->ID(), false);
+        CAddonMgr::Get().EnableAddon((*it)->ID());
         CSingleLock lock(m_critSection);
         m_addons.push_back(*it);
         bReturn = true;
@@ -1271,7 +1344,7 @@ void CPVRClients::ShowDialogNoClientsEnabled(void)
   if (!g_PVRManager.IsStarted() && !g_PVRManager.IsInitialising())
     return;
 
-  CGUIDialogOK::ShowAndGetInput(19240, 19241, 19242, 19243);
+  CGUIDialogOK::ShowAndGetInput(19240, 19241);
 
   std::vector<std::string> params;
   params.push_back("addons://disabled/xbmc.pvrclient");
@@ -1292,9 +1365,9 @@ bool CPVRClients::UpdateAddons(void)
     CSingleLock lock(m_critSection);
     m_addons = addons;
   }
-  
+
   usableClients = m_addons.size();
-  
+
   // handle "new" addons which aren't yet in the db - these have to be added first
   for (VECADDONS::const_iterator it = addons.begin(); it != addons.end(); ++it)
   {
@@ -1312,7 +1385,7 @@ bool CPVRClients::UpdateAddons(void)
     if (bDisable)
     {
       CLog::Log(LOGDEBUG, "%s - disabling add-on '%s'", __FUNCTION__, (*it)->Name().c_str());
-      CAddonMgr::Get().DisableAddon((*it)->ID(), true);
+      CAddonMgr::Get().DisableAddon((*it)->ID());
       usableClients--;
     }
   }
@@ -1325,7 +1398,7 @@ bool CPVRClients::UpdateAddons(void)
     // You need a tuner, backend software, and an add-on for the backend to be able to use PVR.
     // Please visit http://kodi.wiki/view/PVR to learn more.
     m_bNoAddonWarningDisplayed = true;
-    CGUIDialogOK::ShowAndGetInput(19271, 19272, 19273, 19274);
+    CGUIDialogOK::ShowAndGetInput(19271, 19272);
     CSettings::Get().SetBool("pvrmanager.enabled", false);
     CGUIMessage msg(GUI_MSG_UPDATE, WINDOW_SETTINGS_MYPVR, 0);
     g_windowManager.SendThreadMessage(msg, WINDOW_SETTINGS_MYPVR);
@@ -1400,12 +1473,6 @@ bool CPVRClients::SupportsRecordingsUndelete(int iClientId) const
 {
   PVR_CLIENT client;
   return GetConnectedClient(iClientId, client) && client->SupportsRecordingsUndelete();
-}
-
-bool CPVRClients::SupportsRecordingFolders(int iClientId) const
-{
-  PVR_CLIENT client;
-  return GetConnectedClient(iClientId, client) && client->SupportsRecordingFolders();
 }
 
 bool CPVRClients::SupportsRecordingPlayCount(int iClientId) const
