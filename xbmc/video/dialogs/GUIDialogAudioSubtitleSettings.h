@@ -22,6 +22,8 @@
 
 #include "settings/dialogs/GUIDialogSettingsManualBase.h"
 
+class CVariant;
+
 class CGUIDialogAudioSubtitleSettings : public CGUIDialogSettingsManualBase
 {
 public:
@@ -67,6 +69,7 @@ protected:
   bool m_passthrough;
   int m_subtitleStream;
   bool m_subtitleVisible;
+  bool m_dspEnabled;
 
   typedef std::vector<int> Features;
   Features m_audioCaps;

@@ -351,8 +351,9 @@ void CD3DTexture::SaveTexture()
     if (SUCCEEDED(pContext->Map(texture, 0, D3D11_MAP_READ, 0, &res)))
     {
       m_pitch = res.RowPitch;
-      m_data = new unsigned char[res.RowPitch * m_height];
-      memcpy(m_data, res.pData, res.RowPitch * m_height);
+      unsigned int memUsage = GetMemoryUsage(res.RowPitch);
+      m_data = new unsigned char[memUsage];
+      memcpy(m_data, res.pData, memUsage);
       pContext->Unmap(texture, 0);
     }
     else
@@ -402,7 +403,15 @@ void CD3DTexture::OnResetDevice()
 
 unsigned int CD3DTexture::GetMemoryUsage(unsigned int pitch) const
 {
-  return pitch * m_height;
+  switch (m_format)
+  {
+  case DXGI_FORMAT_BC1_UNORM:
+  case DXGI_FORMAT_BC2_UNORM:
+  case DXGI_FORMAT_BC3_UNORM:
+    return pitch * m_height / 4;
+  default:
+    return pitch * m_height;
+  }
 }
 
 // static methods
@@ -472,14 +481,14 @@ bool CD3DEffect::Create(const std::string &effectString, DefinesMap* defines)
 void CD3DEffect::Release()
 {
   g_Windowing.Unregister(this);
-  SAFE_RELEASE(m_effect);
-  SAFE_RELEASE(m_techniquie);
-  SAFE_RELEASE(m_currentPass);
+  OnDestroyDevice();
 }
 
 void CD3DEffect::OnDestroyDevice()
 {
   SAFE_RELEASE(m_effect);
+  m_techniquie = nullptr;
+  m_currentPass = nullptr;
 }
 
 void CD3DEffect::OnCreateDevice()
@@ -511,9 +520,9 @@ bool CD3DEffect::SetTechnique(LPCSTR handle)
   {
     m_techniquie = m_effect->GetTechniqueByName(handle);
     if (!m_techniquie->IsValid())
-      SAFE_RELEASE(m_techniquie);
+      m_techniquie = nullptr;
 
-    return NULL != m_techniquie;
+    return nullptr != m_techniquie;
   }
   return false;
 }
@@ -522,8 +531,9 @@ bool CD3DEffect::SetTexture(LPCSTR handle, CD3DTexture &texture)
 {
   if (m_effect)
   {
-    m_effect->GetVariableByName(handle)->AsShaderResource()->SetResource(nullptr);
-    return (S_OK == m_effect->GetVariableByName(handle)->AsShaderResource()->SetResource(texture.GetShaderResource()));
+    ID3DX11EffectShaderResourceVariable* var = m_effect->GetVariableByName(handle)->AsShaderResource();
+    if (var->IsValid())
+      return (var->SetResource(texture.GetShaderResource()));
   }
   return false;
 }
@@ -532,7 +542,9 @@ bool CD3DEffect::SetConstantBuffer(LPCSTR handle, ID3D11Buffer *buffer)
 {
   if (m_effect)
   {
-    return (S_OK == m_effect->GetConstantBufferByName(handle)->SetConstantBuffer(buffer));
+    ID3DX11EffectConstantBuffer* effectbuffer = m_effect->GetConstantBufferByName(handle);
+    if (effectbuffer->IsValid())
+      return (S_OK == effectbuffer->SetConstantBuffer(buffer));
   }
   return false;
 }
@@ -540,7 +552,11 @@ bool CD3DEffect::SetConstantBuffer(LPCSTR handle, ID3D11Buffer *buffer)
 bool CD3DEffect::SetScalar(LPCSTR handle, float value)
 {
   if (m_effect)
-    return (S_OK == m_effect->GetVariableByName(handle)->AsScalar()->SetFloat(value));
+  {
+    ID3DX11EffectScalarVariable* scalar = m_effect->GetVariableByName(handle)->AsScalar();
+    if (scalar->IsValid())
+      return (S_OK == scalar->SetFloat(value));
+  }
 
   return false;
 }
@@ -564,7 +580,7 @@ bool CD3DEffect::BeginPass(UINT pass)
     m_currentPass = m_techniquie->GetPassByIndex(pass);
     if (!m_currentPass || !m_currentPass->IsValid())
     {
-      SAFE_RELEASE(m_currentPass);
+      m_currentPass = nullptr;
       return false;
     }
     return (S_OK == m_currentPass->Apply(0, g_Windowing.Get3D11Context()));
@@ -576,7 +592,7 @@ bool CD3DEffect::EndPass()
 {
   if (m_effect && m_currentPass)
   {
-    SAFE_RELEASE(m_currentPass);
+    m_currentPass = nullptr;
     return true;
   }
   return false;
@@ -586,7 +602,7 @@ bool CD3DEffect::End()
 {
   if (m_effect && m_techniquie)
   {
-    SAFE_RELEASE(m_techniquie);
+    m_techniquie = nullptr;
     return true;
   }
   return false;
