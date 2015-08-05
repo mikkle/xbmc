@@ -304,7 +304,6 @@ CApplication::CApplication(void)
   m_Autorun = new CAutorun();
 #endif
 
-  m_splash = NULL;
   m_threadID = 0;
   m_progressTrackingPlayCountUpdate = false;
   m_currentStackPosition = 0;
@@ -346,7 +345,7 @@ bool CApplication::OnEvent(XBMC_Event& newEvent)
         CApplicationMessenger::Get().PostMsg(TMSG_QUIT);
       break;
     case XBMC_VIDEORESIZE:
-      if (!g_application.m_bInitializing &&
+      if (g_windowManager.Initialized() &&
           !g_advancedSettings.m_fullScreen)
       {
         g_Windowing.SetWindowResolution(newEvent.resize.w, newEvent.resize.h);
@@ -812,20 +811,7 @@ bool CApplication::CreateGUI()
     CDisplaySettings::Get().SetCurrentResolution(RES_DESKTOP, true);
 
   if (g_advancedSettings.m_splashImage)
-  {
-    std::string strUserSplash = "special://home/media/Splash.png";
-    if (CFile::Exists(strUserSplash))
-    {
-      CLog::Log(LOGINFO, "load user splash image: %s", CSpecialProtocol::TranslatePath(strUserSplash).c_str());
-      m_splash = new CSplash(strUserSplash);
-    }
-    else
-    {
-      CLog::Log(LOGINFO, "load default splash image: %s", CSpecialProtocol::TranslatePath("special://xbmc/media/Splash.png").c_str());
-      m_splash = new CSplash("special://xbmc/media/Splash.png");
-    }
-    m_splash->Show();
-  }
+    CSplash::Get().Show();
 
   // The key mappings may already have been loaded by a peripheral
   CLog::Log(LOGINFO, "load keymapping");
@@ -837,6 +823,7 @@ bool CApplication::CreateGUI()
             info.iWidth,
             info.iHeight,
             info.strMode.c_str());
+
   g_windowManager.Initialize();
 
   return true;
@@ -1171,6 +1158,12 @@ bool CApplication::Initialize()
     g_windowManager.CreateWindows();
     /* window id's 3000 - 3100 are reserved for python */
 
+    // initialize splash window after splash screen disappears
+    // because we need a real window in the background which gets
+    // rendered while we load the main window or enter the master lock key
+    if (g_advancedSettings.m_splashImage)
+      g_windowManager.ActivateWindow(WINDOW_SPLASH);
+
     // Make sure we have at least the default skin
     std::string defaultSkin = ((const CSettingString*)CSettings::Get().GetSetting("lookandfeel.skin"))->GetDefault();
     if (!LoadSkin(CSettings::Get().GetString("lookandfeel.skin")) && !LoadSkin(defaultSkin))
@@ -1178,9 +1171,6 @@ bool CApplication::Initialize()
       CLog::Log(LOGERROR, "Default skin '%s' not found! Terminating..", defaultSkin.c_str());
       return false;
     }
-
-    if (g_advancedSettings.m_splashImage)
-      SAFE_DELETE(m_splash);
 
     if (CSettings::Get().GetBool("masterlock.startuplock") &&
         CProfilesManager::Get().GetMasterProfile().getLockMode() != LOCK_MODE_EVERYONE &&
@@ -1204,17 +1194,15 @@ bool CApplication::Initialize()
 #endif
       ADDON::CAddonMgr::Get().StartServices(false);
 
-      // let's start the PVR manager and decide if the PVR manager handle the startup window activation
-      if (StartPVRManager())
-        uiInitializationFinished = false;
-      else
-      {
-        int firstWindow = g_SkinInfo->GetFirstWindow();
-        // the startup window is considered part of the initialization as it most likely switches to the final window
-        uiInitializationFinished = firstWindow != WINDOW_STARTUP_ANIM;
+      // start the PVR manager
+      StartPVRManager();
 
-        g_windowManager.ActivateWindow(firstWindow);
-      }
+      // activate the configured start window
+      int firstWindow = g_SkinInfo->GetFirstWindow();
+      g_windowManager.ActivateWindow(firstWindow);
+
+      // the startup window is considered part of the initialization as it most likely switches to the final window
+      uiInitializationFinished = firstWindow != WINDOW_STARTUP_ANIM;
 
       CStereoscopicsManager::Get().Initialize();
       CApplicationMessenger::Get().SendMsg(TMSG_SETAUDIODSPSTATE, ACTIVE_AE_DSP_STATE_ON); // send a blocking message to active AudioDSP engine
@@ -1322,18 +1310,12 @@ bool CApplication::StartServer(enum ESERVERS eServer, bool bStart, bool bWait/* 
   return ret;
 }
 
-bool CApplication::StartPVRManager()
+void CApplication::StartPVRManager()
 {
   if (!CSettings::Get().GetBool("pvrmanager.enabled"))
-    return false;
+    return;
 
-  int firstWindowId = 0;
-  if (g_PVRManager.IsPVRWindow(g_SkinInfo->GetStartWindow()))
-    firstWindowId = g_SkinInfo->GetFirstWindow();
-
-  g_PVRManager.Start(true, firstWindowId);
-
-  return (firstWindowId > 0);
+  g_PVRManager.Start(true);
 }
 
 void CApplication::StopPVRManager()
@@ -2589,11 +2571,6 @@ void CApplication::OnApplicationMessage(ThreadMessage* pMsg)
     ShowVolumeBar(&action);
   }
   break;
-
-  case TMSG_SPLASH_MESSAGE:
-    if (GetSplash())
-      GetSplash()->Show(pMsg->strParam);
-    break;
 
   case TMSG_DISPLAY_SETUP:
     *static_cast<bool*>(pMsg->lpVoid) = InitWindow();
@@ -4231,6 +4208,9 @@ bool CApplication::OnMessage(CGUIMessage& message)
       }
       else if (message.GetParam1() == GUI_MSG_UI_READY)
       {
+        // remove splash window
+        g_windowManager.Delete(WINDOW_SPLASH);
+
         if (m_fallbackLanguageLoaded)
           CGUIDialogOK::ShowAndGetInput(CVariant{24133}, CVariant{24134});
 

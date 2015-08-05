@@ -137,6 +137,8 @@ class PredicateSubtitleFilter
 private:
   std::string audiolang;
   bool original;
+  bool nosub;
+  bool onlyforced;
 public:
   /** \brief The class' operator() decides if the given (subtitle) SelectionStream is relevant wrt.
   *          preferred subtitle language and audio language. If the subtitle is relevant <B>false</B> false is returned.
@@ -151,7 +153,9 @@ public:
   */
   PredicateSubtitleFilter(std::string& lang)
     : audiolang(lang),
-      original(StringUtils::EqualsNoCase(CSettings::Get().GetString("locale.subtitlelanguage"), "original"))
+      original(StringUtils::EqualsNoCase(CSettings::Get().GetString("locale.subtitlelanguage"), "original")),
+      nosub(StringUtils::EqualsNoCase(CSettings::Get().GetString("locale.subtitlelanguage"), "none")),
+      onlyforced(StringUtils::EqualsNoCase(CSettings::Get().GetString("locale.subtitlelanguage"), "foced_only"))
   {
   };
 
@@ -160,6 +164,17 @@ public:
     if (ss.type_index == CMediaSettings::Get().GetCurrentVideoSettings().m_SubtitleStream)
       return false;
 
+    if (nosub)
+      return true;
+
+    if (onlyforced)
+    {
+      if ((ss.flags & CDemuxStream::FLAG_FORCED) && g_LangCodeExpander.CompareISO639Codes(ss.language, audiolang))
+        return false;
+      else
+        return true;
+    }
+      
     if(STREAM_SOURCE_MASK(ss.source) == STREAM_SOURCE_DEMUX_SUB || STREAM_SOURCE_MASK(ss.source) == STREAM_SOURCE_TEXT)
       return false;
 
@@ -2593,7 +2608,9 @@ void CDVDPlayer::HandleMessages()
         if(input)
         {
           bool bSwitchSuccessful(false);
-          bool bShowPreview(CSettings::Get().GetInt("pvrplayback.channelentrytimeout") > 0);
+          bool bShowPreview(!g_infoManager.IsPlayerOSDActive() &&
+                            (CSettings::Get().GetBool("pvrplayback.confirmchannelswitch") ||
+                             CSettings::Get().GetInt("pvrplayback.channelentrytimeout") > 0));
 
           if (!bShowPreview)
           {
@@ -2611,7 +2628,12 @@ void CDVDPlayer::HandleMessages()
             if (bShowPreview)
             {
               UpdateApplication(0);
-              m_ChannelEntryTimeOut.Set(CSettings::Get().GetInt("pvrplayback.channelentrytimeout"));
+
+              if (!g_infoManager.IsPlayerOSDActive() &&
+                  CSettings::Get().GetBool("pvrplayback.confirmchannelswitch"))
+                m_ChannelEntryTimeOut.SetInfinite();
+              else
+                m_ChannelEntryTimeOut.Set(CSettings::Get().GetInt("pvrplayback.channelentrytimeout"));
             }
             else
             {
@@ -4096,7 +4118,9 @@ bool CDVDPlayer::OnAction(const CAction &action)
       case ACTION_NEXT_ITEM:
       case ACTION_CHANNEL_UP:
         m_messenger.Put(new CDVDMsg(CDVDMsg::PLAYER_CHANNEL_NEXT));
-        g_infoManager.SetDisplayAfterSeek();
+        if (g_infoManager.IsPlayerOSDActive() ||
+            !CSettings::Get().GetBool("pvrplayback.confirmchannelswitch"))
+          g_infoManager.SetDisplayAfterSeek();
         ShowPVRChannelInfo();
         return true;
       break;
@@ -4105,7 +4129,9 @@ bool CDVDPlayer::OnAction(const CAction &action)
       case ACTION_PREV_ITEM:
       case ACTION_CHANNEL_DOWN:
         m_messenger.Put(new CDVDMsg(CDVDMsg::PLAYER_CHANNEL_PREV));
-        g_infoManager.SetDisplayAfterSeek();
+        if (g_infoManager.IsPlayerOSDActive() ||
+            !CSettings::Get().GetBool("pvrplayback.confirmchannelswitch"))
+          g_infoManager.SetDisplayAfterSeek();
         ShowPVRChannelInfo();
         return true;
       break;
@@ -4637,6 +4663,9 @@ std::string CDVDPlayer::GetPlayingTitle()
 
 bool CDVDPlayer::SwitchChannel(const CPVRChannelPtr &channel)
 {
+  if (g_PVRManager.IsPlayingChannel(channel))
+    return false; // desired channel already active, nothing to do.
+
   if (!g_PVRManager.CheckParentalLock(channel))
     return false;
 

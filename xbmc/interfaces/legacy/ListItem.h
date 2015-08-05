@@ -199,8 +199,8 @@ namespace XBMCAddon
        *     - watched       : depreciated - use playcount instead
        *     - playcount     : integer (2) - number of times this item has been played
        *     - overlay       : integer (2) - range is 0..8.  See GUIListItem.h for values
-       *     - cast          : list (Michal C. Hall)
-       *     - castandrole   : list (Michael C. Hall|Dexter)
+       *     - cast          : list (["Michal C. Hall","Jennifer Carpenter"]) - if provided a list of tuples cast will be interpreted as castandrole
+       *     - castandrole   : list of tuples ([("Michael C. Hall","Dexter"),("Jennifer Carpenter","Debra")])
        *     - director      : string (Dagur Kari)
        *     - mpaa          : string (PG-13)
        *     - plot          : string (Long Description)
@@ -224,6 +224,7 @@ namespace XBMCAddon
        *     - votes         : string (12345 votes)
        *     - trailer       : string (/home/user/trailer.avi)
        *     - dateadded     : string (%Y-%m-%d %h:%m:%s = 2009-04-05 23:16:04)
+       *     - mediatype     : string - "video", "movie", "tvshow", "season", "episode" or "musicvideo"
        * - Music Values:
        *     - tracknumber   : integer (8)
        *     - discnumber    : integer (2)
@@ -243,7 +244,7 @@ namespace XBMCAddon
        *     - exif*         : string (See CPictureInfoTag::TranslateString in PictureInfoTag.cpp for valid strings)
        * 
        * example:\n
-       *   - self.list.getSelectedItem().setInfo('video', { 'Genre': 'Comedy' })n\n
+       *   - self.list.getSelectedItem().setInfo('video', { 'genre': 'Comedy' })n\n
        */
       void setInfo(const char* type, const InfoLabelDict& infoLabels);
 
@@ -267,7 +268,7 @@ namespace XBMCAddon
        *     - language      : string (en)
        * 
        * example:
-       *   - self.list.getSelectedItem().addStreamInfo('video', { 'Codec': 'h264', 'Width' : 1280 })
+       *   - self.list.getSelectedItem().addStreamInfo('video', { 'codec': 'h264', 'width' : 1280 })
        */
       void addStreamInfo(const char* cType, const Properties& dictionary);
 

@@ -94,8 +94,7 @@ CPVRManager::CPVRManager(void) :
     m_bFirstStart(true),
     m_bEpgsCreated(false),
     m_progressHandle(NULL),
-    m_managerState(ManagerStateStopped),
-    m_openWindowId(0)
+    m_managerState(ManagerStateStopped)
 {
   CAnnouncementManager::Get().AddAnnouncer(this);
   ResetProperties();
@@ -332,7 +331,7 @@ bool CPVRManager::UpgradeOutdatedAddons(void)
   if (IsInitialising())
   {
     SetState(ManagerStateStarted);
-    g_EpgContainer.Start();
+    g_EpgContainer.Start(true);
 
     CLog::Log(LOGDEBUG, "PVRManager - %s - restarted", __FUNCTION__);
     return true;
@@ -357,7 +356,6 @@ void CPVRManager::Cleanup(void)
   m_currentFile           = NULL;
   m_bIsSwitchingChannels  = false;
   m_outdatedAddons.clear();
-  m_openWindowId = 0;
   m_bEpgsCreated = false;
 
   for (unsigned int iJobPtr = 0; iJobPtr < m_pendingUpdates.size(); iJobPtr++)
@@ -391,24 +389,23 @@ void CPVRManager::ResetProperties(void)
 class CPVRManagerStartJob : public CJob
 {
 public:
-  CPVRManagerStartJob(int openWindowId = 0) :
-    m_openWindowId(openWindowId) {}
+  CPVRManagerStartJob() {}
   ~CPVRManagerStartJob(void) {}
 
   bool DoWork(void)
   {
-    g_PVRManager.Start(false, m_openWindowId);
+    g_PVRManager.Start(false);
     return true;
   }
 private:
   int m_openWindowId;
 };
 
-void CPVRManager::Start(bool bAsync /* = false */, int openWindowId /* = 0 */)
+void CPVRManager::Start(bool bAsync /* = false */)
 {
   if (bAsync)
   {
-    CPVRManagerStartJob *job = new CPVRManagerStartJob(openWindowId);
+    CPVRManagerStartJob *job = new CPVRManagerStartJob();
     CJobManager::GetInstance().AddJob(job, NULL);
     return;
   }
@@ -424,7 +421,6 @@ void CPVRManager::Start(bool bAsync /* = false */, int openWindowId /* = 0 */)
 
   ResetProperties();
   SetState(ManagerStateStarting);
-  m_openWindowId = openWindowId;
 
   /* create and open database */
   if (!m_database)
@@ -508,20 +504,11 @@ void CPVRManager::Process(void)
 
   SetState(ManagerStateStarted);
 
+  /* start epg container */
+  g_EpgContainer.Start(true);
+
   /* main loop */
   CLog::Log(LOGDEBUG, "PVRManager - %s - entering main loop", __FUNCTION__);
-  g_EpgContainer.Start();
-
-  /* activate startup window */
-  if (m_openWindowId > 0)
-  {
-    g_windowManager.ActivateWindow(m_openWindowId);
-    m_openWindowId = 0;
-
-    // let everyone know that the user interface is now ready for usage
-    CGUIMessage msg(GUI_MSG_NOTIFY_ALL, 0, 0, GUI_MSG_UI_READY);
-    g_windowManager.SendThreadMessage(msg);
-  }
 
   bool bRestart(false);
   while (IsStarted() && m_addons && m_addons->HasConnectedClients() && !bRestart)
@@ -565,11 +552,6 @@ void CPVRManager::Process(void)
   {
     CLog::Log(LOGNOTICE, "PVRManager - %s - no add-ons enabled anymore. restarting the pvrmanager", __FUNCTION__);
     CApplicationMessenger::Get().PostMsg(TMSG_SETPVRMANAGERSTATE, 1);
-  }
-  else
-  {
-    if (IsPVRWindow(g_windowManager.GetActiveWindow()))
-      g_windowManager.ActivateWindow(WINDOW_HOME);
   }
 }
 
@@ -856,6 +838,20 @@ bool CPVRManager::IsPlaying(void) const
   return IsStarted() && m_addons && m_addons->IsPlaying();
 }
 
+bool CPVRManager::IsPlayingChannel(const CPVRChannelPtr &channel) const
+{
+  bool bReturn(false);
+
+  if (channel && IsStarted())
+  {
+    CPVRChannelPtr current(GetCurrentChannel());
+    if (current && *current == *channel)
+      bReturn = true;
+  }
+
+  return bReturn;
+}
+
 CPVRChannelPtr CPVRManager::GetCurrentChannel(void) const
 {
   return m_addons ? m_addons->GetPlayingChannel() : CPVRChannelPtr();
@@ -1123,6 +1119,21 @@ bool CPVRManager::PlayMedia(const CFileItem& item)
   }
 
   return g_application.PlayFile(pvrItem, false) == PLAYBACK_OK;
+}
+
+void CPVRManager::UpdateCurrentChannel(void)
+{
+  CSingleLock lock(m_critSection);
+
+  CPVRChannelPtr playingChannel(GetCurrentChannel());
+  if (m_currentFile &&
+      playingChannel &&
+      !IsPlayingChannel(m_currentFile->GetPVRChannelInfoTag()))
+  {
+    delete m_currentFile;
+    m_currentFile = new CFileItem(playingChannel);
+    UpdateItem(*m_currentFile);
+  }
 }
 
 void CPVRManager::UpdateCurrentFile(void)
