@@ -35,6 +35,7 @@
 #include "LangInfo.h"
 #include "utils/SystemInfo.h"
 #include "guilib/GUITextBox.h"
+#include "guilib/GUIControlGroupList.h"
 #include "pictures/GUIWindowSlideShow.h"
 #include "pictures/PictureInfoTag.h"
 #include "music/tags/MusicInfoTag.h"
@@ -244,6 +245,7 @@ const infomap system_labels[] =  {{ "hasnetwork",       SYSTEM_ETHERNET_LINK_ACT
                                   { "trayopen",         SYSTEM_TRAYOPEN },
                                   { "haslocks",         SYSTEM_HASLOCKS },
                                   { "hasloginscreen",   SYSTEM_HAS_LOGINSCREEN },
+                                  { "hasmodaldialog",   SYSTEM_HAS_MODAL_DIALOG },
                                   { "ismaster",         SYSTEM_ISMASTER },
                                   { "isfullscreen",     SYSTEM_ISFULLSCREEN },
                                   { "isstandalone",     SYSTEM_ISSTANDALONE },
@@ -2450,6 +2452,8 @@ bool CGUIInfoManager::GetBool(int condition1, int contextWindow, const CGUIListI
     bReturn = g_advancedSettings.m_showExitButton;
   else if (condition == SYSTEM_HAS_LOGINSCREEN)
     bReturn = CProfilesManager::Get().UsingLoginScreen();
+  else if (condition == SYSTEM_HAS_MODAL_DIALOG)
+    bReturn = g_windowManager.HasModalDialog();
   else if (condition == WEATHER_IS_FETCHED)
     bReturn = g_weatherManager.IsFetched();
   else if (condition >= PVR_CONDITIONS_START && condition <= PVR_CONDITIONS_END)
@@ -2507,12 +2511,17 @@ bool CGUIInfoManager::GetBool(int condition1, int contextWindow, const CGUIListI
            condition == CONTAINER_SCROLLING || condition == CONTAINER_ISUPDATING ||
            condition == CONTAINER_HAS_PARENT_ITEM)
   {
+    const CGUIControl *control = NULL;
     CGUIWindow *window = GetWindowWithCondition(contextWindow, WINDOW_CONDITION_IS_MEDIA_WINDOW);
     if (window)
+      control = window->GetControl(window->GetViewContainerID());
+
+    if (control)
     {
-      const CGUIControl* control = window->GetControl(window->GetViewContainerID());
-      if (control)
+      if (control->IsContainer())
         bReturn = control->GetCondition(condition, 0);
+      else if (control->GetControlType() == CGUIControl::GUICONTROL_TEXTBOX)
+        bReturn = ((CGUITextBox *)control)->GetCondition(condition, 0);
     }
   }
   else if (condition == CONTAINER_CAN_FILTER)
@@ -3379,6 +3388,8 @@ std::string CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextW
     {
       if (control->IsContainer())
         return ((IGUIContainer *)control)->GetLabel(info.m_info);
+      else if (control->GetControlType() == CGUIControl::GUICONTROL_GROUPLIST)
+        return ((CGUIControlGroupList *)control)->GetLabel(info.m_info);
       else if (control->GetControlType() == CGUIControl::GUICONTROL_TEXTBOX)
         return ((CGUITextBox *)control)->GetLabel(info.m_info);
     }
