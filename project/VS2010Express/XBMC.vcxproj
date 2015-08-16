@@ -424,6 +424,9 @@
     <ClCompile Include="..\..\xbmc\filesystem\win32\Win32File.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\win32\Win32SMBFile.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\VirtualDirectory.cpp" />
+    <ClCompile Include="..\..\xbmc\filesystem\XbtDirectory.cpp" />
+    <ClCompile Include="..\..\xbmc\filesystem\XbtFile.cpp" />
+    <ClCompile Include="..\..\xbmc\filesystem\XbtManager.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\ZeroconfDirectory.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\ZipDirectory.cpp" />
     <ClCompile Include="..\..\xbmc\filesystem\ZipFile.cpp" />
@@ -941,6 +944,7 @@
     <ClInclude Include="..\..\xbmc\FileItemListModification.h" />
     <ClInclude Include="..\..\xbmc\filesystem\EventsDirectory.h" />
     <ClInclude Include="..\..\xbmc\filesystem\BlurayFile.h" />
+    <ClInclude Include="..\..\xbmc\filesystem\Directorization.h" />
     <ClInclude Include="..\..\xbmc\filesystem\HTTPFile.h" />
     <ClInclude Include="..\..\xbmc\filesystem\DAVCommon.h" />
     <ClInclude Include="..\..\xbmc\filesystem\DAVFile.h" />
@@ -955,6 +959,9 @@
     <ClInclude Include="..\..\xbmc\filesystem\win32\Win32SMBDirectory.h" />
     <ClInclude Include="..\..\xbmc\filesystem\win32\Win32File.h" />
     <ClInclude Include="..\..\xbmc\filesystem\win32\Win32SMBFile.h" />
+    <ClInclude Include="..\..\xbmc\filesystem\XbtDirectory.h" />
+    <ClInclude Include="..\..\xbmc\filesystem\XbtFile.h" />
+    <ClInclude Include="..\..\xbmc\filesystem\XbtManager.h" />
     <ClInclude Include="..\..\xbmc\guiinfo\GUIInfoLabels.h" />
     <ClInclude Include="..\..\xbmc\guilib\cximage.h" />
     <ClInclude Include="..\..\xbmc\guilib\GUIKeyboard.h" />
@@ -1262,6 +1269,7 @@
     <ClCompile Include="..\..\xbmc\video\jobs\VideoLibraryJob.cpp" />
     <ClCompile Include="..\..\xbmc\video\jobs\VideoLibraryMarkWatchedJob.cpp" />
     <ClCompile Include="..\..\xbmc\video\jobs\VideoLibraryProgressJob.cpp" />
+    <ClCompile Include="..\..\xbmc\video\jobs\VideoLibraryRefreshingJob.cpp" />
     <ClCompile Include="..\..\xbmc\video\jobs\VideoLibraryScanningJob.cpp" />
     <ClCompile Include="..\..\xbmc\video\PlayerController.cpp" />
     <ClCompile Include="..\..\xbmc\video\videosync\VideoSyncD3D.cpp" />
@@ -2102,6 +2110,7 @@
     <ClInclude Include="..\..\xbmc\video\jobs\VideoLibraryJob.h" />
     <ClInclude Include="..\..\xbmc\video\jobs\VideoLibraryMarkWatchedJob.h" />
     <ClInclude Include="..\..\xbmc\video\jobs\VideoLibraryProgressJob.h" />
+    <ClInclude Include="..\..\xbmc\video\jobs\VideoLibraryRefreshingJob.h" />
     <ClInclude Include="..\..\xbmc\video\jobs\VideoLibraryScanningJob.h" />
     <ClInclude Include="..\..\xbmc\video\PlayerController.h" />
     <ClInclude Include="..\..\xbmc\video\videosync\VideoSync.h" />

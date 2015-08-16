@@ -77,6 +77,7 @@
 #if defined(TARGET_ANDROID)
 #include "APKDirectory.h"
 #endif
+#include "XbtDirectory.h"
 #include "ZipDirectory.h"
 #ifdef HAS_FILESYSTEM_RAR
 #include "RarDirectory.h"
@@ -149,6 +150,7 @@ IDirectory* CDirectoryFactory::Create(const CURL& url)
     CLog::Log(LOGWARNING, "%s - Compiled without non-free, rar support is disabled", __FUNCTION__);
 #endif
   }
+  if (url.IsProtocol("xbt")) return new CXbtDirectory();
   if (url.IsProtocol("multipath")) return new CMultiPathDirectory();
   if (url.IsProtocol("stack")) return new CStackDirectory();
   if (url.IsProtocol("playlistmusic")) return new CPlaylistDirectory();
@@ -166,6 +168,11 @@ IDirectory* CDirectoryFactory::Create(const CURL& url)
 #if defined(TARGET_ANDROID)
   if (url.IsProtocol("androidapp")) return new CAndroidAppDirectory();
 #endif
+#ifdef HAVE_LIBBLURAY
+  if (url.IsProtocol("bluray")) return new CBlurayDirectory();
+#endif
+  if (url.IsProtocol("resource")) return new CResourceDirectory();
+  if (url.IsProtocol("events")) return new CEventsDirectory();
 
   bool networkAvailable = g_application.getNetwork().IsAvailable(true); // true to wait for the network (if possible)
   if (networkAvailable)
@@ -201,11 +208,6 @@ IDirectory* CDirectoryFactory::Create(const CURL& url)
 #ifdef HAS_FILESYSTEM_NFS
     if (url.IsProtocol("nfs")) return new CNFSDirectory();
 #endif
-#ifdef HAVE_LIBBLURAY
-      if (url.IsProtocol("bluray")) return new CBlurayDirectory();
-#endif
-      if (url.IsProtocol("resource")) return new CResourceDirectory();
-      if (url.IsProtocol("events")) return new CEventsDirectory();
   }
 
   CLog::Log(LOGWARNING, "%s - %sunsupported protocol(%s) in %s", __FUNCTION__, networkAvailable ? "" : "Network down or ", url.GetProtocol().c_str(), url.GetRedacted().c_str() );
