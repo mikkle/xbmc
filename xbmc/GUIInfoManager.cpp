@@ -3780,8 +3780,6 @@ std::string CGUIInfoManager::GetMusicLabel(int item)
       return StringUtils::Format("%s", m_audioInfo.audioCodecName.c_str());
     }
     break;
-  case MUSICPLAYER_LYRICS:
-    return GetItemLabel(m_currentFile, AddListItemProp("lyrics"));
   }
   return GetMusicTagLabel(item, m_currentFile);
 }
@@ -5559,8 +5557,8 @@ bool CGUIInfoManager::GetItemBool(const CGUIListItem *item, int condition) const
       if (pItem->HasEPGInfoTag())
       {
         CFileItemPtr timer = g_PVRTimers->GetTimerForEpgTag(pItem);
-        if (timer && timer->HasPVRTimerInfoTag())
-          return timer->GetPVRTimerInfoTag()->GetTimerScheduleId() > 0;
+        if (timer && timer->HasPVRTimerInfoTag() && timer->GetPVRTimerInfoTag()->GetTimerScheduleId() != PVR_TIMER_NO_PARENT)
+          return timer->GetPVRTimerInfoTag()->IsActive();
       }
     }
     else if (condition == LISTITEM_HASRECORDING)
